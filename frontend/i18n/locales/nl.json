@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "title": "Woning Scam Checker — transparante huurfraude-check"
+  },
+  "brand": {
+    "name": "Woning Scam Checker",
+    "badge": "Transparante analyse",
+    "tagline": "Regels die je kunt volgen. Geen verborgen scores."
+  },
+  "trust": {
+    "line": "Geen account · Regels + optionele AI-verdieping (met API-key) · Jouw tekst blijft van jou"
+  },
+  "hero": {
+    "title": "Check een advertentie voordat je betaalt",
+    "subtitle": "Plak tekst of een link naar een woningadvertentie. Je krijgt een risicoscore met concrete redenen — geen black box."
+  },
+  "form": {
+    "label": "Advertentie of URL",
+    "placeholder": "Plak de volledige advertentie, of alleen een link zoals 123wonen.nl/…",
+    "submit": "Analyseren",
+    "submitting": "Bezig met analyseren…",
+    "hint": "Ondersteunde sites: openbare advertentiepagina’s (HTTP). Geen inlog vereist."
+  },
+  "result": {
+    "scoreLabel": "Risicoscore (0–100)",
+    "ruleEngine": "Regel-engine",
+    "finalScore": "Eindscore",
+    "flags": "Signalen",
+    "flagsEmpty": "Geen automatisch gedetecteerde signalen.",
+    "market": "Marktbenchmark (huur)",
+    "marketLine": "Geschatte benchmark: € {avg} per maand.",
+    "marketDiff": "Jouw prijs wijkt {pct}% af t.o.v. die benchmark.",
+    "marketNoPrice": "Geen prijs in de tekst om te vergelijken.",
+    "marketContext": "Markt- en prijscontext",
+    "methodology": "Hoe we dit beoordelen",
+    "riskBreakdown": "Risico per onderdeel",
+    "riskPoints": "{n} pt",
+    "recommendations": "Aanbevelingen",
+    "whatToVerify": "Controleer dit vóór je betaalt",
+    "summary": "Toelichting & bevindingen",
+    "llmBadge": "AI-toetsing",
+    "share": "Rapport bewaren",
+    "openReport": "Open rapport",
+    "downloadPdf": "Download PDF (aanbevolen)",
+    "webReport": "Webversie met alle details (tijdelijk)"
+  },
+  "risk": {
+    "low": "Beperkt risico",
+    "medium": "Matig risico",
+    "high": "Verhoogd risico"
+  },
+  "errors": {
+    "generic": "Analyse mislukt. Controleer of de API bereikbaar is."
+  },
+  "header": {
+    "themeLight": "Licht thema",
+    "themeDark": "Donker thema",
+    "themeSystem": "Systeem",
+    "language": "Taal"
+  },
+  "footer": {
+    "note": "Hulpmiddel met regels en optioneel een taalmodel (OpenAI-compatible API); het vervangt geen eigen oordeel of juridisch advies."
+  }
+}

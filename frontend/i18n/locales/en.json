@@ -1,0 +1,64 @@
+{
+  "meta": {
+    "title": "Woning Scam Checker — transparent rental fraud check"
+  },
+  "brand": {
+    "name": "Woning Scam Checker",
+    "badge": "Transparent analysis",
+    "tagline": "Rules you can follow. No hidden scoring."
+  },
+  "trust": {
+    "line": "No account · Rules plus optional AI layer (with API key) · Your text stays yours"
+  },
+  "hero": {
+    "title": "Check a listing before you pay",
+    "subtitle": "Paste text or a link to a property listing. You get a risk score with clear reasons — not a black box."
+  },
+  "form": {
+    "label": "Listing text or URL",
+    "placeholder": "Paste the full ad, or only a link such as 123wonen.nl/…",
+    "submit": "Analyze",
+    "submitting": "Analyzing…",
+    "hint": "Supported: public listing pages over HTTP. No login required."
+  },
+  "result": {
+    "scoreLabel": "Risk score (0–100)",
+    "ruleEngine": "Rule engine",
+    "finalScore": "Final score",
+    "flags": "Signals",
+    "flagsEmpty": "No automatically detected signals.",
+    "market": "Market benchmark (rent)",
+    "marketLine": "Estimated benchmark: € {avg} per month.",
+    "marketDiff": "Your price differs by {pct}% from that benchmark.",
+    "marketNoPrice": "No price in the text to compare.",
+    "marketContext": "Market & price context",
+    "methodology": "How we assess this",
+    "riskBreakdown": "Risk by category",
+    "riskPoints": "{n} pts",
+    "recommendations": "Recommendations",
+    "whatToVerify": "Verify this before you pay",
+    "summary": "Findings & explanation",
+    "llmBadge": "AI review",
+    "share": "Save your report",
+    "openReport": "Open report",
+    "downloadPdf": "Download PDF (recommended)",
+    "webReport": "Web version with full details (temporary)"
+  },
+  "risk": {
+    "low": "Limited risk",
+    "medium": "Moderate risk",
+    "high": "Elevated risk"
+  },
+  "errors": {
+    "generic": "Analysis failed. Check that the API is reachable."
+  },
+  "header": {
+    "themeLight": "Light theme",
+    "themeDark": "Dark theme",
+    "themeSystem": "System",
+    "language": "Language"
+  },
+  "footer": {
+    "note": "Support tool using rules and optionally a language model (OpenAI-compatible API); it does not replace your own judgment or legal advice."
+  }
+}
