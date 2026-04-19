@@ -184,14 +184,14 @@ class ScamAnalysisService
     private function matchesHighRiskPayment(string $lower): bool
     {
         if (preg_match(
-            '/western union|moneygram|vooruit ?betal|vooruitbetaling|betaal voordat|betaalt u eerst|alleen crypto|bitcoin|btc\b|ethereum|eth\b|usdt|tether|paysafecard|paysafe|steam.?tegoed|steam wallet|itunes|apple.?tegoed|cadeaukaart|gift ?card|pinnen bij|postwissel|swift.?overschrijving naar particulier/i',
+            '/western union|moneygram|vooruit ?betal|vooruitbetaling|betaal voordat|betaalt u eerst|alleen crypto|bitcoin|btc\b|ethereum|eth\b|usdt|tether|paysafecard|paysafe|steam.?tegoed|steam wallet|itunes|apple.?tegoed|cadeaukaart|gift ?card|pinnen bij|postwissel|swift.?overschrijving naar particulier/iu',
             $lower
         )) {
             return true;
         }
 
         return (bool) preg_match(
-            '/\bideal\b.{0,40}(onbekend|privérekening|particulier|niet.?nederland)|niet via de bank maar via/i',
+            '/\bideal\b.{0,40}(onbekend|privérekening|particulier|niet.?nederland)|niet via de bank maar via/iu',
             $lower
         );
     }

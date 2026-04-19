@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'brand_name' => 'HuurRadar',
+    'brand_tagline' => 'Huuradvertentie · risicorapport',
+    'report_title' => 'Rapport',
+    'report_number' => 'Rapport #:id',
+    'risk_low' => 'Laag risico',
+    'risk_medium' => 'Matig risico',
+    'risk_high' => 'Hoog risico',
+    'rule_engine_line' => 'Regel-engine: :rule — eindscore: :final',
+    'market_heading' => 'Marktbenchmark',
+    'market_benchmark' => 'Geschatte benchmark: € :avg per maand.',
+    'market_diff' => 'Afwijking t.o.v. prijs in advertentie: :pct%.',
+    'risk_breakdown_heading' => 'Risico per onderdeel',
+    'breakdown_fallback' => 'Onderdeel',
+    'points' => ':n pt',
+    'signals_heading' => 'Signalen',
+    'signals_empty' => 'Geen automatisch gedetecteerde signalen.',
+    'recommendations_heading' => 'Aanbevelingen',
+    'verify_heading' => 'Controleer vóór je betaalt',
+    'summary_heading' => 'Toelichting',
+    'footer_disclaimer' => 'Geen juridisch of financieel advies. Geautomatiseerde inschatting op basis van tekstpatronen en eenvoudige benchmark.',
+    'foot_tagline' => 'transparante huurfraude-check',
+    'ai_badge' => 'AI',
+];

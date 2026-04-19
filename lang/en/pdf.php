@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'brand_name' => 'HuurRadar',
+    'brand_tagline' => 'Rental listing · risk report',
+    'report_title' => 'Report',
+    'report_number' => 'Report #:id',
+    'risk_low' => 'Low risk',
+    'risk_medium' => 'Moderate risk',
+    'risk_high' => 'High risk',
+    'rule_engine_line' => 'Rule engine: :rule — final score: :final',
+    'market_heading' => 'Market benchmark',
+    'market_benchmark' => 'Estimated benchmark: € :avg per month.',
+    'market_diff' => 'Difference vs. price in the ad: :pct%.',
+    'risk_breakdown_heading' => 'Risk by area',
+    'breakdown_fallback' => 'Area',
+    'points' => ':n pts',
+    'signals_heading' => 'Signals',
+    'signals_empty' => 'No automatically detected signals.',
+    'recommendations_heading' => 'Recommendations',
+    'verify_heading' => 'Verify before you pay',
+    'summary_heading' => 'Notes',
+    'footer_disclaimer' => 'Not legal or financial advice. Automated estimate based on text patterns and a simple benchmark.',
+    'foot_tagline' => 'transparent rental fraud check',
+    'ai_badge' => 'AI',
+];

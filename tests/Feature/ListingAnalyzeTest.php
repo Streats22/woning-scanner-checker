@@ -89,7 +89,7 @@ class ListingAnalyzeTest extends TestCase
     {
         Http::fake(function () {
             return Http::response(
-                '<html><head><title>X</title></head><body><p>Te huur Amsterdam € 900 per maand.</p><p>Neem contact op via WhatsApp.</p>'
+                '<html lang="nl"><head><title>X</title></head><body><p>Te huur Amsterdam € 900 per maand.</p><p>Neem contact op via WhatsApp.</p>'
                 .str_repeat('<p>Extra context om de minimale lengte te halen.</p>', 12)
                 .'</body></html>',
                 200

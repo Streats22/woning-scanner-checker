@@ -10,119 +10,7 @@
     <meta property="og:description" content="Risicoscore {{ $listing->scam_score }}/100 met concrete signalen en aanbevelingen.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
-    <style>
-        :root {
-            --bg: #0a101d;
-            --bg2: #111827;
-            --card: #161f2c;
-            --card2: #1c2738;
-            --text: #e8eef4;
-            --muted: #8b9aab;
-            --accent: #60a5fa;
-            --accent-dim: rgba(96, 165, 250, 0.14);
-            --border: #2d3d52;
-            --warn: #fb923c;
-            --danger: #f87171;
-            --ok: #4ade80;
-        }
-        * { box-sizing: border-box; }
-        body {
-            margin: 0;
-            min-height: 100vh;
-            font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
-            background: radial-gradient(1200px 600px at 10% -10%, rgba(45, 212, 191, 0.08), transparent 50%), var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-            font-size: 1rem;
-        }
-        .wrap { max-width: 46rem; margin: 0 auto; padding: 2rem 1.25rem 4rem; }
-        .badge {
-            display: inline-block;
-            font-size: 0.7rem;
-            font-weight: 700;
-            letter-spacing: 0.06em;
-            text-transform: uppercase;
-            color: var(--accent);
-            background: var(--accent-dim);
-            padding: 0.25rem 0.55rem;
-            border-radius: 6px;
-            margin-bottom: 0.75rem;
-        }
-        h1 { font-family: 'Outfit', system-ui, sans-serif; font-size: clamp(1.35rem, 4vw, 1.65rem); font-weight: 700; margin: 0 0 0.35rem; letter-spacing: -0.02em; }
-        .lead { color: var(--muted); font-size: 0.95rem; margin: 0 0 2rem; max-width: 40rem; }
-        .meta { font-size: 0.8rem; color: var(--muted); margin-bottom: 1.5rem; }
-        .card {
-            padding: 1.35rem 1.25rem;
-            border-radius: 14px;
-            border: 1px solid var(--border);
-            background: linear-gradient(165deg, var(--card) 0%, var(--card2) 100%);
-            margin-bottom: 1rem;
-        }
-        .score-row { display: flex; align-items: flex-end; gap: 1rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
-        .score-val { font-size: clamp(2.5rem, 8vw, 3.25rem); font-weight: 800; line-height: 1; letter-spacing: -0.04em; }
-        .pill {
-            display: inline-block;
-            padding: 0.3rem 0.75rem;
-            border-radius: 999px;
-            font-size: 0.75rem;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-        .c-green { background: rgba(74, 222, 128, 0.15); color: var(--ok); }
-        .c-orange { background: rgba(251, 146, 60, 0.15); color: var(--warn); }
-        .c-red { background: rgba(248, 113, 113, 0.15); color: var(--danger); }
-        .rule-note { font-size: 0.85rem; color: var(--muted); margin-top: 0.5rem; }
-        h2 {
-            font-family: 'Outfit', system-ui, sans-serif;
-            font-size: 1.05rem;
-            font-weight: 600;
-            margin: 0 0 0.65rem;
-            color: var(--text);
-            letter-spacing: -0.01em;
-        }
-        h3 { font-size: 0.9rem; font-weight: 600; margin: 1rem 0 0.4rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
-        p { margin: 0 0 0.75rem; }
-        ul, ol { margin: 0 0 0.75rem; padding-left: 1.2rem; }
-        li { margin: 0.4rem 0; }
-        .prose { color: var(--text); }
-        .prose.muted { color: var(--muted); font-size: 0.9375rem; }
-        .prose pre-wrap { white-space: pre-wrap; word-break: break-word; }
-        .breakdown-item {
-            padding: 0.75rem 0;
-            border-bottom: 1px solid var(--border);
-        }
-        .breakdown-item:last-child { border-bottom: none; }
-        .breakdown-cat { font-weight: 600; color: var(--accent); font-size: 0.9rem; }
-        .breakdown-pts { font-size: 0.75rem; color: var(--muted); margin-left: 0.35rem; }
-        .market-box {
-            background: var(--bg2);
-            border-radius: 10px;
-            padding: 1rem;
-            border: 1px solid var(--border);
-            font-size: 0.9rem;
-            color: var(--muted);
-        }
-        .market-box strong { color: var(--text); }
-        .back { margin-top: 2rem; font-size: 0.9rem; }
-        .back a { color: var(--accent); text-decoration: none; }
-        .back a:hover { text-decoration: underline; }
-        pre.raw {
-            margin-top: 0.75rem;
-            padding: 1rem;
-            border-radius: 10px;
-            background: #080c11;
-            border: 1px solid var(--border);
-            font-size: 0.78rem;
-            white-space: pre-wrap;
-            word-break: break-word;
-            color: var(--muted);
-            max-height: 22rem;
-            overflow: auto;
-        }
-        details summary { cursor: pointer; color: var(--muted); font-size: 0.875rem; }
-        .empty { color: var(--muted); font-style: italic; }
-    </style>
+    @vite(['resources/css/report-web.css'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
@@ -130,8 +18,16 @@
 <body>
 @php
     $s = (int) $listing->scam_score;
-    $tier = $s <= 30 ? 'c-green' : ($s <= 60 ? 'c-orange' : 'c-red');
-    $tierLabel = $s <= 30 ? 'Laag risico' : ($s <= 60 ? 'Matig risico' : 'Hoog risico');
+    if ($s <= 30) {
+        $tier = 'c-green';
+        $tierLabel = 'Laag risico';
+    } elseif ($s <= 60) {
+        $tier = 'c-orange';
+        $tierLabel = 'Matig risico';
+    } else {
+        $tier = 'c-red';
+        $tierLabel = 'Hoog risico';
+    }
     $flags = $listing->scam_flags ?? [];
     $snap = $listing->report_snapshot ?? [];
     $ruleScore = $snap['rule_score'] ?? $s;
@@ -275,7 +171,7 @@
 
         <div class="card">
             <h2>Toelichting &amp; bevindingen</h2>
-            <div class="prose pre-wrap muted" style="white-space: pre-wrap;">{{ $listing->ai_summary }}</div>
+            <div class="prose muted prose-pre-wrap">{{ $listing->ai_summary }}</div>
         </div>
 
         @if ($listing->city)
