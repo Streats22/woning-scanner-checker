@@ -2,22 +2,18 @@
 
 namespace App\Services;
 
+use App\Support\RentBenchmarkMap;
+
 class LocationService
 {
-    /**
-     * Steden waarvoor we een huurbenchmark hebben (zie PriceAnalysisService).
-     *
-     * @var list<string>
-     */
-    private const CITIES = ['Amsterdam', 'Rotterdam', 'Utrecht', 'Alkmaar'];
-
     /**
      * Detecteert de meest waarschijnlijke stad in de advertentietekst.
      *
      * Eerder werd de eerste match uit een vaste volgorde genomen; daardoor won
      * "Amsterdam" uit navigatie/footer vaak van "Rotterdam" in de advertentie.
      * We matchen nu hele woorden en negeren een korte prefix (header/nav), tenzij
-     * daarbuiten geen stad meer voorkomt.
+     * daarbuiten geen stad meer voorkomt. Aliassen (bijv. Den Bosch) worden naar
+     * de canonieke naam voor de benchmark opgelost.
      */
     public function detectCity(string $text): ?string
     {
@@ -26,11 +22,14 @@ class LocationService
             return null;
         }
 
+        $needleToCanonical = RentBenchmarkMap::needleToCanonical();
         $matches = [];
-        foreach (self::CITIES as $city) {
-            $positions = $this->wholeWordMatchPositions($text, $city);
+
+        foreach (RentBenchmarkMap::searchNeedlesSorted() as $needle) {
+            $canonical = $needleToCanonical[$needle] ?? $needle;
+            $positions = $this->wholeWordMatchPositions($text, $needle);
             foreach ($positions as $pos) {
-                $matches[] = ['city' => $city, 'pos' => $pos];
+                $matches[] = ['city' => $canonical, 'pos' => $pos];
             }
         }
 
@@ -50,8 +49,6 @@ class LocationService
             return $afterNav[0]['city'];
         }
 
-        // Alles zat in de "nav"-prefix: kies per stad de eerste positie en neem de stad
-        // waarvan die positie het grootst is (vaak de echte advertentie na boilerplate).
         $firstByCity = [];
         foreach ($matches as $m) {
             $c = $m['city'];

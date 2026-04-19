@@ -27,8 +27,28 @@ class LlmScamAnalysisServiceTest extends TestCase
         $this->assertSame(30, $out['score']);
         $this->assertSame(['Prijs'], $out['flags']);
         $this->assertNull($out['link_assessment']);
+        $this->assertSame([], $out['observations']);
         $this->assertNotEmpty($out['recommendations']);
         $this->assertNotEmpty($out['what_to_verify']);
+    }
+
+    public function test_enhance_skips_http_when_use_llm_false_even_with_api_key(): void
+    {
+        Config::set('services.openai.key', 'sk-test');
+        Config::set('services.openai.model', 'gpt-4o-mini');
+        Config::set('services.openai.base_url', 'https://api.openai.com/v1');
+
+        Http::fake();
+
+        $service = new LlmScamAnalysisService(new AiAnalysisService, new ReportEnrichmentService);
+        $data = new ParsedListingInput(null, 500, null, 'Test Amsterdam');
+        $market = ['average' => 1800, 'difference_percent' => -72];
+        $rule = ['score' => 30, 'flags' => ['Prijs'], 'breakdown' => []];
+
+        $out = $service->enhance($data, $market, $rule, false);
+
+        $this->assertFalse($out['llm_used']);
+        Http::assertNothingSent();
     }
 
     public function test_llm_merges_with_rules_when_openai_returns_json(): void
@@ -51,6 +71,7 @@ class LlmScamAnalysisServiceTest extends TestCase
                                 'link_note' => null,
                                 'recommendations' => ['Tip A'],
                                 'what_to_verify' => ['Check B'],
+                                'observations' => ['Obs 1', 'Obs 2'],
                                 'risk_breakdown' => [['category' => 'Test', 'points' => 10, 'detail' => 'X']],
                             ]),
                         ],
@@ -72,6 +93,7 @@ class LlmScamAnalysisServiceTest extends TestCase
         $this->assertContains('Prijs', $out['flags']);
         $this->assertStringContainsString('Samenvatting van AI.', $out['summary']);
         $this->assertStringContainsString('Langere toelichting.', $out['summary']);
+        $this->assertContains('Obs 1', $out['observations']);
     }
 
     public function test_link_assessment_when_url_present(): void

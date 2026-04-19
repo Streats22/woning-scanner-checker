@@ -5,6 +5,7 @@ namespace Tests\Feature;
 use App\Models\Listing;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
@@ -26,6 +27,7 @@ class ListingAnalyzeTest extends TestCase
                 'summary',
                 'summary_short',
                 'narrative',
+                'observations',
                 'llm_used',
                 'link_assessment',
                 'recommendations',
@@ -34,6 +36,7 @@ class ListingAnalyzeTest extends TestCase
                 'rule_score',
                 'methodology',
                 'market_context',
+                'listing_fit' => ['tier', 'score', 'reason_codes'],
                 'id',
                 'report_url',
                 'report_pdf_url',
@@ -42,6 +45,7 @@ class ListingAnalyzeTest extends TestCase
             ->assertJson([
                 'llm_used' => false,
                 'link_assessment' => null,
+                'observations' => [],
             ]);
 
         $this->assertDatabaseCount('listings', 1);
@@ -49,6 +53,8 @@ class ListingAnalyzeTest extends TestCase
         $this->assertSame($text, $listing->raw_input);
         $this->assertIsArray($listing->report_snapshot);
         $this->assertArrayHasKey('recommendations', $listing->report_snapshot);
+        $this->assertArrayHasKey('listing_fit', $listing->report_snapshot);
+        $this->assertSame([], $listing->report_snapshot['observations'] ?? null);
         $this->assertNull($listing->source_url);
         $this->assertNotNull($listing->ai_summary);
         $this->assertMatchesRegularExpression(
@@ -57,6 +63,26 @@ class ListingAnalyzeTest extends TestCase
         );
         $this->assertStringContainsString($listing->report_slug, $response->json('report_url'));
         $this->assertStringContainsString($listing->report_slug.'/pdf', $response->json('report_pdf_url'));
+    }
+
+    public function test_analyze_does_not_call_openai_when_use_ai_is_false(): void
+    {
+        Config::set('services.openai.key', 'sk-test');
+        Config::set('services.openai.model', 'gpt-4o-mini');
+        Config::set('services.openai.base_url', 'https://api.openai.com/v1');
+
+        Http::fake();
+
+        $text = 'Te huur Amsterdam € 500 per maand. Neem alleen WhatsApp contact op.';
+
+        $response = $this->postJson('/api/analyze', [
+            'text' => $text,
+            'use_ai' => false,
+        ]);
+
+        $response->assertOk()->assertJson(['llm_used' => false]);
+
+        Http::assertNothingSent();
     }
 
     public function test_analyze_fetches_plain_text_when_input_is_single_url(): void
@@ -143,6 +169,18 @@ class ListingAnalyzeTest extends TestCase
         $this->get('/report/'.$listing->report_slug.'/pdf')
             ->assertOk()
             ->assertHeader('content-type', 'application/pdf');
+
+        $this->get('/report/'.$listing->report_slug.'/pdf?theme=dark&locale=en')
+            ->assertOk()
+            ->assertHeader('content-type', 'application/pdf');
+
+        $redirectPdf = $this->get('/report/'.$listing->id.'/pdf?theme=dark&locale=en');
+        $redirectPdf->assertRedirect();
+        $loc = (string) $redirectPdf->headers->get('Location');
+        $this->assertStringContainsString('/report/'.$listing->report_slug.'/pdf', $loc);
+        parse_str((string) parse_url($loc, PHP_URL_QUERY), $pdfQs);
+        $this->assertSame('dark', $pdfQs['theme'] ?? null);
+        $this->assertSame('en', $pdfQs['locale'] ?? null);
     }
 
     public function test_report_redirects_when_slug_prefix_differs_but_trailing_id_matches(): void

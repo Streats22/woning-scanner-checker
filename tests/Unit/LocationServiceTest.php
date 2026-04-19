@@ -43,4 +43,28 @@ class LocationServiceTest extends TestCase
 
         $this->assertNull($s->detectCity('Te huur ergens in Brabant, prijs op aanvraag'));
     }
+
+    public function test_detects_den_bosch_alias_as_canonical_key(): void
+    {
+        $s = new LocationService;
+
+        $this->assertSame(
+            "'s-Hertogenbosch",
+            $s->detectCity('Appartement te huur Den Bosch centrum € 950 per maand')
+        );
+    }
+
+    public function test_detects_groningen(): void
+    {
+        $s = new LocationService;
+
+        $this->assertSame('Groningen', $s->detectCity('Kamer te huur nabij centrum Groningen, € 450'));
+    }
+
+    public function test_detects_spijkenisse_alias_as_voorne_aan_zee(): void
+    {
+        $s = new LocationService;
+
+        $this->assertSame('Voorne aan Zee', $s->detectCity('Appartement te huur Spijkenisse, € 1100'));
+    }
 }

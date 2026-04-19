@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exceptions\ListingFetchException;
 use App\Models\Listing;
+use App\Services\ListingContentFitService;
 use App\Services\ListingParserService;
 use App\Services\LlmScamAnalysisService;
 use App\Services\LocationService;
@@ -31,13 +32,17 @@ class ListingController extends Controller
         private ReportPdfService $pdfRenderer,
         private ReportUrlGenerator $reportUrlGenerator,
         private ListingAnalyzeResultAssembler $analyzeResultAssembler,
+        private ListingContentFitService $listingContentFit,
     ) {}
 
     public function analyze(Request $request)
     {
         $validated = $request->validate([
             'text' => ['required', 'string', 'max:65535'],
+            'use_ai' => ['sometimes', 'boolean'],
         ]);
+
+        $useAi = $request->boolean('use_ai');
 
         try {
             $data = $this->parser->parseInput($validated['text']);
@@ -55,9 +60,11 @@ class ListingController extends Controller
         );
 
         $ruleScam = $this->scam->analyze($data, $priceData);
-        $analysis = $this->llmScam->enhance($data, $priceData, $ruleScam);
+        $analysis = $this->llmScam->enhance($data, $priceData, $ruleScam, $useAi);
 
-        $reportSnapshot = $this->analyzeResultAssembler->buildReportSnapshot($analysis, $priceData);
+        $listingFit = $this->listingContentFit->assess($data);
+
+        $reportSnapshot = $this->analyzeResultAssembler->buildReportSnapshot($analysis, $priceData, $listingFit);
 
         $listing = Listing::create([
             'raw_input' => $validated['text'],
@@ -87,7 +94,7 @@ class ListingController extends Controller
         $listing->refresh();
 
         $urls = $this->reportUrlGenerator->absoluteUrls($request, $listing);
-        $payload = $this->analyzeResultAssembler->buildApiPayload($listing, $analysis, $priceData, $urls);
+        $payload = $this->analyzeResultAssembler->buildApiPayload($listing, $analysis, $priceData, $urls, $listingFit);
 
         return response()->json($payload);
     }
@@ -105,7 +112,7 @@ class ListingController extends Controller
         ]);
     }
 
-    public function reportPdf(string $idOrSlug): Response|RedirectResponse
+    public function reportPdf(Request $request, string $idOrSlug): Response|RedirectResponse
     {
         $listing = $this->listingResolver->resolve($idOrSlug);
 
@@ -113,13 +120,24 @@ class ListingController extends Controller
             return $redirect;
         }
 
-        return $this->pdfRenderer->render($listing);
+        $theme = $request->query('theme', 'light');
+        $locale = $request->query('locale', 'nl');
+        $theme = is_string($theme) ? $theme : 'light';
+        $locale = is_string($locale) ? $locale : 'nl';
+
+        return $this->pdfRenderer->render($listing, $theme, $locale);
     }
 
     private function canonicalReportRedirect(Listing $listing, string $idOrSlug, string $routeName): ?RedirectResponse
     {
         if ($listing->report_slug !== null && $idOrSlug !== $listing->report_slug) {
-            return redirect()->route($routeName, ['idOrSlug' => $listing->report_slug], 301);
+            $url = route($routeName, ['idOrSlug' => $listing->report_slug]);
+            $qs = request()->getQueryString();
+            if ($qs !== null && $qs !== '') {
+                $url .= '?'.$qs;
+            }
+
+            return redirect($url, 301);
         }
 
         return null;

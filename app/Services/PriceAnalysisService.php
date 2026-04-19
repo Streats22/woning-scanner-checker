@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Support\RentBenchmarkMap;
+
 class PriceAnalysisService
 {
     /**
@@ -9,14 +11,7 @@ class PriceAnalysisService
      */
     public function analyze(?string $city, ?int $price): array
     {
-        $map = [
-            'Amsterdam' => 1800,
-            'Rotterdam' => 1400,
-            'Utrecht' => 1600,
-            'Alkmaar' => 1200,
-        ];
-
-        $avg = $map[$city] ?? 1300;
+        $avg = RentBenchmarkMap::averageFor($city);
 
         return [
             'average' => $avg,

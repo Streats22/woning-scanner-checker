@@ -4,14 +4,14 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Woning Scam Checker</title>
+    <title>HuurRadar</title>
     <style>
         :root {
-            --bg: #0f1419;
-            --card: #1a2332;
+            --bg: #0a101d;
+            --card: #111827;
             --text: #e8eef4;
             --muted: #8b9aab;
-            --accent: #3b82f6;
+            --accent: #60a5fa;
             --border: #2d3a4d;
         }
         * { box-sizing: border-box; }
@@ -97,7 +97,7 @@
 </head>
 <body>
     <div class="wrap">
-        <h1>Woning Scam Checker</h1>
+        <h1>HuurRadar</h1>
         <p class="sub">Plak een advertentie. Je krijgt een risicoscore op basis van duidelijke regels — geen black box.</p>
 
         <form id="form" action="#" method="post">

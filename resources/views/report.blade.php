@@ -4,22 +4,22 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="index, follow">
-    <title>Scam-rapport {{ $listing->report_slug ?? '#'.$listing->id }} — Woning Scam Checker</title>
+    <title>Scam-rapport {{ $listing->report_slug ?? '#'.$listing->id }} — HuurRadar</title>
     <meta name="description" content="Uitgebreid risicorapport (score {{ $listing->scam_score }}/100): signalen, benchmark, advies en controlelijst.">
-    <meta property="og:title" content="Scam-rapport — Woning Scam Checker">
+    <meta property="og:title" content="Scam-rapport — HuurRadar">
     <meta property="og:description" content="Risicoscore {{ $listing->scam_score }}/100 met concrete signalen en aanbevelingen.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
     <style>
         :root {
-            --bg: #0a0e14;
-            --bg2: #121a24;
+            --bg: #0a101d;
+            --bg2: #111827;
             --card: #161f2c;
             --card2: #1c2738;
             --text: #e8eef4;
             --muted: #8b9aab;
-            --accent: #2dd4bf;
-            --accent-dim: rgba(45, 212, 191, 0.12);
+            --accent: #60a5fa;
+            --accent-dim: rgba(96, 165, 250, 0.14);
             --border: #2d3d52;
             --warn: #fb923c;
             --danger: #f87171;
@@ -142,6 +142,7 @@
     $marketContext = $snap['market_context'] ?? null;
     $linkAssessment = $snap['link_assessment'] ?? null;
     $llmUsed = $snap['llm_used'] ?? false;
+    $listingFit = is_array($snap['listing_fit'] ?? null) ? $snap['listing_fit'] : null;
 @endphp
     <div class="wrap">
         <span class="badge">Gedeeld rapport</span>
@@ -168,6 +169,22 @@
                 <p class="rule-note">Regel-engine: <strong>{{ $ruleScore }}</strong> — eindscore na combinatie (regels + optionele AI): <strong>{{ $s }}</strong>.</p>
             @endif
         </div>
+
+        @if ($listingFit && isset($listingFit['tier'], $listingFit['score']))
+            <div class="card" style="border-left:3px solid var(--accent);">
+                <h2>Lijkt dit op een huuradvertentie?</h2>
+                <p class="prose muted" style="margin:0;">
+                    Automatische inschatting op basis van ingelezen tekst en link: <strong>{{ (int) $listingFit['score'] }}/100</strong>.
+                    @if ($listingFit['tier'] === 'strong')
+                        Dit lijkt redelijk typerend voor een huuradvertentie (prijs, termen en/of bekend platform).
+                    @elseif ($listingFit['tier'] === 'mixed')
+                        Twijfelachtig: enkele signalen, maar de inhoud kan ook iets anders zijn — plak bij voorkeur de volledige advertentie.
+                    @else
+                        Weinig typerend voor een advertentie; de analyse kan minder betrouwbaar zijn.
+                    @endif
+                </p>
+            </div>
+        @endif
 
         @if ($methodology)
             <div class="card">

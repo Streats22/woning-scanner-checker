@@ -14,14 +14,18 @@ class LlmScamAnalysisService
     ) {}
 
     /**
-     * Combineert regel-gebaseerde score met een LLM-analyse (indien geconfigureerd).
+     * Combineert regel-gebaseerde score met een LLM-analyse (alleen als $useLlm true en API-key gezet).
      *
      * @param  array{average: int, difference_percent: ?int}  $market
      * @param  array{score: int, flags: array<int, string>, breakdown: array<int, array{category: string, points: int, detail: string}>}  $ruleScam
      * @return array<string, mixed>
      */
-    public function enhance(ParsedListingInput $data, array $market, array $ruleScam): array
+    public function enhance(ParsedListingInput $data, array $market, array $ruleScam, bool $useLlm = true): array
     {
+        if (! $useLlm) {
+            return $this->fallbackFromRules($data, $market, $ruleScam);
+        }
+
         $key = config('services.openai.key');
         if (! is_string($key) || $key === '') {
             return $this->fallbackFromRules($data, $market, $ruleScam);
@@ -30,9 +34,14 @@ class LlmScamAnalysisService
         $description = mb_substr($data->description, 0, 14000);
         $url = $data->sourceUrl ?? 'geen (alleen geplakte tekst)';
 
+        $rawMax = config('services.openai.max_tokens');
+        $maxTokens = is_numeric($rawMax) ? (int) $rawMax : 4096;
+        $maxTokens = max(512, min(16384, $maxTokens));
+
         $payload = [
             'model' => config('services.openai.model'),
             'temperature' => 0.25,
+            'max_tokens' => $maxTokens,
             'response_format' => ['type' => 'json_object'],
             'messages' => [
                 [
@@ -40,6 +49,7 @@ class LlmScamAnalysisService
                     'content' => <<<'PROMPT'
 Je bent een Nederlandse expert in huur-/kamerverhuur-fraude en misleidende advertenties.
 Je krijgt tekst (en soms een bron-URL) plus een eenvoudige regel-analyse (score, vlaggen, onderdelen).
+De server herkent o.a.: onderprijs vs. benchmark, WhatsApp/Telegram/Signal/Skype, tijdsdruk (o.a. “veel interesse”), Western Union/crypto/cadeaukaarten, geen bezichtiging of buitenland-verhaal, sleutelservice, vroeg om ID/paspoort, voorafkosten, Google Forms/Typeform, copy-paste verhalen, Engelstalige sjablonen.
 
 Taken:
 1) Beoordeel of de inhoud consistent lijkt met een echte huuradvertentie of op scam/phishing wijst.
@@ -55,6 +65,7 @@ Antwoord ALLEEN met geldige JSON, dit schema:
   "flags": string[],
   "summary": string,
   "narrative": string,
+  "observations": string[],
   "link_data_quality": "consistent"|"twijfelachtig"|"onvoldoende_data"|null,
   "link_note": string|null,
   "recommendations": string[],
@@ -64,6 +75,7 @@ Antwoord ALLEEN met geldige JSON, dit schema:
 
 - narrative: 5-10 zinnen Nederlands, diepgaander dan summary.
 - summary: 2-3 zinnen kern.
+- observations: 4-8 korte observaties (1 zin elk) over taal, structuur, inconsistenties, contactpatronen — niet herhalen van flags, wel extra detail.
 - recommendations: minimaal 4, maximaal 10 concrete acties voor de huurder.
 - what_to_verify: minimaal 4, maximaal 10 controle-stappen.
 - link_data_quality: null als er geen URL was.
@@ -131,6 +143,7 @@ PROMPT,
 
             $llmRec = $this->parseStringList($parsed['recommendations'] ?? null, 10);
             $llmVerify = $this->parseStringList($parsed['what_to_verify'] ?? null, 10);
+            $observations = $this->parseStringList($parsed['observations'] ?? null, 8);
 
             $recommendations = array_values(array_unique([...$baseExtras['recommendations'], ...$llmRec]));
             $whatToVerify = array_values(array_unique([...$baseExtras['what_to_verify'], ...$llmVerify]));
@@ -158,6 +171,7 @@ PROMPT,
                 'summary' => $summary,
                 'summary_short' => $summaryShort,
                 'narrative' => $narrative,
+                'observations' => $observations,
                 'llm_used' => true,
                 'link_assessment' => $linkAssessment,
                 'recommendations' => $recommendations,
@@ -192,6 +206,7 @@ PROMPT,
             'summary' => $summary,
             'summary_short' => $summary,
             'narrative' => null,
+            'observations' => [],
             'llm_used' => false,
             'link_assessment' => null,
             'recommendations' => $extras['recommendations'],
