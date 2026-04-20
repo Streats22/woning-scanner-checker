@@ -37,6 +37,33 @@ export function writeConsent(functional: boolean): ConsentRecord {
   return record
 }
 
+/** Verwijdert veelvoorkomende Google Analytics-cookies (niet HttpOnly) bij “Alleen noodzakelijk”. */
+export function clearGoogleAnalyticsCookies(): void {
+  if (typeof document === 'undefined')
+    return
+  const host = window.location.hostname
+  const expire = 'Max-Age=0; path=/; SameSite=Lax'
+  const tryClear = (name: string) => {
+    document.cookie = `${name}=; ${expire}`
+    document.cookie = `${name}=; ${expire}; domain=${host}`
+    document.cookie = `${name}=; ${expire}; domain=.${host}`
+  }
+  try {
+    const raw = document.cookie.split(';')
+    for (const part of raw) {
+      const name = part.trim().split('=')[0]
+      if (!name)
+        continue
+      if (name === '_ga' || name === '_gid' || name === '_gat' || name.startsWith('_ga_')) {
+        tryClear(name)
+      }
+    }
+  }
+  catch {
+    /* ignore */
+  }
+}
+
 export function clearFunctionalStorage(): void {
   try {
     localStorage.removeItem(LOCALE_PREF_KEY)
@@ -48,4 +75,5 @@ export function clearFunctionalStorage(): void {
   if (typeof document === 'undefined')
     return
   document.cookie = `${LEGACY_I18N_COOKIE}=; Max-Age=0; path=/; SameSite=Lax`
+  clearGoogleAnalyticsCookies()
 }

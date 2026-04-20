@@ -15,6 +15,7 @@
         <div class="cookie-panel">
           <h2 :id="titleId" class="cookie-panel__title font-display">{{ t('cookies.dialogTitle') }}</h2>
           <p :id="descId" class="cookie-panel__intro">{{ t('cookies.dialogIntro') }}</p>
+          <p v-if="gaConfigured" class="cookie-panel__analytics-note">{{ t('cookies.analyticsNote') }}</p>
           <p class="cookie-panel__no-tracking">{{ t('cookies.noTrackingBanner') }}</p>
 
           <button
@@ -77,6 +78,7 @@ import { getCookieTableRows } from '~/utils/cookie-table-rows'
 
 const { t, locale } = useI18n()
 const { showDialog, acceptFunctional, necessaryOnly } = useCookieConsent()
+const gaConfigured = computed(() => !!useRuntimeConfig().public.googleAnalyticsId?.trim())
 
 const titleId = 'wsc-cookie-title'
 const descId = 'wsc-cookie-desc'
@@ -155,6 +157,13 @@ watch(showDialog, (open) => {
   color: var(--text-secondary);
 }
 
+.cookie-panel__analytics-note {
+  margin: 0 0 0.65rem;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+}
+
 .cookie-panel__no-tracking {
   padding: 0.55rem 0.65rem;
   border-radius: var(--radius-sm);
@@ -198,8 +207,11 @@ watch(showDialog, (open) => {
 
 .cookie-table__caption {
   caption-side: top;
+  display: block;
+  width: 100%;
   text-align: left;
-  padding: 0 0 0.5rem;
+  padding: 0 0 0.65rem;
+  margin: 0 0 0.35rem;
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-primary);

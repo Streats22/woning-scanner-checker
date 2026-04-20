@@ -267,8 +267,9 @@
   },
   "cookies": {
     "dialogTitle": "Cookies en lokale opslag (AVG / ePrivacy)",
-    "dialogIntro": "Deze site gebruikt geen cookies voor marketing, advertentieprofielen of bezoekersanalyse. We leggen hieronder uit welke gegevens in je browser kunnen staan en waarom.",
-    "noTrackingBanner": "Geen advertentie- of analytische tracking (geen Meta Pixel, Google Analytics, enz.). Geen verkoop van gegevens aan derden via deze website.",
+    "dialogIntro": "Deze site gebruikt geen cookies voor marketing of advertentieprofielen. We leggen hieronder uit welke gegevens in je browser kunnen staan en waarom.",
+    "analyticsNote": "Als Google Analytics op deze omgeving staat ingeschakeld, laden we dat script alleen nadat je “Functionele opslag toestaan” kiest — niet bij “Alleen noodzakelijk”. Het gaat om gebruiksstatistieken, niet om advertenties.",
+    "noTrackingBanner": "Geen advertentietracking (geen Meta Pixel, enz.). Geen verkoop van gegevens aan derden via deze website. Analytische cookies (zoals Google Analytics) alleen na jouw expliciete keuze voor functionele opslag.",
     "detailsToggle": "Toon volledige tabel",
     "detailsHide": "Verberg tabel",
     "tableCaption": "Overzicht van cookies en lokale opslag",
@@ -282,7 +283,7 @@
     "apiNote": "Als je een advertentie laat analyseren, stuurt je browser een HTTPS-verzoek naar onze server met de door jou geplakte tekst. Serverlogs kunnen technische gegevens bevatten (zoals IP-adres en tijdstip) voor beveiliging en foutopsporing — niet voor advertentie-tracking via cookies in de browser.",
     "fontsNote": "Lettertypen worden geladen via Google Fonts (fonts.googleapis.com / fonts.gstatic.com). Daarbij kan je IP-adres bij Google terechtkomen. Er worden geen marketingcookies van onze kant geplaatst voor dit doel.",
     "legalNote": "Dit overzicht is bedoeld voor transparantie. Het is geen juridisch advies; raadpleeg bij twijfel een privacyprofessional.",
-    "footerSummary": "Geen marketing- of analytische cookies. Functionele opslag (taal, thema) alleen na je keuze. Details over lettertypen en opslag: cookie-instellingen.",
+    "footerSummary": "Geen marketingcookies. Optioneel Google Analytics alleen na je keuze voor functionele opslag. Taal en thema hetzelfde. Details: cookie-instellingen.",
     "openSettings": "Privacy- en cookievoorkeuren",
     "rows": [
       {
@@ -308,6 +309,12 @@
         "type": "Cookie (legacy)",
         "purpose": "Niet meer gebruikt; kan worden verwijderd bij ‘Alleen noodzakelijk’.",
         "duration": "n.v.t."
+      },
+      {
+        "name": "_ga, _ga_* (Google Analytics)",
+        "type": "Cookie (first-party, via Google)",
+        "purpose": "Alleen als je functionele opslag accepteert en analytics op de server staat: bezoekstatistieken. Geen advertentieprofielen via deze site.",
+        "duration": "Volgens het beleid van Google (vaak tot ca. 2 jaar)"
       }
     ]
   }

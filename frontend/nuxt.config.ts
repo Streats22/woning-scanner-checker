@@ -161,6 +161,11 @@ export default defineNuxtConfig({
       buildId,
       /** `true` als NUXT_PUBLIC_ENABLE_PWA_SW=1 — schakelt unregister-plugin uit en registreert de SW. */
       pwaSwEnabled: process.env.NUXT_PUBLIC_ENABLE_PWA_SW === '1',
+      /**
+       * Google Analytics 4 measurement ID (bijv. G-XXXXXXXX). Leeg = geen GA.
+       * Wordt alleen geladen na expliciete keuze “Functionele opslag toestaan” (geen laden bij “Alleen noodzakelijk”).
+       */
+      googleAnalyticsId: process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID?.trim() || '',
     },
   },
 

@@ -267,8 +267,9 @@
   },
   "cookies": {
     "dialogTitle": "Cookies & local storage (GDPR / ePrivacy)",
-    "dialogIntro": "This site does not use cookies for marketing, ad profiles, or visitor analytics. Below we explain what may be stored in your browser and why.",
-    "noTrackingBanner": "No advertising or analytics tracking (no Meta Pixel, Google Analytics, etc.). No sale of personal data to third parties via this website.",
+    "dialogIntro": "This site does not use cookies for marketing or ad profiles. Below we explain what may be stored in your browser and why.",
+    "analyticsNote": "If Google Analytics is enabled for this deployment, we only load it after you choose “Allow functional storage”—not with “Necessary only”. It measures usage, not ads.",
+    "noTrackingBanner": "No ad tracking (no Meta Pixel, etc.). No sale of personal data to third parties via this website. Analytics cookies (such as Google Analytics) only after you explicitly allow functional storage.",
     "detailsToggle": "Show full table",
     "detailsHide": "Hide table",
     "tableCaption": "Cookies and local storage overview",
@@ -282,7 +283,7 @@
     "apiNote": "When you run an analysis, your browser sends an HTTPS request to our server with the text you pasted. Server logs may contain technical data (such as IP address and time) for security and debugging—not for ad tracking via browser cookies.",
     "fontsNote": "Fonts are loaded from Google Fonts (fonts.googleapis.com / fonts.gstatic.com). Your IP address may be processed by Google. We do not place marketing cookies for this.",
     "legalNote": "This overview is for transparency only. It is not legal advice; consult a privacy professional if in doubt.",
-    "footerSummary": "No marketing or analytics cookies. Functional storage (language, theme) only after you choose. Fonts and storage details: cookie settings.",
+    "footerSummary": "No marketing cookies. Optional Google Analytics only after you allow functional storage. Language and theme the same. Details: cookie settings.",
     "openSettings": "Privacy & cookie preferences",
     "rows": [
       {
@@ -308,6 +309,12 @@
         "type": "Cookie (legacy)",
         "purpose": "No longer used; may be cleared when you choose “Necessary only”.",
         "duration": "n/a"
+      },
+      {
+        "name": "_ga, _ga_* (Google Analytics)",
+        "type": "Cookie (first-party, via Google)",
+        "purpose": "Only if you accept functional storage and analytics is enabled: usage statistics—not ad profiles on this site.",
+        "duration": "Per Google’s policy (often up to ~2 years)"
       }
     ]
   }
