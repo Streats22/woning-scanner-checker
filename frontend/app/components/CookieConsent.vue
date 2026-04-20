@@ -66,27 +66,17 @@
 </template>
 
 <script setup lang="ts">
-type CookieRow = {
-  name: string
-  type: string
-  purpose: string
-  duration: string
-}
+import { getCookieTableRows } from '~/utils/cookie-table-rows'
 
-const { t, locale, getLocaleMessage } = useI18n()
+const { t, locale } = useI18n()
 const { showDialog, acceptFunctional, necessaryOnly } = useCookieConsent()
 
 const titleId = 'wsc-cookie-title'
 const descId = 'wsc-cookie-desc'
 const detailsOpen = ref(false)
 
-/** Geen `tm()` op geneste objecten: anders AST i.p.v. platte strings. */
-const tableRows = computed((): CookieRow[] => {
-  const msgs = getLocaleMessage(locale.value) as Record<string, unknown>
-  const cookies = msgs?.cookies as { rows?: CookieRow[] } | undefined
-  const rows = cookies?.rows
-  return Array.isArray(rows) ? rows : []
-})
+/** Rows from raw locale JSON — getLocaleMessage/tm can return intlify AST for nested strings. */
+const tableRows = computed(() => getCookieTableRows(locale.value))
 
 function onAcceptFunctional() {
   acceptFunctional(locale.value)

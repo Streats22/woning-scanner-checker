@@ -28,7 +28,7 @@ class ListingParserService
             return new ParsedListingInput(
                 sourceUrl: $out['effective_url'],
                 price: $this->price($text),
-                contact: $this->phone($text),
+                contact: $this->contactHint($text),
                 description: $text,
                 surfaceM2: $this->surfaceParser->parse($text),
             );
@@ -42,7 +42,7 @@ class ListingParserService
         return new ParsedListingInput(
             sourceUrl: null,
             price: $this->price($text),
-            contact: $this->phone($text),
+            contact: $this->contactHint($text),
             description: $text,
             surfaceM2: $this->surfaceParser->parse($text),
         );
@@ -99,12 +99,64 @@ class ListingParserService
         return null;
     }
 
-    private function phone(string $text): ?string
+    /**
+     * Best-effort contact snippet for the report (not validation).
+     * Previously only matched 06 + 8 consecutive digits; many listings use +31, spaced 06, email, or WhatsApp links.
+     */
+    private function contactHint(string $text): ?string
     {
-        if (preg_match('/06[\s-]?\d{8}/', $text, $m)) {
+        // International NL mobile: +31 6… / 0031 6… (with optional separators)
+        if (preg_match('/(?:\+31|0031)[\s.-]?6[\s.-]?\d{8}/u', $text, $m)) {
+            return $this->normalizeSpaces($m[0]);
+        }
+        if (preg_match('/\+316\d{8}/u', $text, $m)) {
+            return $m[0];
+        }
+        if (preg_match('/00316\d{8}/u', $text, $m)) {
             return $m[0];
         }
 
+        // Dutch mobile 06… (8 digits, optional grouping like 06 12 34 56 78)
+        if (preg_match('/\b06[\s.-]*(?:\d[\s.-]*){7}\d\b/u', $text, $m)) {
+            $digits = preg_replace('/\D+/', '', $m[0]);
+            if (strlen($digits) === 10 && str_starts_with($digits, '06')) {
+                return $this->normalizeSpaces($m[0]);
+            }
+        }
+
+        // tel: links (HTML or plain)
+        if (preg_match('/tel:([\d+\s().-]{8,40})/iu', $text, $m)) {
+            $candidate = trim($m[1]);
+            $digits = preg_replace('/\D+/', '', $candidate);
+            if (strlen($digits) >= 9) {
+                return $candidate;
+            }
+        }
+
+        // mailto: or visible email
+        if (preg_match('/mailto:([^\s"\'<>]+)/i', $text, $m)) {
+            $addr = rawurldecode($m[1]);
+            if (filter_var($addr, FILTER_VALIDATE_EMAIL)) {
+                return $addr;
+            }
+        }
+        if (preg_match('/\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}\b/u', $text, $m)) {
+            return $m[0];
+        }
+
+        // WhatsApp deep links
+        if (preg_match('#https?://wa\.me/([0-9]+)#i', $text, $m)) {
+            return 'WhatsApp: '.$m[1];
+        }
+        if (preg_match('#https?://api\.whatsapp\.com/send\?phone=([0-9]+)#i', $text, $m)) {
+            return 'WhatsApp: '.$m[1];
+        }
+
         return null;
+    }
+
+    private function normalizeSpaces(string $s): string
+    {
+        return trim(preg_replace('/\s+/u', ' ', $s) ?? $s);
     }
 }
