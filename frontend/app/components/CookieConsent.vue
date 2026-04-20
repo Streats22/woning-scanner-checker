@@ -111,7 +111,7 @@ watch(showDialog, (open) => {
 .cookie-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 200;
+  z-index: 270;
   background: color-mix(in srgb, var(--text-primary) 35%, transparent);
   backdrop-filter: blur(2px);
 }
@@ -119,8 +119,8 @@ watch(showDialog, (open) => {
 .cookie-root {
   position: fixed;
   inset: 0;
-  /* Boven backdrop (200), onder sticky header (250): root zelf heeft geen pointer-events */
-  z-index: 210;
+  /* Boven mobiel menu (~255) en header (250); root zelf heeft geen pointer-events */
+  z-index: 280;
   display: flex;
   align-items: flex-end;
   justify-content: center;

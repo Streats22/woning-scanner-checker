@@ -12,12 +12,28 @@ export interface WscSeoOptions {
   imageAlt?: MaybeRefOrGetter<string | undefined>
 }
 
+/** Moet overeenkomen met `public/og.png` (sips -Z 1200 …). */
 const OG_WIDTH = 1200
-const OG_HEIGHT = 630
+const OG_HEIGHT = 669
+
+/** WhatsApp/Facebook crawlers: HTTPS + absolute URL. */
+function normalizeOgImageUrl(url: string): string {
+  if (!url)
+    return ''
+  try {
+    const u = new URL(url)
+    if (u.protocol === 'http:' && u.hostname !== 'localhost' && u.hostname !== '127.0.0.1')
+      u.protocol = 'https:'
+    return u.toString()
+  }
+  catch {
+    return url
+  }
+}
 
 /**
  * Canonieke URL’s, Open Graph, Twitter, hreflang en robots — afgestemd op `NUXT_PUBLIC_SITE_URL`.
- * Standaard social image: `/og.png` (1200×630) voor WhatsApp, Facebook, LinkedIn, X.
+ * Standaard social image: `/og.png` (1200×669) voor WhatsApp, Facebook, LinkedIn, X.
  */
 export function useWscSeo(options: WscSeoOptions) {
   const route = useRoute()
@@ -62,23 +78,25 @@ export function useWscSeo(options: WscSeoOptions) {
   const ogImageUrl = computed(() => {
     const custom = toValue(options.image)
     if (custom?.trim())
-      return custom.trim()
+      return normalizeOgImageUrl(custom.trim())
     const rel = '/og.png'
     const base = siteUrl.value
+    let out = ''
     if (base)
-      return `${base}${rel}`
-    if (import.meta.server) {
+      out = `${base}${rel}`
+    else if (import.meta.server) {
       try {
         const u = useRequestURL()
-        return `${u.origin}${rel}`
+        out = `${u.origin}${rel}`
       }
       catch {
         /* ignore */
       }
     }
-    if (import.meta.client && typeof window !== 'undefined')
-      return `${window.location.origin}${rel}`
-    return ''
+    else if (import.meta.client && typeof window !== 'undefined')
+      out = `${window.location.origin}${rel}`
+
+    return normalizeOgImageUrl(out)
   })
 
   const ogImageAlt = computed(

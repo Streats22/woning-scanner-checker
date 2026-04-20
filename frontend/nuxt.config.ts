@@ -136,6 +136,8 @@ export default defineNuxtConfig({
       '/': { headers: { 'cache-control': 'private, no-cache, must-revalidate' } },
       '/check': { headers: { 'cache-control': 'private, no-cache, must-revalidate' } },
       '/faq': { headers: { 'cache-control': 'private, no-cache, must-revalidate' } },
+      /** OG-image voor WhatsApp/Facebook; mag edge-cachen, bij wijziging bestandsnaam of cache purgen. */
+      '/og.png': { headers: { 'cache-control': 'public, max-age=86400, stale-while-revalidate=604800' } },
     },
   },
 })

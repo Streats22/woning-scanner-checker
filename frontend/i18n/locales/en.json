@@ -192,8 +192,14 @@
     "navHome": "De Huur Radar home",
     "langNl": "Switch to Dutch",
     "langEn": "Switch to English",
-    "langNlShort": "Nederlands",
-    "langEnShort": "English"
+    "langNlShort": "NL",
+    "langEnShort": "EN",
+    "menuTitle": "Menu",
+    "menuOpen": "Open menu",
+    "menuClose": "Close menu",
+    "menuSectionPages": "Pages",
+    "menuSectionLanguage": "Language",
+    "menuSectionAppearance": "Appearance"
   },
   "faq": {
     "metaTitle": "Rental fraud FAQ & safe renting | De Huur Radar",

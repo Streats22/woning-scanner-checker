@@ -13,7 +13,7 @@
           </div>
         </NuxtLink>
 
-        <nav class="topbar__actions" :aria-label="t('a11y.siteNav')">
+        <nav class="topbar__actions topbar__actions--desktop" :aria-label="t('a11y.siteNav')">
           <div class="topbar__nav-cluster" role="presentation">
             <NuxtLink
               class="topbar__nav-link topbar__nav-link--primary"
@@ -101,8 +101,148 @@
             </button>
           </div>
         </nav>
+
+        <button
+          type="button"
+          class="topbar__menu-btn"
+          :aria-expanded="mobileMenuOpen"
+          :aria-controls="mobileMenuPanelId"
+          :aria-label="mobileMenuOpen ? t('header.menuClose') : t('header.menuOpen')"
+          @click="toggleMobileMenu"
+        >
+          <span class="topbar__menu-bars" aria-hidden="true">
+            <span />
+            <span />
+            <span />
+          </span>
+        </button>
       </div>
     </header>
+
+    <Teleport to="body">
+      <Transition name="wsc-mobile-nav">
+        <div
+          v-if="mobileMenuOpen"
+          :id="mobileMenuPanelId"
+          class="mobile-nav"
+          role="dialog"
+          aria-modal="true"
+          tabindex="-1"
+          :aria-label="t('header.menuTitle')"
+          @keydown.escape.prevent="closeMobileMenu"
+        >
+          <div
+            class="mobile-nav__backdrop"
+            aria-hidden="true"
+            @click="closeMobileMenu"
+          />
+          <div class="mobile-nav__sheet">
+            <div class="mobile-nav__head">
+              <p class="mobile-nav__title font-display">{{ t('header.menuTitle') }}</p>
+              <button
+                type="button"
+                class="mobile-nav__close"
+                :aria-label="t('header.menuClose')"
+                @click="closeMobileMenu"
+              >
+                <span aria-hidden="true">×</span>
+              </button>
+            </div>
+            <div class="mobile-nav__scroll">
+              <p class="mobile-nav__section-label">{{ t('header.menuSectionPages') }}</p>
+              <nav class="mobile-nav__links" :aria-label="t('header.menuSectionPages')">
+                <NuxtLink
+                  class="mobile-nav__link"
+                  :to="localePath('/check')"
+                  active-class="mobile-nav__link--active"
+                  @click="closeMobileMenu"
+                >
+                  {{ t('header.check') }}
+                </NuxtLink>
+                <NuxtLink
+                  class="mobile-nav__link"
+                  :to="localePath('/faq')"
+                  active-class="mobile-nav__link--active"
+                  @click="closeMobileMenu"
+                >
+                  {{ t('header.faq') }}
+                </NuxtLink>
+              </nav>
+
+              <p class="mobile-nav__section-label">{{ t('header.menuSectionLanguage') }}</p>
+              <div
+                class="seg seg--2 seg--lang mobile-nav__seg"
+                :class="locale === 'nl' ? 'seg--i0' : 'seg--i1'"
+                role="group"
+                :aria-label="t('header.language')"
+              >
+                <span class="seg__pill" aria-hidden="true" />
+                <button
+                  type="button"
+                  class="seg__btn seg__btn--lang"
+                  :class="{ 'seg__btn--active': locale === 'nl' }"
+                  :aria-pressed="locale === 'nl'"
+                  :aria-label="t('header.langNl')"
+                  @click="setLocale('nl')"
+                >
+                  {{ t('header.langNlShort') }}
+                </button>
+                <button
+                  type="button"
+                  class="seg__btn seg__btn--lang"
+                  :class="{ 'seg__btn--active': locale === 'en' }"
+                  :aria-pressed="locale === 'en'"
+                  :aria-label="t('header.langEn')"
+                  @click="setLocale('en')"
+                >
+                  {{ t('header.langEnShort') }}
+                </button>
+              </div>
+
+              <p class="mobile-nav__section-label">{{ t('header.menuSectionAppearance') }}</p>
+              <div
+                class="seg seg--3 mobile-nav__seg"
+                :class="'seg--i' + themeSegIndex"
+                role="group"
+                :aria-label="`${t('header.themeLight')}, ${t('header.themeSystem')}, ${t('header.themeDark')}`"
+              >
+                <span class="seg__pill" aria-hidden="true" />
+                <button
+                  type="button"
+                  class="seg__btn seg__btn--icon"
+                  :class="{ 'seg__btn--active': colorMode.preference === 'light' }"
+                  :aria-pressed="colorMode.preference === 'light'"
+                  :aria-label="t('header.themeLight')"
+                  @click="colorMode.preference = 'light'"
+                >
+                  <span class="seg__glyph" aria-hidden="true">☀</span>
+                </button>
+                <button
+                  type="button"
+                  class="seg__btn seg__btn--icon"
+                  :class="{ 'seg__btn--active': colorMode.preference === 'system' }"
+                  :aria-pressed="colorMode.preference === 'system'"
+                  :aria-label="t('header.themeSystem')"
+                  @click="colorMode.preference = 'system'"
+                >
+                  <span class="seg__glyph" aria-hidden="true">◐</span>
+                </button>
+                <button
+                  type="button"
+                  class="seg__btn seg__btn--icon"
+                  :class="{ 'seg__btn--active': colorMode.preference === 'dark' }"
+                  :aria-pressed="colorMode.preference === 'dark'"
+                  :aria-label="t('header.themeDark')"
+                  @click="colorMode.preference = 'dark'"
+                >
+                  <span class="seg__glyph" aria-hidden="true">☾</span>
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </Transition>
+    </Teleport>
 
     <main id="main-content" class="layout-main" tabindex="-1">
       <slot />
@@ -185,6 +325,37 @@ const buildIdDisplay = computed(() => {
 const showBuildFooter = import.meta.dev
 const colorMode = useColorMode()
 const { openCookieSettings, showDialog: cookieDialogOpen } = useCookieConsent()
+
+const mobileMenuPanelId = 'wsc-mobile-nav-panel'
+const mobileMenuOpen = ref(false)
+const route = useRoute()
+
+function toggleMobileMenu() {
+  mobileMenuOpen.value = !mobileMenuOpen.value
+}
+
+function closeMobileMenu() {
+  mobileMenuOpen.value = false
+}
+
+watch(() => route.fullPath, () => {
+  closeMobileMenu()
+})
+
+watch(cookieDialogOpen, (open) => {
+  if (open)
+    closeMobileMenu()
+})
+
+watch(mobileMenuOpen, async (open) => {
+  if (!import.meta.client)
+    return
+  document.body.style.overflow = open ? 'hidden' : ''
+  if (open) {
+    await nextTick()
+    document.getElementById(mobileMenuPanelId)?.focus({ preventScroll: true })
+  }
+})
 
 const scrollY = ref(0)
 const showBackToTop = computed(() => scrollY.value > 280)
@@ -271,6 +442,8 @@ const themeColor = computed(() => {
   return colorMode.value === 'dark' ? dark : light
 })
 
+let mqDesktopListener: (() => void) | null = null
+
 onMounted(() => {
   if (!import.meta.client)
     return
@@ -287,12 +460,24 @@ onMounted(() => {
       /* ignore */
     }
   }
+  const mq = window.matchMedia('(min-width: 768px)')
+  mqDesktopListener = () => {
+    if (mq.matches)
+      mobileMenuOpen.value = false
+  }
+  mq.addEventListener('change', mqDesktopListener)
 })
 
 onUnmounted(() => {
   if (!import.meta.client)
     return
   window.removeEventListener('scroll', onWindowScroll)
+  document.body.style.overflow = ''
+  if (mqDesktopListener) {
+    const mq = window.matchMedia('(min-width: 768px)')
+    mq.removeEventListener('change', mqDesktopListener)
+    mqDesktopListener = null
+  }
 })
 
 watch(locale, (val) => {
@@ -411,7 +596,248 @@ useHead(() => ({
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  flex-wrap: nowrap;
+}
+
+.topbar__actions--desktop {
+  display: none;
+  align-items: center;
+  gap: 0.6rem;
   flex-wrap: wrap;
+}
+
+@media (min-width: 768px) {
+  .topbar__actions--desktop {
+    display: flex;
+  }
+}
+
+.topbar__menu-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 48px;
+  min-height: 48px;
+  margin-left: auto;
+  padding: 0;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-muted);
+  color: var(--text-primary);
+  cursor: pointer;
+  touch-action: manipulation;
+  box-shadow: var(--shadow-sm);
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.topbar__menu-btn:hover {
+  border-color: color-mix(in srgb, var(--accent) 22%, var(--border-subtle));
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface-muted));
+}
+
+.topbar__menu-btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.topbar__menu-btn:active {
+  transform: scale(0.97);
+}
+
+.topbar__menu-bars {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 1.35rem;
+}
+
+.topbar__menu-bars span {
+  display: block;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--text-primary);
+}
+
+@media (min-width: 768px) {
+  .topbar__menu-btn {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .topbar__menu-btn:active {
+    transform: none;
+  }
+}
+
+.mobile-nav {
+  position: fixed;
+  inset: 0;
+  z-index: 255;
+  display: flex;
+  justify-content: flex-end;
+  pointer-events: auto;
+}
+
+.mobile-nav__backdrop {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--text-primary) 42%, transparent);
+  backdrop-filter: blur(3px);
+}
+
+.mobile-nav__sheet {
+  position: relative;
+  z-index: 1;
+  width: min(20.5rem, 92vw);
+  height: 100%;
+  max-height: 100dvh;
+  background: var(--surface-elevated);
+  border-left: 1px solid var(--border-subtle);
+  box-shadow: -8px 0 40px color-mix(in srgb, var(--text-primary) 12%, transparent);
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+.mobile-nav__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: max(0.75rem, env(safe-area-inset-top, 0px)) 0.65rem 0.65rem 1rem;
+  border-bottom: 1px solid var(--border-subtle);
+  flex-shrink: 0;
+}
+
+.mobile-nav__title {
+  margin: 0;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: var(--text-primary);
+}
+
+.mobile-nav__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 48px;
+  min-height: 48px;
+  padding: 0;
+  border: none;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-secondary);
+  font-size: 1.65rem;
+  line-height: 1;
+  cursor: pointer;
+  touch-action: manipulation;
+}
+
+.mobile-nav__close:hover {
+  color: var(--text-primary);
+  background: var(--surface-muted);
+}
+
+.mobile-nav__close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.mobile-nav__scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  padding: 0.85rem 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.mobile-nav__section-label {
+  margin: 0.5rem 0 0.1rem;
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--text-tertiary);
+}
+
+.mobile-nav__section-label:first-child {
+  margin-top: 0;
+}
+
+.mobile-nav__links {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.mobile-nav__link {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius-md);
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+.mobile-nav__link:hover {
+  background: var(--surface-muted);
+}
+
+.mobile-nav__link--active {
+  background: var(--accent-muted);
+  color: var(--accent);
+}
+
+.mobile-nav__seg {
+  align-self: stretch;
+  width: 100%;
+  max-width: 100%;
+}
+
+.wsc-mobile-nav-enter-active,
+.wsc-mobile-nav-leave-active {
+  transition: opacity 0.28s var(--ease-out);
+}
+
+.wsc-mobile-nav-enter-active .mobile-nav__sheet,
+.wsc-mobile-nav-leave-active .mobile-nav__sheet {
+  transition: transform 0.32s var(--ease-out);
+}
+
+.wsc-mobile-nav-enter-from,
+.wsc-mobile-nav-leave-to {
+  opacity: 0;
+}
+
+.wsc-mobile-nav-enter-from .mobile-nav__sheet,
+.wsc-mobile-nav-leave-to .mobile-nav__sheet {
+  transform: translateX(100%);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wsc-mobile-nav-enter-active .mobile-nav__sheet,
+  .wsc-mobile-nav-leave-active .mobile-nav__sheet {
+    transition: none;
+  }
+
+  .wsc-mobile-nav-enter-from .mobile-nav__sheet,
+  .wsc-mobile-nav-leave-to .mobile-nav__sheet {
+    transform: none;
+  }
 }
 
 .brand {
@@ -464,13 +890,6 @@ useHead(() => ({
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--accent);
-}
-
-.topbar__actions {
-  display: flex;
-  align-items: center;
-  gap: 0.6rem;
-  flex-wrap: wrap;
 }
 
 .topbar__nav-cluster {

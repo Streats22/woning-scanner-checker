@@ -192,8 +192,14 @@
     "navHome": "Naar startpagina De Huur Radar",
     "langNl": "Schakel over naar Nederlands",
     "langEn": "Schakel over naar English",
-    "langNlShort": "Nederlands",
-    "langEnShort": "English"
+    "langNlShort": "NL",
+    "langEnShort": "EN",
+    "menuTitle": "Menu",
+    "menuOpen": "Menu openen",
+    "menuClose": "Menu sluiten",
+    "menuSectionPages": "Pagina’s",
+    "menuSectionLanguage": "Taal",
+    "menuSectionAppearance": "Weergave"
   },
   "faq": {
     "metaTitle": "FAQ huurfraude & veilig huren | De Huur Radar",
