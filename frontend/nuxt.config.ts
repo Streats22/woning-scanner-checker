@@ -29,9 +29,18 @@ export default defineNuxtConfig({
   /**
    * Service worker cachet shell + /_nuxt-assets na eerste bezoek — helpt bij flakiness / korte uitval.
    * Geen vervanging voor een draaiende server op eerste load; nginx 502 → zie public/offline.html.
+   *
+   * Na een deploy: oude precache kan nog naar weggehaalde chunk-URL’s wijzen → nginx 404 bij verkeerde cache.
+   * NetworkFirst op /_nuxt/ probeert eerst het netwerk (nieuwe hashes), periodicSync helpt mobiel met SW-updates.
+   * Zet NUXT_PUBLIC_DISABLE_PWA_SW=1 om geen service worker te registreren (alleen webmanifest; bij hardnekkige cache-issues).
    */
   pwa: {
+    ...(process.env.NUXT_PUBLIC_DISABLE_PWA_SW === '1' ? { injectRegister: false as const } : {}),
     registerType: 'autoUpdate',
+    client: {
+      /** Seconden tussen checks op nieuwe SW (mobiel pakt updates sneller op). */
+      periodicSyncForUpdates: 3600,
+    },
     manifest: {
       name: 'De Huur Radar',
       short_name: 'Huur Radar',
@@ -47,7 +56,19 @@ export default defineNuxtConfig({
       navigateFallback: '/',
       navigateFallbackDenylist: [/^\/api/, /^\/report/, /^\/build/, /^\/storage/, /^\/up$/],
       globPatterns: ['**/*.{js,css,ico,png,svg,woff2}'],
+      /** Standaard in vite-plugin-pwa; expliciet voor duidelijkheid bij oude precache-entries. */
+      cleanupOutdatedCaches: true,
       runtimeCaching: [
+        {
+          /** Hash-bestanden: bij voorkeur netwerk (nieuwe deploy), anders runtime-cache als fallback. */
+          urlPattern: /^https?:\/\/[^/]+\/_nuxt\//i,
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'wsc-nuxt-chunks',
+            expiration: { maxEntries: 80, maxAgeSeconds: 60 * 60 * 24 * 7 },
+            networkTimeoutSeconds: 8,
+          },
+        },
         {
           urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
           handler: 'CacheFirst',
@@ -136,6 +157,9 @@ export default defineNuxtConfig({
       '/': { headers: { 'cache-control': 'private, no-cache, must-revalidate' } },
       '/check': { headers: { 'cache-control': 'private, no-cache, must-revalidate' } },
       '/faq': { headers: { 'cache-control': 'private, no-cache, must-revalidate' } },
+      /** Voorkomt dat een tussen-cache oude sw.js vasthoudt — mobiel krijgt updates sneller door. */
+      '/sw.js': { headers: { 'cache-control': 'no-store, must-revalidate' } },
+      '/registerSW.js': { headers: { 'cache-control': 'no-store, must-revalidate' } },
       /** OG-image voor WhatsApp/Facebook; mag edge-cachen, bij wijziging bestandsnaam of cache purgen. */
       '/og.png': { headers: { 'cache-control': 'public, max-age=86400, stale-while-revalidate=604800' } },
     },
