@@ -4,7 +4,7 @@ use App\Http\Controllers\ListingController;
 use Illuminate\Support\Facades\Route;
 
 /*
- * GET / wordt door Nginx naar de Nuxt-server gedeeld (zie deploy/nginx-ploi-nuxt-laravel.conf).
+ * GET / wordt door Nginx naar de Nuxt-server gedeeld (zie deploy/dehuurradar.nl.conf).
  * Legacy POST /analyze blijft voor oude clients; de app gebruikt POST /api/analyze.
  */
 Route::post('/analyze', [ListingController::class, 'analyze']);

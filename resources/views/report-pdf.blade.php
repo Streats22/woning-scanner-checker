@@ -6,6 +6,7 @@
     <style>
         /**
          * Dark: zelfde tokens als frontend `html.dark` (main.css — surface-page, text-*, border-subtle, accent).
+         * @page margin: 0 + zelfde achtergrond als html/body — voorkomt witte randen/strepen rondom (Dompdf).
          */
         @page {
             margin: 0;
@@ -14,21 +15,36 @@
 
         html.pdf-html--dark {
             background: #0a101d !important;
+            margin: 0;
+            padding: 0;
         }
     </style>
     @else
     <style>
+        /**
+         * Light: marge via body-padding, niet via @page — één doorlopende witte achtergrond, geen “kader”.
+         */
         @page {
-            margin: 32pt 40pt 36pt 40pt;
+            margin: 0;
             background-color: #ffffff;
         }
 
         html.pdf-html--light {
             background: #ffffff !important;
+            margin: 0;
+            padding: 0;
         }
     </style>
     @endif
     <style>
+        /* Dompdf: geen standaard tabellijnen (witte/grijze strepen rond cellen). */
+        body.pdf-root--light table,
+        body.pdf-root--dark table { border-collapse: collapse; border: 0; }
+        body.pdf-root--light td,
+        body.pdf-root--light th,
+        body.pdf-root--dark td,
+        body.pdf-root--dark th { border: 0; padding: 0; }
+
         /* Light (default) */
         body.pdf-root--light {
             font-family: DejaVu Sans, sans-serif;
@@ -37,7 +53,8 @@
             line-height: 1.45;
             background: #ffffff !important;
             margin: 0;
-            padding: 0;
+            padding: 28pt 32pt 32pt 32pt;
+            box-sizing: border-box;
         }
         body.pdf-root--light h1 { font-size: 15pt; margin: 0 0 6pt; color: #0f172a; }
         body.pdf-root--light h2 { font-size: 11pt; margin: 14pt 0 6pt; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 3pt; }
@@ -57,12 +74,12 @@
         body.pdf-root--light .cat { font-weight: bold; color: #1e40af; }
         body.pdf-root--light .summary { white-space: pre-wrap; word-wrap: break-word; font-size: 9pt; color: #334155; }
         body.pdf-root--light .footer { margin-top: 16pt; font-size: 8pt; color: #94a3b8; }
-        body.pdf-root--light .pdf-brand { width: 100%; margin-bottom: 12pt; border-bottom: 1px solid #e2e8f0; padding-bottom: 10pt; }
+        body.pdf-root--light .pdf-brand { width: 100%; margin-bottom: 14pt; border-bottom: none; padding-bottom: 0; }
         body.pdf-root--light .pdf-brand td { vertical-align: middle; }
         body.pdf-root--light .pdf-brand__name { font-size: 16pt; font-weight: bold; color: #1e40af; letter-spacing: -0.02em; }
         body.pdf-root--light .pdf-brand__tag { font-size: 8.5pt; color: #64748b; margin-top: 2pt; }
         body.pdf-root--light .pdf-brand__logo { width: 44px; height: 44px; }
-        body.pdf-root--light .pdf-brand-foot { margin-top: 14pt; padding-top: 10pt; border-top: 1px solid #e2e8f0; text-align: center; font-size: 8pt; color: #94a3b8; }
+        body.pdf-root--light .pdf-brand-foot { margin-top: 18pt; padding-top: 0; border-top: none; text-align: center; font-size: 8pt; color: #94a3b8; }
         body.pdf-root--light .pdf-brand-foot img { vertical-align: middle; margin-right: 4pt; }
         body.pdf-root--light .pdf-brand-foot strong { color: #1e40af; font-weight: bold; }
 
@@ -74,7 +91,8 @@
             line-height: 1.45;
             background: #0a101d !important;
             margin: 0 !important;
-            padding: 32pt 40pt 36pt 40pt;
+            padding: 28pt 32pt 32pt 32pt;
+            box-sizing: border-box;
         }
 
         body.pdf-root--dark h1,
@@ -121,15 +139,15 @@
         body.pdf-root--dark .summary { white-space: pre-wrap; word-wrap: break-word; font-size: 9pt; color: #94a3b8 !important; }
         body.pdf-root--dark .footer { margin-top: 16pt; font-size: 8pt; color: #64748b !important; }
         body.pdf-root--dark strong { color: #60a5fa !important; font-weight: bold; }
-        body.pdf-root--dark .pdf-brand { width: 100%; margin-bottom: 12pt; border-bottom: 1px solid #2d3b55; padding-bottom: 10pt; background: transparent !important; }
+        body.pdf-root--dark .pdf-brand { width: 100%; margin-bottom: 14pt; border-bottom: none; padding-bottom: 0; background: transparent !important; }
         body.pdf-root--dark .pdf-brand td { vertical-align: middle; background: transparent !important; }
         body.pdf-root--dark .pdf-brand__name { font-size: 16pt; font-weight: bold; color: #f1f5f9 !important; letter-spacing: -0.02em; }
         body.pdf-root--dark .pdf-brand__tag { font-size: 8.5pt; color: #94a3b8 !important; margin-top: 2pt; }
         body.pdf-root--dark .pdf-brand__logo { width: 44px; height: 44px; }
         body.pdf-root--dark .pdf-brand-foot {
-            margin-top: 14pt;
-            padding-top: 10pt;
-            border-top: 1px solid #2d3b55;
+            margin-top: 18pt;
+            padding-top: 0;
+            border-top: none;
             text-align: center;
             font-size: 8pt;
             color: #94a3b8 !important;
