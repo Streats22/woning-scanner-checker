@@ -82,7 +82,8 @@ useWscSeo({
 .hero__inner {
   max-width: 960px;
   margin: 0 auto;
-  padding: 2.5rem 1.25rem 2.25rem;
+  padding: max(2.5rem, env(safe-area-inset-top, 0px)) max(1.25rem, env(safe-area-inset-right, 0px)) 2.25rem
+    max(1.25rem, env(safe-area-inset-left, 0px));
 }
 
 .hero__eyebrow {
@@ -188,7 +189,7 @@ useWscSeo({
   }
 }
 
-@media (prefers-reduced-motion: no-preference) {
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .hero__pillar:hover {
     transform: translateY(-1px);
     box-shadow: var(--shadow-md);
@@ -216,6 +217,7 @@ useWscSeo({
   align-items: center;
   justify-content: center;
   padding: 0.75rem 1.35rem;
+  min-height: 48px;
   font-size: 0.95rem;
   font-weight: 600;
   color: #fff;
@@ -223,16 +225,19 @@ useWscSeo({
   border-radius: var(--radius-md);
   text-decoration: none;
   box-shadow: var(--shadow-sm);
+  touch-action: manipulation;
   transition:
     background var(--duration-fast) var(--ease-out),
     transform var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out);
 }
 
-.hero__cta-btn:hover {
-  background: var(--accent-hover);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .hero__cta-btn:hover {
+    background: var(--accent-hover);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
 }
 
 .hero__cta-btn:focus-visible {
@@ -258,7 +263,12 @@ useWscSeo({
   max-width: 960px;
   margin: 0 auto;
   width: 100%;
-  padding: 1.75rem 1.25rem 3rem;
+  min-width: 0;
+  padding:
+    1.75rem
+    max(1.25rem, env(safe-area-inset-right, 0px))
+    max(3rem, env(safe-area-inset-bottom, 0px))
+    max(1.25rem, env(safe-area-inset-left, 0px));
   display: flex;
   flex-direction: column;
   gap: 1.35rem;
@@ -283,6 +293,7 @@ useWscSeo({
   align-items: center;
   justify-content: center;
   padding: 0.7rem 1.35rem;
+  min-height: 48px;
   font-size: 0.95rem;
   font-weight: 600;
   color: #fff;
@@ -290,16 +301,19 @@ useWscSeo({
   border-radius: var(--radius-md);
   text-decoration: none;
   box-shadow: var(--shadow-sm);
+  touch-action: manipulation;
   transition:
     background var(--duration-fast) var(--ease-out),
     transform var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out);
 }
 
-.home-after-story__btn:hover {
-  background: var(--accent-hover);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+@media (hover: hover) and (pointer: fine) {
+  .home-after-story__btn:hover {
+    background: var(--accent-hover);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
 }
 
 .home-after-story__btn:focus-visible {
@@ -346,7 +360,7 @@ useWscSeo({
     box-shadow var(--duration-fast) var(--ease-out);
 }
 
-@media (prefers-reduced-motion: no-preference) {
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .landing-card:hover {
     border-color: color-mix(in srgb, var(--accent) 22%, var(--border-subtle));
     box-shadow: var(--shadow-panel-hover);
@@ -370,12 +384,17 @@ useWscSeo({
 }
 
 .landing-card__link {
+  display: inline-flex;
+  align-items: center;
   margin-top: 0.15rem;
+  padding: 0.35rem 0;
+  min-height: 44px;
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--accent);
   text-decoration: none;
   align-self: flex-start;
+  touch-action: manipulation;
 }
 
 .landing-card__link:hover {

@@ -9,6 +9,7 @@ namespace App\Support;
  * Dekking: alle Nederlandse gemeenten uit de Wikipedia-lijst (zie data/nl_rent_benchmarks.php),
  * met provincie-defaults en handmatige scherpstellingen via scripts/generate_nl_rent_benchmarks.py.
  * Onderhoud: generator draaien na gemeentelijke herindeling; zo nodig MANUAL_OVERRIDES in het script bijwerken.
+ * Controlelijst alle waarden: `php artisan rent:benchmarks:list` (of `--csv`).
  */
 final class RentBenchmarkMap
 {

@@ -31,7 +31,7 @@
             </NuxtLink>
           </div>
           <div
-            class="seg seg--2"
+            class="seg seg--2 seg--lang"
             :class="locale === 'nl' ? 'seg--i0' : 'seg--i1'"
             role="group"
             :aria-label="t('header.language')"
@@ -39,23 +39,23 @@
             <span class="seg__pill" aria-hidden="true" />
             <button
               type="button"
-              class="seg__btn"
+              class="seg__btn seg__btn--lang"
               :class="{ 'seg__btn--active': locale === 'nl' }"
               :aria-pressed="locale === 'nl'"
               :aria-label="t('header.langNl')"
               @click="setLocale('nl')"
             >
-              NL
+              {{ t('header.langNlShort') }}
             </button>
             <button
               type="button"
-              class="seg__btn"
+              class="seg__btn seg__btn--lang"
               :class="{ 'seg__btn--active': locale === 'en' }"
               :aria-pressed="locale === 'en'"
               :aria-label="t('header.langEn')"
               @click="setLocale('en')"
             >
-              EN
+              {{ t('header.langEnShort') }}
             </button>
           </div>
 
@@ -107,6 +107,17 @@
     <main id="main-content" class="layout-main" tabindex="-1">
       <slot />
     </main>
+
+    <button
+      v-show="showBackToTop && !cookieDialogOpen"
+      type="button"
+      class="back-to-top"
+      :aria-label="t('a11y.backToTop')"
+      @click="scrollToTop"
+    >
+      <span class="back-to-top__icon" aria-hidden="true">↑</span>
+      <span class="back-to-top__text">{{ t('a11y.backToTopShort') }}</span>
+    </button>
 
     <footer class="footer">
       <div class="footer__inner">
@@ -173,7 +184,24 @@ const buildIdDisplay = computed(() => {
 /** Alleen in development: productie-footer zonder technische build-regel. */
 const showBuildFooter = import.meta.dev
 const colorMode = useColorMode()
-const { openCookieSettings } = useCookieConsent()
+const { openCookieSettings, showDialog: cookieDialogOpen } = useCookieConsent()
+
+const scrollY = ref(0)
+const showBackToTop = computed(() => scrollY.value > 280)
+
+function onWindowScroll() {
+  if (!import.meta.client)
+    return
+  scrollY.value = window.scrollY || document.documentElement.scrollTop || 0
+}
+
+function scrollToTop() {
+  if (!import.meta.client)
+    return
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' })
+  document.getElementById('main-content')?.focus({ preventScroll: true })
+}
 
 const themeSegIndex = computed(() => {
   const p = colorMode.preference
@@ -246,17 +274,25 @@ const themeColor = computed(() => {
 onMounted(() => {
   if (!import.meta.client)
     return
+  onWindowScroll()
+  window.addEventListener('scroll', onWindowScroll, { passive: true })
   const c = readConsent()
-  if (!c?.functional)
+  if (c?.functional) {
+    try {
+      const saved = localStorage.getItem(LOCALE_PREF_KEY)
+      if (saved === 'nl' || saved === 'en')
+        void setLocale(saved)
+    }
+    catch {
+      /* ignore */
+    }
+  }
+})
+
+onUnmounted(() => {
+  if (!import.meta.client)
     return
-  try {
-    const saved = localStorage.getItem(LOCALE_PREF_KEY)
-    if (saved === 'nl' || saved === 'en')
-      void setLocale(saved)
-  }
-  catch {
-    /* ignore */
-  }
+  window.removeEventListener('scroll', onWindowScroll)
 })
 
 watch(locale, (val) => {
@@ -307,6 +343,9 @@ useHead(() => ({
 .layout-main {
   flex: 1 1 auto;
   min-width: 0;
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
 }
 
 .skip-link {
@@ -348,7 +387,8 @@ useHead(() => ({
 .topbar {
   position: sticky;
   top: 0;
-  z-index: 40;
+  /* Boven cookiemodal (backdrop ~200) zodat taal/thema op mobiel blijven werken */
+  z-index: 250;
   background: color-mix(in srgb, var(--surface-elevated) 92%, transparent);
   backdrop-filter: blur(12px);
   border-bottom: 1px solid var(--border-subtle);
@@ -363,7 +403,10 @@ useHead(() => ({
 .topbar__inner {
   max-width: 960px;
   margin: 0 auto;
-  padding: 0.875rem 1.25rem;
+  padding-top: max(0.75rem, env(safe-area-inset-top, 0px));
+  padding-right: max(1.25rem, env(safe-area-inset-right, 0px));
+  padding-bottom: 0.875rem;
+  padding-left: max(1.25rem, env(safe-area-inset-left, 0px));
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -449,7 +492,11 @@ useHead(() => ({
   text-decoration: none;
   white-space: nowrap;
   padding: 0.38rem 0.6rem;
+  min-height: 44px;
+  display: inline-flex;
+  align-items: center;
   border-radius: calc(var(--radius-md) - 2px);
+  touch-action: manipulation;
   transition:
     color var(--duration-fast) var(--ease-out),
     background var(--duration-fast) var(--ease-out),
@@ -457,10 +504,12 @@ useHead(() => ({
     transform var(--duration-fast) var(--ease-out);
 }
 
-.topbar__nav-link:hover {
-  text-decoration: none;
-  color: var(--accent);
-  background: color-mix(in srgb, var(--accent-muted) 55%, transparent);
+@media (hover: hover) and (pointer: fine) {
+  .topbar__nav-link:hover {
+    text-decoration: none;
+    color: var(--accent);
+    background: color-mix(in srgb, var(--accent-muted) 55%, transparent);
+  }
 }
 
 .topbar__nav-link--primary {
@@ -538,10 +587,12 @@ useHead(() => ({
   font-size: 0.8rem;
   font-weight: 600;
   padding: 0.4rem 0.65rem;
+  min-height: 40px;
   cursor: pointer;
   line-height: 1.2;
   flex: 1 1 0;
   min-width: 0;
+  touch-action: manipulation;
   transition:
     color var(--duration-fast) var(--ease-out),
     transform 0.2s var(--ease-out);
@@ -568,8 +619,10 @@ useHead(() => ({
   transform: scale(0.96);
 }
 
-.seg__btn:hover:not(.seg__btn--active) {
-  color: var(--text-primary);
+@media (hover: hover) and (pointer: fine) {
+  .seg__btn:hover:not(.seg__btn--active) {
+    color: var(--text-primary);
+  }
 }
 
 .seg__btn--active {
@@ -586,6 +639,90 @@ useHead(() => ({
 .topbar__nav-link:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
+}
+
+.seg--lang {
+  flex-shrink: 0;
+}
+
+.seg__btn--lang {
+  font-size: 0.7rem;
+  padding: 0.38rem 0.48rem;
+  letter-spacing: -0.02em;
+}
+
+.back-to-top {
+  position: fixed;
+  right: max(0.85rem, env(safe-area-inset-right, 0px));
+  bottom: max(0.85rem, env(safe-area-inset-bottom, 0px));
+  z-index: 240;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.5rem 0.85rem;
+  min-height: 48px;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-lg);
+  cursor: pointer;
+  touch-action: manipulation;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.back-to-top:hover {
+  background: var(--accent-hover);
+}
+
+.back-to-top:active {
+  transform: scale(0.98);
+}
+
+.back-to-top:focus-visible {
+  outline: 2px solid var(--surface-elevated);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px var(--accent-muted);
+}
+
+.back-to-top__icon {
+  font-size: 1rem;
+  line-height: 1;
+}
+
+@media (max-width: 380px) {
+  .back-to-top__text {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .back-to-top {
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    border-radius: 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .back-to-top:active {
+    transform: none;
+  }
 }
 
 .footer__cookie:focus-visible {

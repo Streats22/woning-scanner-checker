@@ -2,12 +2,14 @@
   <div>
     <Transition name="wsc-locale" mode="out-in">
       <div :key="locale" class="main main--check">
-      <p class="check-nav">
-        <NuxtLink class="check-nav__link" :to="localePath('/')">
-          <span class="check-nav__arrow" aria-hidden="true">←</span>
-          <span class="check-nav__text">{{ t('check.backHome') }}</span>
-        </NuxtLink>
-      </p>
+      <Transition name="wsc-nav-back" appear>
+        <p class="check-nav">
+          <NuxtLink class="check-nav__link wsc-back-link" :to="localePath('/')">
+            <span class="wsc-back-link__arrow" aria-hidden="true">←</span>
+            <span class="check-nav__text">{{ t('check.backHome') }}</span>
+          </NuxtLink>
+        </p>
+      </Transition>
 
       <header class="check-head" aria-labelledby="check-page-title">
         <h1 id="check-page-title" class="check-head__title font-display">{{ t('check.pageTitle') }}</h1>
@@ -52,7 +54,12 @@
       </section>
 
       <div class="panel panel--form">
-        <form class="form" :aria-busy="pending" @submit.prevent="onSubmit">
+        <form
+          class="form"
+          method="post"
+          :aria-busy="pending"
+          @submit.prevent="onSubmit"
+        >
           <label class="label" for="text">{{ t('form.label') }}</label>
           <ClientOnly>
             <AdScreenshotOcr @append-text="onOcrAppend" />
@@ -87,11 +94,12 @@
             <p class="form__hint form__hint--ai">{{ t('form.useAiHint') }}</p>
           </div>
           <button
-            type="submit"
+            type="button"
             class="btn"
             :class="{ 'btn--pending': pending }"
             :disabled="pending"
             :aria-busy="pending"
+            @click="onSubmit"
           >
             <span class="btn__spinner" aria-hidden="true" />
             <span class="btn__label">{{ pending ? t('form.submitting') : t('form.submit') }}</span>
@@ -172,6 +180,14 @@
 
           <template v-if="result.listing_facts">
             <h2 class="section-title font-display">{{ t('result.listingFactsTitle') }}</h2>
+            <div
+              class="benchmark-focus"
+              role="region"
+              :aria-label="t('result.benchmarkAria')"
+            >
+              <p class="benchmark-focus__intro body-text">{{ benchmarkIntro }}</p>
+              <p v-if="benchmarkVerdict" class="benchmark-focus__verdict body-text">{{ benchmarkVerdict }}</p>
+            </div>
             <dl class="facts-grid">
               <dt class="facts-grid__dt">{{ t('result.listingFactsCity') }}</dt>
               <dd class="facts-grid__dd">{{ result.listing_facts.city ?? emDash }}</dd>
@@ -197,7 +213,6 @@
               <dt class="facts-grid__dt">{{ t('result.listingFactsContact') }}</dt>
               <dd class="facts-grid__dd">{{ result.listing_facts.contact_hint ?? emDash }}</dd>
             </dl>
-            <p v-if="listingFactsScopeNote" class="body-text muted facts-scope">{{ listingFactsScopeNote }}</p>
           </template>
 
           <p v-if="result.link_assessment" class="link-assessment body-text">{{ result.link_assessment }}</p>
@@ -260,16 +275,18 @@
           </ul>
           <p v-else class="muted">{{ t('result.flagsEmpty') }}</p>
 
-          <h2 class="section-title font-display">{{ t('result.market') }}</h2>
-          <p class="body-text muted">
-            {{ t('result.marketLine', { avg: result.market.average }) }}
-            <template v-if="result.market.difference_percent != null">
-              {{ ' ' + t('result.marketDiff', { pct: result.market.difference_percent }) }}
-            </template>
-            <template v-else>
-              {{ ' ' + t('result.marketNoPrice') }}
-            </template>
-          </p>
+          <template v-if="!result.listing_facts">
+            <h2 class="section-title font-display">{{ t('result.market') }}</h2>
+            <p class="body-text muted">
+              {{ t('result.marketLine', { avg: result.market.average }) }}
+              <template v-if="result.market.difference_percent != null">
+                {{ ' ' + t('result.marketDiff', { pct: result.market.difference_percent }) }}
+              </template>
+              <template v-else>
+                {{ ' ' + t('result.marketNoPrice') }}
+              </template>
+            </p>
+          </template>
 
           <template v-if="result.recommendations?.length">
             <h2 class="section-title font-display">{{ t('result.recommendations') }}</h2>
@@ -411,15 +428,37 @@ const listingFactsDiffLabel = computed(() => {
   return `${f.benchmark_diff_percent > 0 ? '+' : ''}${f.benchmark_diff_percent}%`
 })
 
-const listingFactsScopeNote = computed(() => {
+const benchmarkIntro = computed(() => {
   const f = result.value?.listing_facts
   if (!f)
     return ''
+  const avg = formatFactsPrice(f.benchmark_monthly_eur)
   if (f.benchmark_scope === 'national')
-    return t('result.listingFactsScopeNational')
-  if (f.benchmark_city)
-    return t('result.listingFactsScopeCity', { city: f.benchmark_city })
-  return ''
+    return t('result.benchmarkIntroNational', { avg })
+  const city = (f.benchmark_city ?? f.city ?? '').trim()
+  if (!city)
+    return t('result.benchmarkIntroNational', { avg })
+
+  return t('result.benchmarkIntroMunicipality', { city, avg })
+})
+
+const benchmarkVerdict = computed(() => {
+  const f = result.value?.listing_facts
+  if (!f)
+    return ''
+  if (f.price_eur == null)
+    return t('result.benchmarkVerdictNoPrice')
+  const d = f.benchmark_diff_percent
+  if (d == null)
+    return ''
+  if (d <= -30)
+    return t('result.benchmarkVerdictFarBelow', { pct: d })
+  if (d < -10)
+    return t('result.benchmarkVerdictBelow', { pct: d })
+  if (d <= 10)
+    return t('result.benchmarkVerdictAround', { pct: d })
+
+  return t('result.benchmarkVerdictAbove', { pct: d })
 })
 
 const howSteps = computed(() => [
@@ -592,7 +631,8 @@ function onOcrAppend(chunk: string) {
   text.value = cur ? `${cur}\n\n${chunk}` : chunk
 }
 
-async function onSubmit() {
+async function onSubmit(e?: Event) {
+  e?.preventDefault()
   errorMsg.value = ''
   result.value = null
   pending.value = true
@@ -627,26 +667,21 @@ async function onSubmit() {
   margin: 0;
 }
 
-.check-nav__link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.92rem;
-  font-weight: 600;
-  color: var(--accent);
-  text-decoration: none;
-  transition: color var(--duration-fast) var(--ease-out);
-}
-
-.check-nav__link:hover {
-  color: var(--accent-hover);
-  text-decoration: underline;
-  text-underline-offset: 0.18em;
-}
-
 .check-head {
   margin: 0;
   padding-bottom: 0.15rem;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .check-head {
+    animation: wsc-fade-in-up 0.52s var(--ease-out) 0.04s backwards;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .check-head {
+    animation: none;
+  }
 }
 
 .check-head__title {
@@ -671,7 +706,12 @@ async function onSubmit() {
   max-width: 960px;
   margin: 0 auto;
   width: 100%;
-  padding: 1.75rem 1.25rem 3.25rem;
+  min-width: 0;
+  padding:
+    max(1.25rem, env(safe-area-inset-top, 0px))
+    max(1.25rem, env(safe-area-inset-right, 0px))
+    max(3.25rem, env(safe-area-inset-bottom, 0px))
+    max(1.25rem, env(safe-area-inset-left, 0px));
   display: flex;
   flex-direction: column;
   gap: 1.35rem;
@@ -701,7 +741,9 @@ async function onSubmit() {
   .main > .panel--result {
     animation: wsc-panel-rise 0.52s var(--ease-out) backwards;
   }
+}
 
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .main > .panel--how:hover,
   .main > .panel--form:hover {
     transform: translateY(-2px);
@@ -743,6 +785,10 @@ async function onSubmit() {
   font-weight: 600;
   color: var(--accent);
   list-style: none;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  touch-action: manipulation;
   transition: color var(--duration-fast) var(--ease-out);
 }
 
@@ -863,6 +909,12 @@ async function onSubmit() {
     0 4px 18px color-mix(in srgb, var(--accent) 12%, transparent);
 }
 
+@media (max-width: 520px) {
+  .textarea {
+    font-size: 16px;
+  }
+}
+
 .form__hint {
   font-size: 0.8rem;
   color: var(--text-tertiary);
@@ -974,6 +1026,7 @@ async function onSubmit() {
   justify-content: center;
   gap: 0.55rem;
   min-height: 2.75rem;
+  touch-action: manipulation;
   transition:
     background var(--duration-fast) var(--ease-out),
     transform var(--duration-fast) var(--ease-out),
@@ -981,10 +1034,20 @@ async function onSubmit() {
     opacity var(--duration-fast) var(--ease-out);
 }
 
-.btn:hover:not(:disabled) {
-  background: var(--accent-hover);
-  box-shadow: var(--shadow-md);
-  transform: translateY(-1px);
+@media (max-width: 520px) {
+  .btn {
+    align-self: stretch;
+    width: 100%;
+    min-height: 48px;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn:hover:not(:disabled) {
+    background: var(--accent-hover);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
 }
 
 .btn:active:not(:disabled) {
@@ -1217,6 +1280,34 @@ async function onSubmit() {
   }
 }
 
+.benchmark-focus {
+  margin: 0 0 0.85rem;
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  border-left: 3px solid var(--accent);
+  background: color-mix(in srgb, var(--surface-muted) 88%, var(--accent) 6%);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .benchmark-focus {
+    animation: wsc-panel-rise 0.45s var(--ease-out) 0.06s backwards;
+  }
+}
+
+.benchmark-focus__intro {
+  margin: 0 0 0.45rem;
+  color: var(--text-primary);
+  line-height: 1.55;
+}
+
+.benchmark-focus__verdict {
+  margin: 0;
+  color: var(--text-secondary);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
 .facts-grid {
   display: grid;
   grid-template-columns: minmax(7.5rem, 34%) 1fr;
@@ -1246,12 +1337,6 @@ async function onSubmit() {
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 0.12em;
-}
-
-.facts-scope {
-  margin: 0 0 0.25rem;
-  font-size: 0.85rem;
-  line-height: 1.45;
 }
 
 @media (max-width: 520px) {
@@ -1648,17 +1733,28 @@ async function onSubmit() {
   border-radius: var(--radius-md);
   text-decoration: none;
   box-shadow: var(--shadow-sm);
+  touch-action: manipulation;
   transition:
     background var(--duration-fast) var(--ease-out),
     transform var(--duration-fast) var(--ease-out);
 }
 
-.share__btn:hover {
-  background: var(--accent-hover);
+@media (hover: hover) and (pointer: fine) {
+  .share__btn:hover {
+    background: var(--accent-hover);
+  }
 }
 
 .share__btn:active {
   transform: translateY(1px);
+}
+
+@media (max-width: 520px) {
+  .share__btn {
+    width: 100%;
+    min-height: 48px;
+    padding: 0.65rem 1rem;
+  }
 }
 
 .share__link {

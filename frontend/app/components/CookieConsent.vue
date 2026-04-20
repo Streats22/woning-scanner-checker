@@ -119,7 +119,8 @@ watch(showDialog, (open) => {
 .cookie-root {
   position: fixed;
   inset: 0;
-  z-index: 201;
+  /* Boven backdrop (200), onder sticky header (250): root zelf heeft geen pointer-events */
+  z-index: 210;
   display: flex;
   align-items: flex-end;
   justify-content: center;

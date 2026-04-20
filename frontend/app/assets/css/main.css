@@ -84,6 +84,77 @@ body {
   background: var(--surface-page);
   color: var(--text-primary);
   line-height: 1.6;
+  -webkit-tap-highlight-color: color-mix(in srgb, var(--accent) 18%, transparent);
+}
+
+/**
+ * Terug-navigatie (check / faq) — grote tikzone + lichte slide-in bij eerste load.
+ * Gebruik: class `wsc-back-link` op de NuxtLink, wrapper met Transition name="wsc-nav-back" appear.
+ */
+.wsc-back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 0.4rem;
+  min-height: 44px;
+  padding: 0.45rem 0.85rem;
+  margin: 0 -0.35rem;
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--accent);
+  text-decoration: none;
+  border-radius: var(--radius-md);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+  touch-action: manipulation;
+}
+
+.wsc-back-link:hover {
+  color: var(--accent-hover);
+  background: var(--accent-muted);
+  text-decoration: none;
+}
+
+.wsc-back-link:active {
+  transform: scale(0.98);
+}
+
+.wsc-back-link__arrow {
+  display: inline-flex;
+  transition: transform var(--duration-normal) var(--ease-spring);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wsc-back-link:hover .wsc-back-link__arrow {
+    transform: translateX(-3px);
+  }
+}
+
+.wsc-nav-back-enter-active {
+  transition:
+    opacity 0.42s var(--ease-out),
+    transform 0.48s var(--ease-out);
+}
+
+.wsc-nav-back-enter-from {
+  opacity: 0;
+  transform: translateX(-0.65rem);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wsc-nav-back-enter-active {
+    transition: opacity 0.12s ease;
+  }
+
+  .wsc-nav-back-enter-from {
+    transform: none;
+  }
+
+  .wsc-back-link:active {
+    transform: none;
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -175,6 +246,11 @@ body {
     transform calc(var(--duration-page) + 0.06s) var(--ease-out);
 }
 
+/** Tijdens leave: onzichtbare laag mag geen tikken blokkeren (iOS / mobiel) */
+.wsc-page-leave-active {
+  pointer-events: none;
+}
+
 .wsc-page-enter-from,
 .wsc-page-leave-to {
   opacity: 0;
@@ -203,6 +279,10 @@ body {
     opacity 0.42s var(--ease-in-out-soft),
     transform 0.52s var(--ease-out),
     filter 0.38s var(--ease-out);
+}
+
+.wsc-locale-leave-active {
+  pointer-events: none;
 }
 
 .wsc-locale-enter-from {

@@ -1,7 +1,7 @@
 {
   "meta": {
     "homeTitle": "De Huur Radar | Gratis huurfraude-check & risicoscore 0–100",
-    "homeDescription": "Check huuradvertenties vóór je betaalt: risicoscore 0–100, huur-benchmark per stad, fraude-signalen (WhatsApp, vooruitbetaling, Western Union). Voor Marktplaats, Funda, kamers. Geen account, geen verborgen scores.",
+    "homeDescription": "Ook voor studenten en kamers: check een advertentie vóór je betaalt. Risicoscore 0–100 met uitleg, huur-benchmark per stad en herkenbare signalen (WhatsApp, vooruitbetaling, Western Union). Werkt voor Marktplaats, Funda, Facebook en kamer-sites. Geen account.",
     "title": "De Huur Radar — huurfraude-check & transparante risicoscore",
     "description": "Controleer huuradvertenties op oplichting vóór je betaalt. Risicoscore 0–100 met uitleg, benchmark per stad, herkenbare signalen. Optionele AI. Zonder account.",
     "ogImageAlt": "De Huur Radar — controleer huuradvertenties vóór je betaalt"
@@ -9,30 +9,32 @@
   "brand": {
     "name": "De Huur Radar",
     "badge": "Transparante analyse",
-    "tagline": "Scan een advertentie. Regels die je kunt volgen — geen verborgen scores."
+    "tagline": "Huur of kamer gezien? Check de advertentie vóór je betaalt — met duidelijke regels, geen geheime score."
   },
   "a11y": {
     "skipToContent": "Ga naar hoofdinhoud",
     "siteNav": "Paginanavigatie en voorkeuren",
-    "footerStatement": "Tekstgebaseerd, zonder video of audio. Inzoomen, toetsenbord en schermlezer worden ondersteund."
+    "footerStatement": "Tekstgebaseerd, zonder video of audio. Inzoomen, toetsenbord en schermlezer worden ondersteund.",
+    "backToTop": "Terug naar boven",
+    "backToTopShort": "Boven"
   },
   "trust": {
     "pillarsLabel": "Kernpunten van deze dienst",
     "pillar1": "Geen account",
-    "pillar2": "Regels eerst",
+    "pillar2": "Eerst de regels",
     "pillar3": "Jouw tekst blijft van jou",
-    "line": "Regels + optionele AI-verdieping (met API-key). Geen verborgen logica in de score."
+    "line": "Vaste regels; optioneel extra uitleg met AI. Geen verborgen logica in de score."
   },
   "hero": {
-    "title": "Check een advertentie voordat je betaalt",
-    "subtitle": "Risicoscore 0–100 met concrete redenen — geen black box. Start hieronder of open de volledige check."
+    "title": "De Huur Radar — check een advertentie vóór je betaalt",
+    "subtitle": "Handig voor studenten en kamerzoekers: risicoscore 0–100 met uitleg — geen black box. Start hieronder of open de volledige check."
   },
   "home": {
-    "ctaCheck": "Start de advertentie-check",
+    "ctaCheck": "Start De Huur Radar — Check",
     "ctaReadStory": "Waarom, wat en hoe",
-    "ctaAfterStory": "Ga naar de advertentie-check",
+    "ctaAfterStory": "Ga naar De Huur Radar — Check",
     "landingMoreTitle": "Verder op deze site",
-    "cardCheckTitle": "Advertentie-check",
+    "cardCheckTitle": "De Huur Radar — Check",
     "cardCheckBody": "Plak tekst of een URL, optioneel met OCR op een screenshot. Je ziet score, signalen en een rapport — zonder account.",
     "cardCheckLink": "Naar de check",
     "cardFaqTitle": "FAQ & bronnen",
@@ -41,10 +43,10 @@
     "faqTeaser": "Vragen over fraude, kamers of bronnen? Bekijk de FAQ."
   },
   "check": {
-    "metaTitle": "Advertentie-check | De Huur Radar — risicoscore & huurfraude",
-    "metaDescription": "Plak een advertentie-URL of tekst. Risicoscore 0–100 met uitleg: prijs vs. benchmark, WhatsApp, vooruitbetaling, Western Union. OCR op screenshots. Gratis, zonder account.",
-    "pageTitle": "Advertentie-check",
-    "pageLead": "Plak tekst of een link naar een woningadvertentie. Je krijgt een risicoscore met concrete redenen — geen black box.",
+    "metaTitle": "De Huur Radar — Check | Huuradvertentie controleren, risicoscore & fraude-signalen",
+    "metaDescription": "De Huur Radar check: plak een advertentie-URL of tekst. Risicoscore 0–100 met uitleg: prijs vs. benchmark, WhatsApp, vooruitbetaling, Western Union. OCR op screenshots. Gratis, zonder account.",
+    "pageTitle": "De Huur Radar — Check",
+    "pageLead": "Plak tekst of een link — voor een kamer, studio of hele woning. Je krijgt een risicoscore met concrete redenen, ook als je snel een studentenkamer zoekt.",
     "backHome": "Terug naar de startpagina"
   },
   "about": {
@@ -68,7 +70,7 @@
     "howShortStep3": "Je ziet score, signalen, aanbevelingen en (optioneel) AI-toelichting; de technische details en alle puntentelling staan op de check-pagina.",
     "howShortHint": "Alle stappen, punten per regel en benchmark-uitleg? Ga naar de check en open het uitklapblok «Wat doen wij — en hoe komt de score tot stand?». Of bekijk de FAQ voor veelgestelde vragen.",
     "backHome": "Terug naar de startpagina",
-    "ctaToCheck": "Naar de advertentie-check",
+    "ctaToCheck": "Naar De Huur Radar — Check",
     "ctaFaq": "FAQ & bronnen"
   },
   "howItWorks": {
@@ -90,8 +92,8 @@
     "ruleForms": "Extern formulier (+10): links naar Google Forms, Typeform of vergelijkbare aanmeldflows (massale kopie-scams).",
     "ruleNarrative": "Klassiek scam-verhaal (+10): verhuizing naar buitenland, erfenis, “goed doel” — vaker copy-paste dan echte NL-advertenties.",
     "ruleTemplateEn": "Engelse sjabloon (+8): zinnen als “Kind regards”, “Dear Sir” — typisch voor internationale oplichting.",
-    "benchmarkTitle": "Model-benchmarks (Nederland)",
-    "benchmarkBody": "We gebruiken een interne tabel met een model-maandbedrag per Nederlandse gemeente (en Caribisch Nederland). Onbekende plaatsen vallen terug op een landelijke default. Waarden zijn indicatief — geen taxatie.",
+    "benchmarkTitle": "Model-huur per stad/regio (controle)",
+    "benchmarkBody": "Eerst proberen we te zien in welke gemeente de advertentie hoort; daarna vergelijken we met een vast modelbedrag (€/maand) per gemeente uit onze interne tabel. Onbekende plaatsen: landelijke default. Zo check je snel of een prijs «normaal» is voor die regio — indicatief, geen taxatie.",
     "disclaimer": "Dit is een hulpmiddel, geen juridisch of financieel advies en geen garantie tegen fraude. Handel altijd naar eigen oordeel."
   },
   "form": {
@@ -100,14 +102,14 @@
     "submit": "Analyseren",
     "submitting": "Bezig met analyseren…",
     "hint": "Of gebruik hieronder een screenshot (Marktplaats, Facebook, enz.): tekst wordt lokaal in je browser gelezen. Voor een URL: openbare advertentiepagina’s (HTTP), geen inlog.",
-    "useAiLabel": "Uitgebreide AI-analyse",
-    "useAiHint": "Staat uit: alleen regels op de server (sneller, geen advertentie naar een taalmodel). Aan: extra toelichting, observaties en samenvoeging met de regel-score — alleen als de server een AI-API heeft ingesteld.",
-    "progressTitle": "Dit doet de server nu:",
-    "progressStepParse": "Invoer verwerken (tekst of pagina ophalen)",
-    "progressStepMarket": "Stad en prijs vergelijken met benchmark",
-    "progressStepRules": "Signalen met de regel-engine",
-    "progressStepAi": "Extra AI-analyse",
-    "progressStepReport": "Score en rapport samenstellen"
+    "useAiLabel": "Extra uitleg met AI",
+    "useAiHint": "Uit: alleen de vaste regels (snel). Aan: extra toelichting naast de score — alleen als onze server daarvoor is ingericht.",
+    "progressTitle": "Even geduld, we zijn bezig:",
+    "progressStepParse": "Tekst of pagina lezen",
+    "progressStepMarket": "Stad en huur vergelijken",
+    "progressStepRules": "Signalen controleren",
+    "progressStepAi": "Extra AI-pass",
+    "progressStepReport": "Score en rapport klaarzetten"
   },
   "ocr": {
     "title": "Tekst uit een screenshot",
@@ -152,12 +154,20 @@
     "listingFitWeak": "Waarschijnlijk geen (volledige) advertentie",
     "listingFitWeakBody": "We zien weinig dat op een huuradvertentie lijkt: weinig herkenbare termen, heel korte tekst, of een pagina zonder typische huurinfo. De fraude-check is dan minder betrouwbaar — probeer de volledige advertentietekst of een echte advertentie-URL.",
     "ariaRegion": "Analyseresultaat",
-    "listingFactsTitle": "Geëxtraheerde gegevens",
+    "listingFactsTitle": "Stad, prijs en model-huur",
+    "benchmarkAria": "Uitleg: welke regio en welk modelbedrag we gebruiken",
+    "benchmarkIntroMunicipality": "We plaatsen deze advertentie bij voorkeur in {city}. Daarvoor gebruiken we een indicatieve model-huur van {avg} per maand — geen taxatie, wel een snelle controle: hoort deze prijs bij die regio?",
+    "benchmarkIntroNational": "We herkennen geen specifieke gemeente in de tekst. Dan gebruiken we een landelijk model van {avg} per maand als referentie (zelfde orde als een gemiddelde vrije-sector huur; geen taxatie).",
+    "benchmarkVerdictNoPrice": "Zonder zichtbare prijs in de advertentie kunnen we geen verschil met het model berekenen — vul desnoods de maandprijs handmatig in de tekst.",
+    "benchmarkVerdictFarBelow": "Jouw prijs ligt {pct}% onder dat model — dat valt op als «veel goedkoper dan normaal voor deze regio» en telt sterk mee in de fraude-score (ook als er andere verklaringen zijn).",
+    "benchmarkVerdictBelow": "Jouw prijs ligt {pct}% onder het model — dat kan nog steeds verdacht zijn; controleer de advertentie extra.",
+    "benchmarkVerdictAround": "Jouw prijs wijkt met ongeveer {pct}% van het model — dat zit in een redelijke band rond wat we voor deze regio verwachten (nog steeds: eigen oordeel houden).",
+    "benchmarkVerdictAbove": "Jouw prijs ligt {pct}% boven het model — dat is niet op zich een fraude-signaal; we kijken vooral naar «te mooi goedkoop».",
     "listingFactsCity": "Stad (herkenning)",
     "listingFactsStreet": "Straat / huisnummer",
     "listingFactsPrice": "Prijs in advertentie",
-    "listingFactsBenchmark": "Benchmark (model)",
-    "listingFactsBenchmarkDiff": "Verschil t.o.v. benchmark",
+    "listingFactsBenchmark": "Model-huur (regio)",
+    "listingFactsBenchmarkDiff": "Verschil t.o.v. model",
     "listingFactsMonth": "maand",
     "listingFactsSource": "Bron-URL",
     "listingFactsContact": "Contact (indicatie)",
@@ -173,15 +183,17 @@
     "generic": "Analyse mislukt. Controleer of de API bereikbaar is."
   },
   "header": {
-    "themeLight": "Licht thema",
-    "themeDark": "Donker thema",
-    "themeSystem": "Systeem",
+    "themeLight": "Licht",
+    "themeDark": "Donker",
+    "themeSystem": "Automatisch",
     "language": "Taal",
     "check": "Check",
     "faq": "FAQ & bronnen",
     "navHome": "Naar startpagina De Huur Radar",
-    "langNl": "Nederlands",
-    "langEn": "English"
+    "langNl": "Schakel over naar Nederlands",
+    "langEn": "Schakel over naar English",
+    "langNlShort": "Nederlands",
+    "langEnShort": "English"
   },
   "faq": {
     "metaTitle": "FAQ huurfraude & veilig huren | De Huur Radar",
@@ -237,7 +249,7 @@
     "fontsNote": "Lettertypen worden geladen via Google Fonts (fonts.googleapis.com / fonts.gstatic.com). Daarbij kan je IP-adres bij Google terechtkomen. Er worden geen marketingcookies van onze kant geplaatst voor dit doel.",
     "legalNote": "Dit overzicht is bedoeld voor transparantie. Het is geen juridisch advies; raadpleeg bij twijfel een privacyprofessional.",
     "footerSummary": "Geen marketing- of analytische cookies. Functionele opslag (taal, thema) alleen na je keuze. Details over lettertypen en opslag: cookie-instellingen.",
-    "openSettings": "Cookie-instellingen",
+    "openSettings": "Privacy- en cookievoorkeuren",
     "rows": [
       {
         "name": "wsc_privacy_consent",

@@ -1,12 +1,14 @@
 <template>
   <Transition name="wsc-locale" mode="out-in">
     <div :key="locale" class="main main--faq">
-    <p class="faq-nav">
-      <NuxtLink class="faq-nav__link" :to="localePath('/')">
-        <span class="faq-nav__arrow" aria-hidden="true">←</span>
-        <span class="faq-nav__text">{{ t('faq.backToHome') }}</span>
-      </NuxtLink>
-    </p>
+    <Transition name="wsc-nav-back" appear>
+      <p class="faq-nav">
+        <NuxtLink class="faq-nav__link wsc-back-link" :to="localePath('/')">
+          <span class="wsc-back-link__arrow" aria-hidden="true">←</span>
+          <span class="faq-nav__text">{{ t('faq.backToHome') }}</span>
+        </NuxtLink>
+      </p>
+    </Transition>
 
     <section class="panel panel--faq panel--rise" aria-labelledby="faq-title">
       <h1 id="faq-title" class="section-title font-display section-title--first">{{ t('faq.title') }}</h1>
@@ -104,7 +106,12 @@ useHead(() => ({
   max-width: 960px;
   margin: 0 auto;
   width: 100%;
-  padding: 1.75rem 1.25rem 3rem;
+  min-width: 0;
+  padding:
+    max(1rem, env(safe-area-inset-top, 0px))
+    max(1.25rem, env(safe-area-inset-right, 0px))
+    max(3rem, env(safe-area-inset-bottom, 0px))
+    max(1.25rem, env(safe-area-inset-left, 0px));
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
@@ -117,49 +124,6 @@ useHead(() => ({
 
 .faq-nav {
   margin: 0 0 0.15rem;
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .faq-nav {
-    animation: wsc-fade-in-up var(--duration-slow) var(--ease-out) backwards;
-  }
-}
-
-.faq-nav__link {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.35rem;
-  font-size: 0.88rem;
-  font-weight: 600;
-  color: var(--accent);
-  text-decoration: none;
-  padding: 0.35rem 0.2rem;
-  border-radius: var(--radius-sm);
-  transition:
-    color var(--duration-fast) var(--ease-out),
-    gap var(--duration-fast) var(--ease-out),
-    background var(--duration-fast) var(--ease-out);
-}
-
-.faq-nav__arrow {
-  display: inline-block;
-  transition: transform var(--duration-normal) var(--ease-spring);
-}
-
-.faq-nav__link:hover {
-  text-decoration: none;
-  color: var(--accent-hover);
-  background: var(--accent-muted);
-}
-
-.faq-nav__link:hover .faq-nav__arrow {
-  transform: translateX(-3px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .faq-nav__link:hover .faq-nav__arrow {
-    transform: none;
-  }
 }
 
 .panel {
@@ -182,7 +146,9 @@ useHead(() => ({
   .panel--rise-delay {
     animation-delay: 0.12s;
   }
+}
 
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .panel--faq:hover,
   .panel--contact:hover {
     transform: translateY(-2px);
@@ -270,13 +236,15 @@ useHead(() => ({
     animation: wsc-panel-rise 0.45s var(--ease-out) 0.22s backwards;
   }
 
-  .faq-item:hover {
-    border-color: color-mix(in srgb, var(--accent) 18%, var(--border-subtle));
-    box-shadow: var(--shadow-sm);
-  }
-
   .faq-item[open] {
     border-color: color-mix(in srgb, var(--accent) 28%, var(--border-subtle));
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .faq-item:hover {
+    border-color: color-mix(in srgb, var(--accent) 18%, var(--border-subtle));
     box-shadow: var(--shadow-sm);
   }
 }
@@ -285,10 +253,14 @@ useHead(() => ({
   cursor: pointer;
   font-size: 0.95rem;
   font-weight: 600;
-  padding: 0.75rem 2.35rem 0.75rem 1rem;
+  padding: 0.85rem 2.35rem 0.85rem 1rem;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
   list-style: none;
   color: var(--text-primary);
   position: relative;
+  touch-action: manipulation;
   transition:
     color var(--duration-fast) var(--ease-out),
     background var(--duration-fast) var(--ease-out),
@@ -318,9 +290,11 @@ useHead(() => ({
   }
 }
 
-.faq-item__summary:hover {
-  color: var(--accent);
-  background: color-mix(in srgb, var(--surface-page) 55%, var(--surface-muted));
+@media (hover: hover) and (pointer: fine) {
+  .faq-item__summary:hover {
+    color: var(--accent);
+    background: color-mix(in srgb, var(--surface-page) 55%, var(--surface-muted));
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {

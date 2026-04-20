@@ -1,7 +1,7 @@
 {
   "meta": {
     "homeTitle": "De Huur Radar | Free rental scam check & risk score 0–100",
-    "homeDescription": "Check rental listings before you pay: risk score 0–100, city rent benchmark, scam signals (WhatsApp, upfront payment, wire transfer). For Marktplaats, Funda, rooms. No account, no hidden scores.",
+    "homeDescription": "Built for students and room hunters too: check a listing before you pay. Risk score 0–100 with explanations, city rent benchmark, and clear signals (WhatsApp, upfront payment, wire transfer). Works for Marktplaats, Funda, Facebook, and room ads. No account.",
     "title": "De Huur Radar — rental scam check & transparent risk score",
     "description": "Check rental listings for fraud before you pay. Risk score 0–100 with explanations, city benchmark, clear signals. Optional AI. No account.",
     "ogImageAlt": "De Huur Radar — check rental listings before you pay"
@@ -9,30 +9,32 @@
   "brand": {
     "name": "De Huur Radar",
     "badge": "Transparent analysis",
-    "tagline": "Scan a listing. Rules you can follow — no hidden scoring."
+    "tagline": "Spotted a room or rental? Check the ad before you pay — clear rules, no secret score."
   },
   "a11y": {
     "skipToContent": "Skip to main content",
     "siteNav": "Page navigation and preferences",
-    "footerStatement": "Text-based, no video or audio. Zoom, keyboard, and screen reader use are supported."
+    "footerStatement": "Text-based, no video or audio. Zoom, keyboard, and screen reader use are supported.",
+    "backToTop": "Back to top",
+    "backToTopShort": "Top"
   },
   "trust": {
     "pillarsLabel": "What this service stands for",
     "pillar1": "No account",
     "pillar2": "Rules first",
     "pillar3": "Your text stays yours",
-    "line": "Rules plus optional AI layer (with API key). No hidden logic in the score."
+    "line": "Fixed rules; optional extra AI explanation. No hidden logic in the score."
   },
   "hero": {
-    "title": "Check a listing before you pay",
-    "subtitle": "Risk score 0–100 with clear reasons — not a black box. Start below or open the full checker."
+    "title": "De Huur Radar — check a listing before you pay",
+    "subtitle": "Great for students and room seekers: risk score 0–100 with clear reasons — not a black box. Start below or open the full checker."
   },
   "home": {
-    "ctaCheck": "Start listing check",
+    "ctaCheck": "Start the rental check",
     "ctaReadStory": "Why, what & how",
-    "ctaAfterStory": "Go to the listing check",
+    "ctaAfterStory": "Go to the rental check",
     "landingMoreTitle": "More on this site",
-    "cardCheckTitle": "Listing check",
+    "cardCheckTitle": "Rental listing check",
     "cardCheckBody": "Paste text or a URL, optionally with OCR from a screenshot. You get score, signals, and a report — no sign-up.",
     "cardCheckLink": "Open the check",
     "cardFaqTitle": "FAQ & sources",
@@ -41,10 +43,10 @@
     "faqTeaser": "Questions about fraud, rooms, or sources? See the FAQ."
   },
   "check": {
-    "metaTitle": "Listing check | De Huur Radar — risk score & rental fraud",
-    "metaDescription": "Paste a listing URL or text. Risk score 0–100 with reasons: price vs. benchmark, WhatsApp, upfront payment, wire transfer. OCR on screenshots. Free, no account.",
-    "pageTitle": "Listing check",
-    "pageLead": "Paste text or a link to a property listing. You get a risk score with clear reasons — not a black box.",
+    "metaTitle": "De Huur Radar — Check | Rental listing risk score, benchmark & fraud signals",
+    "metaDescription": "De Huur Radar check: paste a listing URL or text. Risk score 0–100 with reasons: price vs. benchmark, WhatsApp, upfront payment, wire transfer. OCR on screenshots. Free, no account.",
+    "pageTitle": "De Huur Radar — Check",
+    "pageLead": "Paste text or a link — for a room, studio, or whole flat. You get a risk score with clear reasons, including when you’re hunting for a student room.",
     "backHome": "Back to home"
   },
   "about": {
@@ -68,7 +70,7 @@
     "howShortStep3": "You see the score, signals, recommendations, and (optional) AI narrative; technical details and every point weight are on the check page.",
     "howShortHint": "Want every step, rule points, and benchmark detail? On the check page, open the collapsible section “What we do — and how the score is built”. Or see the FAQ for common questions.",
     "backHome": "Back to home",
-    "ctaToCheck": "Go to the listing check",
+    "ctaToCheck": "Go to the rental check",
     "ctaFaq": "FAQ & sources"
   },
   "howItWorks": {
@@ -90,8 +92,8 @@
     "ruleForms": "External form (+10): Google Forms, Typeform, etc. — common in mass copy-paste scams.",
     "ruleNarrative": "Classic scam story (+10): moving abroad, inheritance, “charity” — often copy-paste.",
     "ruleTemplateEn": "English template (+8): phrases like “Kind regards”, “Dear Sir” — typical of cross-border fraud.",
-    "benchmarkTitle": "Model benchmarks (Netherlands)",
-    "benchmarkBody": "We use an internal table with a model monthly rent per Dutch municipality (including Caribbean Netherlands). Unknown locations fall back to a national default. Values are indicative—not a valuation.",
+    "benchmarkTitle": "Model rent by city/region (sanity check)",
+    "benchmarkBody": "First we try to infer which municipality applies; then we compare to a fixed model amount (€/month) per municipality from our internal table. Unknown locations use a national default — a quick check whether the price looks «normal» for that area (indicative, not a valuation).",
     "disclaimer": "This is a support tool, not legal or financial advice and not a guarantee against fraud. Always use your own judgment."
   },
   "form": {
@@ -100,14 +102,14 @@
     "submit": "Analyze",
     "submitting": "Analyzing…",
     "hint": "Or use a screenshot below (Marktplaats, Facebook, etc.): text is read locally in your browser. For URLs: public listing pages over HTTP, no login.",
-    "useAiLabel": "Enhanced AI analysis",
-    "useAiHint": "Off: rules only on the server (faster; your text is not sent to a language model). On: extra narrative, observations, and merging with the rule score—only if the server has an AI API configured.",
-    "progressTitle": "What’s happening now:",
-    "progressStepParse": "Processing input (paste or fetching the page)",
-    "progressStepMarket": "Matching city and rent to the benchmark",
-    "progressStepRules": "Running the rule engine for signals",
-    "progressStepAi": "Enhanced AI pass",
-    "progressStepReport": "Building your score and report"
+    "useAiLabel": "Extra explanation with AI",
+    "useAiHint": "Off: fixed rules only (faster). On: extra narrative alongside the score — only if our server is set up for it.",
+    "progressTitle": "Hang on, we’re working on it:",
+    "progressStepParse": "Reading your text or page",
+    "progressStepMarket": "Comparing city and rent",
+    "progressStepRules": "Checking for warning signs",
+    "progressStepAi": "Optional AI pass",
+    "progressStepReport": "Preparing your score and report"
   },
   "ocr": {
     "title": "Text from a screenshot",
@@ -152,12 +154,20 @@
     "listingFitWeak": "Probably not a (complete) listing",
     "listingFitWeakBody": "Little here looks like a rental ad: few recognizable terms, very short text, or a page without typical rental info. The fraud check is less reliable — try the full listing text or a real listing URL.",
     "ariaRegion": "Analysis result",
-    "listingFactsTitle": "Extracted listing details",
+    "listingFactsTitle": "City, price & model rent",
+    "benchmarkAria": "Explanation: which region and model amount we use",
+    "benchmarkIntroMunicipality": "We map this listing to {city} when possible. For that area we use an indicative model rent of {avg} per month — not a valuation, but a quick check: does this price look normal for that region?",
+    "benchmarkIntroNational": "We could not detect a specific municipality in the text. We then use a national model of {avg} per month as a reference (same order of magnitude as a broad market average; not a valuation).",
+    "benchmarkVerdictNoPrice": "Without a visible monthly rent in the ad we cannot compare to the model — add the price to the text if needed.",
+    "benchmarkVerdictFarBelow": "Your price is {pct}% below that model — that stands out as «much cheaper than normal for this area» and weighs heavily in the risk score (even if other explanations exist).",
+    "benchmarkVerdictBelow": "Your price is {pct}% below the model — it can still be suspicious; double-check the listing.",
+    "benchmarkVerdictAround": "Your price is about {pct}% from the model — a reasonable band around what we expect for this area (still: use your own judgment).",
+    "benchmarkVerdictAbove": "Your price is {pct}% above the model — that is not a fraud signal by itself; we mainly flag «too good to be true» low prices.",
     "listingFactsCity": "City (detected)",
     "listingFactsStreet": "Street / number",
     "listingFactsPrice": "Price in the listing",
-    "listingFactsBenchmark": "Benchmark (model)",
-    "listingFactsBenchmarkDiff": "Difference vs. benchmark",
+    "listingFactsBenchmark": "Model rent (area)",
+    "listingFactsBenchmarkDiff": "Difference vs. model",
     "listingFactsMonth": "month",
     "listingFactsSource": "Source URL",
     "listingFactsContact": "Contact (hint)",
@@ -173,15 +183,17 @@
     "generic": "Analysis failed. Check that the API is reachable."
   },
   "header": {
-    "themeLight": "Light theme",
-    "themeDark": "Dark theme",
-    "themeSystem": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark",
+    "themeSystem": "Auto",
     "language": "Language",
     "check": "Check",
     "faq": "FAQ & sources",
     "navHome": "De Huur Radar home",
-    "langNl": "Nederlands",
-    "langEn": "English"
+    "langNl": "Switch to Dutch",
+    "langEn": "Switch to English",
+    "langNlShort": "Nederlands",
+    "langEnShort": "English"
   },
   "faq": {
     "metaTitle": "Rental fraud FAQ & safe renting | De Huur Radar",
@@ -237,7 +249,7 @@
     "fontsNote": "Fonts are loaded from Google Fonts (fonts.googleapis.com / fonts.gstatic.com). Your IP address may be processed by Google. We do not place marketing cookies for this.",
     "legalNote": "This overview is for transparency only. It is not legal advice; consult a privacy professional if in doubt.",
     "footerSummary": "No marketing or analytics cookies. Functional storage (language, theme) only after you choose. Fonts and storage details: cookie settings.",
-    "openSettings": "Cookie settings",
+    "openSettings": "Privacy & cookie preferences",
     "rows": [
       {
         "name": "wsc_privacy_consent",

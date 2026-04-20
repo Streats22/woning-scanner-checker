@@ -24,7 +24,44 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: process.env.NODE_ENV !== 'production' },
 
-  modules: ['@nuxtjs/color-mode', '@nuxtjs/i18n'],
+  modules: ['@vite-pwa/nuxt', '@nuxtjs/color-mode', '@nuxtjs/i18n'],
+
+  /**
+   * Service worker cachet shell + /_nuxt-assets na eerste bezoek — helpt bij flakiness / korte uitval.
+   * Geen vervanging voor een draaiende server op eerste load; nginx 502 → zie public/offline.html.
+   */
+  pwa: {
+    registerType: 'autoUpdate',
+    manifest: {
+      name: 'De Huur Radar',
+      short_name: 'Huur Radar',
+      description: 'Huurfraude-check en risicoscore vóór je betaalt.',
+      theme_color: '#1e40af',
+      background_color: '#f3f6fb',
+      display: 'standalone',
+      lang: 'nl',
+      start_url: '/',
+      scope: '/',
+    },
+    workbox: {
+      navigateFallback: '/',
+      navigateFallbackDenylist: [/^\/api/, /^\/report/, /^\/build/, /^\/storage/, /^\/up$/],
+      globPatterns: ['**/*.{js,css,ico,png,svg,woff2}'],
+      runtimeCaching: [
+        {
+          urlPattern: /^https:\/\/fonts\.(?:googleapis|gstatic)\.com\/.*/i,
+          handler: 'CacheFirst',
+          options: {
+            cacheName: 'google-fonts',
+            expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
+          },
+        },
+      ],
+    },
+    devOptions: {
+      enabled: false,
+    },
+  },
 
   css: ['~/assets/css/main.css'],
 
@@ -63,7 +100,7 @@ export default defineNuxtConfig({
     head: {
       htmlAttrs: { lang: 'nl' },
       charset: 'utf-8',
-      viewport: 'width=device-width, initial-scale=1',
+      viewport: 'width=device-width, initial-scale=1, viewport-fit=cover',
       meta: [
         { name: 'format-detection', content: 'telephone=no' },
         { name: 'referrer', content: 'strict-origin-when-cross-origin' },
