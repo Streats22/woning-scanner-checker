@@ -1,25 +1,79 @@
 {
   "meta": {
-    "title": "Woning Scam Checker — transparante huurfraude-check"
+    "title": "De Huur Radar — gratis huurfraude-check & advertentie-risicoscore",
+    "description": "Controleer huuradvertenties op oplichting vóór je betaalt: risicoscore 0–100, huur-benchmark per stad, signalen (WhatsApp, vooruitbetaling, Western Union), Marktplaats/Funda/kamer. Regels + optionele AI. Zonder account."
   },
   "brand": {
-    "name": "Woning Scam Checker",
+    "name": "De Huur Radar",
     "badge": "Transparante analyse",
-    "tagline": "Regels die je kunt volgen. Geen verborgen scores."
+    "tagline": "Scan een advertentie. Regels die je kunt volgen — geen verborgen scores."
+  },
+  "a11y": {
+    "skipToContent": "Ga naar hoofdinhoud",
+    "siteNav": "Paginanavigatie en voorkeuren",
+    "footerStatement": "Deze site is tekstgebaseerd: geen video of audio nodig. Je kunt inzoomen, het toetsenbord en schermlezers gebruiken."
   },
   "trust": {
-    "line": "Geen account · Regels + optionele AI-verdieping (met API-key) · Jouw tekst blijft van jou"
+    "pillarsLabel": "Kernpunten van deze dienst",
+    "pillar1": "Geen account",
+    "pillar2": "Regels eerst",
+    "pillar3": "Jouw tekst blijft van jou",
+    "line": "Regels + optionele AI-verdieping (met API-key). Geen verborgen logica in de score."
   },
   "hero": {
     "title": "Check een advertentie voordat je betaalt",
     "subtitle": "Plak tekst of een link naar een woningadvertentie. Je krijgt een risicoscore met concrete redenen — geen black box."
+  },
+  "home": {
+    "faqTeaser": "Vragen over fraude, kamers en betrouwbare bronnen? Bekijk de FAQ & bronnen."
+  },
+  "howItWorks": {
+    "title": "Wat doen wij — en hoe komt de score tot stand?",
+    "lead": "We geven een risicoscore tussen 0 en 100 op basis van vaste, controleerbare regels. Geen geheime weging: onderstaande stappen en punten zijn wat de server gebruikt.",
+    "summaryToggle": "Volledige uitleg: stappen, punten en benchmark",
+    "step1": "Invoer: plaktekst, een URL (openbare pagina), of tekst uit een screenshot (Marktplaats/Facebook enz.) via OCR in je browser. Geldt voor woningen, appartementen en studentenkamers; we lezen o.a. prijs, contact en beschrijving.",
+    "step2": "Stad en benchmark: we proberen een stad te herkennen en vergelijken met een vast modelbedrag (€/maand) per stad; voor andere plaatsen geldt een standaard. Dat is een grove schatting, geen taxatie.",
+    "step3": "Regel-score: alleen wat we in de tekst terugvinden, telt mee. De punten van alle treffers worden bij elkaar opgeteld tot maximaal 100.",
+    "step4": "Optioneel AI: zet je de schakelaar aan en heeft de server een taalmodel (OpenAI-compatibele API), dan wordt de advertentie extra geanalyseerd — o.a. observaties en toelichting. De eindscore is het maximum van regel-score en AI-score; met de schakelaar uit draait alleen de regel-engine.",
+    "step5": "Aanbevelingen en controlelijst komen altijd uit de regels; met AI aan worden ze aangevuld met model-suggesties en extra observaties.",
+    "rulesTitle": "Automatische signalen (regel-engine)",
+    "rulePrice": "Prijs ruim onder de benchmark (+30): maandprijs onder 70% van het modelgemiddelde voor de gekozen stad.",
+    "ruleMessaging": "Contact via chat (+10 WhatsApp, +8 Telegram/Signal/WeChat/Skype): veel fraude vermijdt traceerbare e-mail of vaste nummers.",
+    "ruleUrgency": "Tijdsdruk (+20): o.a. “alleen vandaag”, “snel reageren”, “beperkte tijd”, “binnen 24 uur”.",
+    "rulePayment": "Hoog-risico betalen (+40): o.a. Western Union, MoneyGram, vooruitbetaling, crypto (BTC/USDT), cadeaukaarten, Paysafecard.",
+    "ruleTrust": "Bezichtiging & afstand (+12): geen normale bezichtiging, sleutel per post/koerier, of “ik woon in het buitenland”.",
+    "ruleFees": "Geld vóór bezichtiging (+14): inschrijfgeld, reserveringskosten of “administratiekosten” vóór een afspraak.",
+    "ruleForms": "Extern formulier (+10): links naar Google Forms, Typeform of vergelijkbare aanmeldflows (massale kopie-scams).",
+    "ruleNarrative": "Klassiek scam-verhaal (+10): verhuizing naar buitenland, erfenis, “goed doel” — vaker copy-paste dan echte NL-advertenties.",
+    "ruleTemplateEn": "Engelse sjabloon (+8): zinnen als “Kind regards”, “Dear Sir” — typisch voor internationale oplichting.",
+    "benchmarkTitle": "Model-benchmarks (Nederland)",
+    "benchmarkBody": "We gebruiken een interne tabel met een model-maandbedrag per Nederlandse gemeente (en Caribisch Nederland). Onbekende plaatsen vallen terug op een landelijke default. Waarden zijn indicatief — geen taxatie.",
+    "disclaimer": "Dit is een hulpmiddel, geen juridisch of financieel advies en geen garantie tegen fraude. Handel altijd naar eigen oordeel."
   },
   "form": {
     "label": "Advertentie of URL",
     "placeholder": "Plak de volledige advertentie, of alleen een link zoals 123wonen.nl/…",
     "submit": "Analyseren",
     "submitting": "Bezig met analyseren…",
-    "hint": "Ondersteunde sites: openbare advertentiepagina’s (HTTP). Geen inlog vereist."
+    "hint": "Of gebruik hieronder een screenshot (Marktplaats, Facebook, enz.): tekst wordt lokaal in je browser gelezen. Voor een URL: openbare advertentiepagina’s (HTTP), geen inlog.",
+    "useAiLabel": "Uitgebreide AI-analyse",
+    "useAiHint": "Staat uit: alleen regels op de server (sneller, geen advertentie naar een taalmodel). Aan: extra toelichting, observaties en samenvoeging met de regel-score — alleen als de server een AI-API heeft ingesteld.",
+    "progressTitle": "Dit doet de server nu:",
+    "progressStepParse": "Invoer verwerken (tekst of pagina ophalen)",
+    "progressStepMarket": "Stad en prijs vergelijken met benchmark",
+    "progressStepRules": "Signalen met de regel-engine",
+    "progressStepAi": "Extra AI-analyse",
+    "progressStepReport": "Score en rapport samenstellen"
+  },
+  "ocr": {
+    "title": "Tekst uit een screenshot",
+    "hint": "Handig voor advertenties op Marktplaats, Facebook Marketplace of andere apps: maak een schermfoto en laat de tekst hier invullen.",
+    "button": "Kies afbeelding",
+    "buttonBusy": "Tekst lezen…",
+    "privacy": "OCR draait in je browser; alleen als je op Analyseren klikt, gaat de tekst naar onze server.",
+    "errorSize": "Afbeelding is te groot (max. 8 MB).",
+    "errorEmpty": "Geen tekst gevonden. Probeer een scherpere screenshot of plak handmatig.",
+    "errorGeneric": "Tekstherkenning mislukt. Probeer opnieuw of plak handmatig."
   },
   "result": {
     "scoreLabel": "Risicoscore (0–100)",
@@ -37,12 +91,34 @@
     "riskPoints": "{n} pt",
     "recommendations": "Aanbevelingen",
     "whatToVerify": "Controleer dit vóór je betaalt",
+    "observationsTitle": "Extra observaties (AI)",
     "summary": "Toelichting & bevindingen",
     "llmBadge": "AI-toetsing",
     "share": "Rapport bewaren",
     "openReport": "Open rapport",
     "downloadPdf": "Download PDF (aanbevolen)",
-    "webReport": "Webversie met alle details (tijdelijk)"
+    "webReport": "Webversie met alle details (tijdelijk)",
+    "listingFitAria": "Advertentie-herkenning: match {n} van honderd",
+    "listingFitTitle": "Lijkt dit op een huuradvertentie?",
+    "listingFitMatchLabel": "Match {n}/100",
+    "listingFitStrong": "Ja — redelijk typerend voor een advertentie",
+    "listingFitStrongBody": "De tekst (en eventueel de link) bevatten typische signalen, zoals prijs, huurtermen, oppervlakte of een bekend verhuurplatform. Geen garantie, maar wél een duidelijke indicatie dat dit bedoeld is als woning-/huurinformatie.",
+    "listingFitMixed": "Twijfelachtig — kan wel of niet kloppen",
+    "listingFitMixedBody": "Er zijn enkele signalen, maar de inhoud is kort, mist duidelijke huurdetails, of lijkt gemengd met andere pagina-inhoud. Plak bij twijfel de volledige advertentie of een directe advertentielink.",
+    "listingFitWeak": "Waarschijnlijk geen (volledige) advertentie",
+    "listingFitWeakBody": "We zien weinig dat op een huuradvertentie lijkt: weinig herkenbare termen, heel korte tekst, of een pagina zonder typische huurinfo. De fraude-check is dan minder betrouwbaar — probeer de volledige advertentietekst of een echte advertentie-URL.",
+    "ariaRegion": "Analyseresultaat",
+    "listingFactsTitle": "Geëxtraheerde gegevens",
+    "listingFactsCity": "Stad (herkenning)",
+    "listingFactsStreet": "Straat / huisnummer",
+    "listingFactsPrice": "Prijs in advertentie",
+    "listingFactsBenchmark": "Benchmark (model)",
+    "listingFactsBenchmarkDiff": "Verschil t.o.v. benchmark",
+    "listingFactsMonth": "maand",
+    "listingFactsSource": "Bron-URL",
+    "listingFactsContact": "Contact (indicatie)",
+    "listingFactsScopeNational": "Benchmark: landelijk gemiddelde — geen specifieke stad herkend in de tekst.",
+    "listingFactsScopeCity": "Benchmark: model voor {city} (indicatief, geen taxatie)."
   },
   "risk": {
     "low": "Beperkt risico",
@@ -56,9 +132,92 @@
     "themeLight": "Licht thema",
     "themeDark": "Donker thema",
     "themeSystem": "Systeem",
-    "language": "Taal"
+    "language": "Taal",
+    "faq": "FAQ & bronnen",
+    "navHome": "Naar startpagina De Huur Radar",
+    "langNl": "Nederlands",
+    "langEn": "English"
+  },
+  "faq": {
+    "metaTitle": "FAQ huurfraude & bronnen — De Huur Radar (Marktplaats, kamers, veilig huren)",
+    "metaDescription": "Antwoorden op veelgestelde vragen over De Huur Radar, huurfraude, studentenkamers, WhatsApp-scams en betrouwbare bronnen (NL/EU). Contact en verder lezen.",
+    "backToHome": "Terug naar de check",
+    "contactTitle": "Contact",
+    "contactIntro": "Vragen over deze tool of de website? Stuur een e-mail naar:",
+    "contactNote": "Voor juridische of financiële vragen over een concrete huur: raadpleeg een professional of officiële meldpunten (zie de bronnen hierboven).",
+    "title": "Veelgestelde vragen",
+    "intro": "De Huur Radar combineert vaste tekstregels met een optionele AI-laag. De tool is bruikbaar voor vrijstaande woningen, appartementen én studentenkamers — overal waar je een huuradvertentie plakt. Hieronder antwoorden op veelgestelde vragen. Onderaan vind je een uitgebreide lijst met externe bronnen (consumentenadvies, platforms en overheid) — ter verdere lectuur, zonder dat we die sites goedkeuren of garanderen.",
+    "sourcesTitle": "Bronnen & verder lezen",
+    "sourcesIntro": "Deze selectie (23+ links) sluit aan bij gangbare adviezen over huurfraude in Nederland en de EU, inclusief tips voor studenten en kamerzoekers. Tip: controleer bij twijfel eigendom via het Kadaster en wees sceptisch bij te mooie aanbiedingen, alleen-WhatsApp-contact en vooraf betalen.",
+    "q1": "Wat doet De Huur Radar precies?",
+    "a1": "Je plakt een advertentietekst of URL. We schatten een risicoscore (0–100) op basis van herkenbare patronen (prijs t.o.v. een model-benchmark, druk om snel te betalen, riskante betaalroutes, contact via chat-apps, enz.). Optioneel kan een taalmodel dezelfde tekst meenemen; de eindscore is het maximum van regel-score en AI-score.",
+    "q2": "Waarom is een lage huurprijs een signaal?",
+    "a2": "Een veelgebruikte truc is onderprijzen om reacties te lokken. We vergelijken de geëxtraheerde prijs ruw met een stad/regio-benchmark. Dat is géén taxatie: het is een snelle sanity-check, zoals consumentenorganisaties ook “te mooi om waar te zijn” benadrukken.",
+    "q3": "Moet ik via WhatsApp reageren als de advertentie dat vraagt?",
+    "a3": "Niet per se — en wees extra voorzichtig als WhatsApp of Telegram het enige kanaal is. !WOON en andere bronnen raden aan om identiteit en verhuurrecht te checken en niet alleen op chat te vertrouwen.",
+    "q4": "Hoe kan ik controleren of iemand mag verhuren?",
+    "a4": "Vraag naar een huurcontract en controleer wie de eigenaar is, bijvoorbeeld via eigendomsinformatie bij het Kadaster (tegen kleine vergoeding). Bij onderhuur moet de hoofdhuurder vaak meeweten — zie bijvoorbeeld informatie van het Juridisch Loket en Rijksoverheid.",
+    "q5": "Wat zijn typische Facebook- of Marktplaats-scams?",
+    "a5": "Voorbeelden: gekloonde foto’s (check met reverse image search), profielen zonder geschiedenis, “reserveringskosten” voor een bezichtiging, of druk om dezelfde dag nog borg over te maken. Artikelen van o.a. Huurstunt en platform-veiligheidspagina’s beschrijven deze patronen uitgebreid.",
+    "q6": "Ik ben opgelicht — wat nu?",
+    "a6": "Verzamel bewijs (screenshots, betaalbewijzen), breek contact af, doe aangifte bij de politie en meld bij Fraudehelpdesk.nl. Je bank kan soms helpen bij terugboeking. Dit volgt het stappenplan dat o.a. Stekkies en Fraudehelpdesk publiceren.",
+    "q7": "Is dit juridisch advies?",
+    "a7": "Nee. De Huur Radar is een technisch hulpmiddel met transparante regels; het vervangt geen makelaar, jurist of officiële meldpunten.",
+    "q8": "Waarom staan er Engelse scam-zinnen in de regels?",
+    "a8": "Internationale oplichters gebruiken vaak standaard Engelstalige templates. Als die woorden in een ogenschijnlijk Nederlandse advertentie staan, verhogen we het risico licht — los van andere signalen.",
+    "q9": "Zijn studentenkamers anders dan gewone huur?",
+    "a9": "De trucs zijn vaak dezelfde: te mooie prijs, inschrijfgeld of ‘bemiddelingskosten’ vóór een bezichtiging, druk om snel te betalen, of een ID-kopie uitwisselen met iemand die je niet kent. Juist bij kamers is de vraag hoog en zijn studenten een doelgroep — zie o.a. Scholieren.com (CCV / ministerie) voor praktische tips (Google Image Search op foto’s, geen bemiddelingskosten als huurder zonder makelaarsopdracht, Kopie-ID-app van de overheid). De Huur Radar herkent dezelfde tekstpatronen in kameradvertenties als bij andere huur."
   },
   "footer": {
-    "note": "Hulpmiddel met regels en optioneel een taalmodel (OpenAI-compatible API); het vervangt geen eigen oordeel of juridisch advies."
+    "note": "Hulpmiddel met regels en optioneel een taalmodel (OpenAI-compatible API); het vervangt geen eigen oordeel of juridisch advies.",
+    "madeBy": "Gemaakt door ",
+    "contactLabel": "Contact: ",
+    "buildIdTitle": "Tijdstip van de laatste frontend-build op deze server (ter vergelijking met lokaal)"
+  },
+  "cookies": {
+    "dialogTitle": "Cookies en lokale opslag (AVG / ePrivacy)",
+    "dialogIntro": "Deze site gebruikt geen cookies voor marketing, advertentieprofielen of bezoekersanalyse. We leggen hieronder uit welke gegevens in je browser kunnen staan en waarom.",
+    "noTrackingBanner": "Geen advertentie- of analytische tracking (geen Meta Pixel, Google Analytics, enz.). Geen verkoop van gegevens aan derden via deze website.",
+    "detailsToggle": "Toon volledige tabel",
+    "detailsHide": "Verberg tabel",
+    "tableName": "Naam / sleutel",
+    "tableType": "Type",
+    "tablePurpose": "Doel",
+    "tableDuration": "Bewaartermijn",
+    "acceptFunctional": "Functionele opslag toestaan",
+    "necessaryOnly": "Alleen noodzakelijk",
+    "necessaryOnlyHelp": "Alleen noodzakelijk: we bewaren alleen je keuze voor deze melding en verwijderen opgeslagen taal- en thema-voorkeuren. De pagina wordt daarna vernieuwd.",
+    "apiNote": "Als je een advertentie laat analyseren, stuurt je browser een HTTPS-verzoek naar onze server met de door jou geplakte tekst. Serverlogs kunnen technische gegevens bevatten (zoals IP-adres en tijdstip) voor beveiliging en foutopsporing — niet voor advertentie-tracking via cookies in de browser.",
+    "fontsNote": "Lettertypen worden geladen via Google Fonts (fonts.googleapis.com / fonts.gstatic.com). Daarbij kan je IP-adres bij Google terechtkomen. Er worden geen marketingcookies van onze kant geplaatst voor dit doel.",
+    "legalNote": "Dit overzicht is bedoeld voor transparantie. Het is geen juridisch advies; raadpleeg bij twijfel een privacyprofessional.",
+    "footerSummary": "Privacy: geen marketing- of analytische cookies. Functionele opslag (taal, thema) alleen na je keuze hieronder.",
+    "openSettings": "Cookie-instellingen",
+    "notApplicableLine": "Geen third-party advertentiecookies op deze site. Zie de cookiemelding voor details over functionele opslag en lettertypen.",
+    "rows": [
+      {
+        "name": "wsc_privacy_consent",
+        "type": "localStorage",
+        "purpose": "Bewaart je keuze (functioneel of minimaal) zodat we de melding niet opnieuw tonen.",
+        "duration": "Tot je gegevens wist of je keuze wijzigt"
+      },
+      {
+        "name": "wsc_locale_pref",
+        "type": "localStorage",
+        "purpose": "Taalvoorkeur (NL/EN), alleen als je functionele opslag accepteert.",
+        "duration": "Tot je gegevens wist of je keuze wijzigt"
+      },
+      {
+        "name": "wsc-color-mode",
+        "type": "localStorage",
+        "purpose": "Thema (licht/donker/systeem) via de site-instelling.",
+        "duration": "Tot je gegevens wist of je keuze wijzigt"
+      },
+      {
+        "name": "wsc_i18n",
+        "type": "Cookie (legacy)",
+        "purpose": "Niet meer gebruikt; kan worden verwijderd bij ‘Alleen noodzakelijk’.",
+        "duration": "n.v.t."
+      }
+    ]
   }
 }
