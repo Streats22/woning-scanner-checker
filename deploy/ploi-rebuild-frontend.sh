@@ -30,6 +30,12 @@ fi
 
 cd "$FRONTEND"
 
+if [[ ! -f .env ]] || ! grep -qE '^[[:space:]]*NUXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-' .env 2>/dev/null; then
+  echo "==> WAARSCHUWING: in frontend/.env ontbreekt NUXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-… (of .env bestaat niet)." >&2
+  echo "    Ploi/Laravel-site-env gaat naar PHP, niet naar Node — zet GA hier, niet alleen in Laravel." >&2
+  echo "    Zonder deze regel bevat npm run build geen measurement-ID." >&2
+fi
+
 echo "==> $(pwd)"
 echo "==> git pull…"
 git pull --ff-only || true
