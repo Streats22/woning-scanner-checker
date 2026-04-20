@@ -1,0 +1,42 @@
+De Huur Radar — Let's Encrypt / Ploi (HTTP-01 webroot)
+======================================================
+
+Waarom 404 of unauthorized?
+- Certbot schrijft naar:  WEBROOT/.well-known/acme-challenge/<token>
+- Nginx moet dat EXACT uit WEBROOT lezen (zelfde pad als "root" in nginx voor :80).
+- Als Ploi webroot = /home/ploi/.../dehuurradar.nl (zonder public) maar nginx root = .../public → 404.
+
+1) Webroot in Ploi gelijk trekken
+   - Site → Web directory: "public" (relatief), of absoluut:
+     /home/ploi/dehuurradar.nl/public
+   - Bij SSL / Let's Encrypt: kies webroot-handmatig indien mogelijk, zelfde pad als hierboven.
+   - Als je deploy/symlinks gebruikt: echo $(readlink -f /home/ploi/dehuurradar.nl/public)
+     en gebruik DAT pad overal.
+
+2) Controleren welke nginx-server je request raakt (belangrijk bij 404)
+   sudo nginx -T 2>/dev/null | grep -E 'listen (\[::\]:)?80|server_name .*dehuurradar'
+   - Zie je TWEE "server" blocks met listen 80 + dehuurradar.nl waarvan één alleen "return 301 https"?
+     Dan wint die vaak vóór je acme-location → 404/301 voor LE.
+   - Tijdelijk: in Ploi "Force SSL" / "Redirect HTTP to HTTPS" UIT tot het certificaat staat.
+   - Of: conflicterende snippet uit before/after verwijderen.
+
+3) Handmatige test (op de server)
+   mkdir -p /home/ploi/dehuurradar.nl/public/.well-known/acme-challenge
+   echo ping > /home/ploi/dehuurradar.nl/public/.well-known/acme-challenge/test
+   curl -sS -w "\nHTTP:%{http_code}\n" http://dehuurradar.nl/.well-known/acme-challenge/test
+   curl -sS -w "\nHTTP:%{http_code}\n" http://www.dehuurradar.nl/.well-known/acme-challenge/test
+   Beide: HTTP 200 en body "ping". Geen 301/404.
+
+4) Cloudflare
+   - Domein op "DNS only" (grijze wolk) tijdens uitgifte, anders kan de proxy een andere origin/response geven.
+
+5) IPv6
+   - AAAA moet naar dezelfde server als A. Anders kan LE via IPv6 een andere (lege) vhost raken.
+
+6) Certbot handmatig (ter debug, pad aanpassen)
+   sudo certbot certonly --webroot -w /home/ploi/dehuurradar.nl/public \
+     -d dehuurradar.nl -d www.dehuurradar.nl
+
+7) Na succes: nginx herladen, daarna eventueel weer Force SSL / Cloudflare proxy aan.
+
+Repo: zie deploy/dehuurradar.nl.conf (acme-location vóór location /).
