@@ -83,7 +83,7 @@ export default defineNuxtConfig({
 
   runtimeConfig: {
     public: {
-      /** Productie: canonieke URL, Open Graph, sitemap (bv. https://dehuurradar.nl) */
+      /** Productie: canonieke URL, Open Graph/WhatsApp (og:url + og:image), sitemap, JSON-LD */
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL?.trim() || '',
       apiBase: resolvedApiBase,
       /** Alleen `true` als `NUXT_PUBLIC_API_ALLOW_HTTP=1` — geen http→https upgrade voor API-base. */

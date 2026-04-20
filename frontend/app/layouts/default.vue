@@ -206,7 +206,7 @@ const jsonLdGraph = computed(() => {
         url: base,
         name: 'De Huur Radar',
         inLanguage: ['nl-NL', 'en'],
-        description: t('meta.description'),
+        description: t('meta.homeDescription'),
         publisher: { '@id': `${base}/#organization` },
         potentialAction: {
           '@type': 'ReadAction',
@@ -218,6 +218,7 @@ const jsonLdGraph = computed(() => {
         '@id': `${base}/#organization`,
         name: 'De Huur Radar',
         url: base,
+        logo: { '@type': 'ImageObject', url: `${base}/og.png` },
       },
       {
         '@type': 'SoftwareApplication',
@@ -228,7 +229,8 @@ const jsonLdGraph = computed(() => {
         browserRequirements: 'Requires JavaScript. Requires a modern browser.',
         offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
         url: `${base}/check`,
-        description: t('meta.description'),
+        description: t('meta.homeDescription'),
+        image: `${base}/og.png`,
       },
     ],
   }

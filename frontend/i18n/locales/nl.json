@@ -1,9 +1,10 @@
 {
   "meta": {
-    "homeTitle": "De Huur Radar — gratis huurfraude-check & transparante risicoscore",
-    "homeDescription": "Controleer huuradvertenties vóór je betaalt: risicoscore 0–100, benchmark per stad, herkenbare signalen. Geen account. Start de check of lees hoe we werken.",
-    "title": "De Huur Radar — gratis huurfraude-check & advertentie-risicoscore",
-    "description": "Controleer huuradvertenties op oplichting vóór je betaalt: risicoscore 0–100, huur-benchmark per stad, signalen (WhatsApp, vooruitbetaling, Western Union), Marktplaats/Funda/kamer. Regels + optionele AI. Zonder account."
+    "homeTitle": "De Huur Radar | Gratis huurfraude-check & risicoscore 0–100",
+    "homeDescription": "Check huuradvertenties vóór je betaalt: risicoscore 0–100, huur-benchmark per stad, fraude-signalen (WhatsApp, vooruitbetaling, Western Union). Voor Marktplaats, Funda, kamers. Geen account, geen verborgen scores.",
+    "title": "De Huur Radar — huurfraude-check & transparante risicoscore",
+    "description": "Controleer huuradvertenties op oplichting vóór je betaalt. Risicoscore 0–100 met uitleg, benchmark per stad, herkenbare signalen. Optionele AI. Zonder account.",
+    "ogImageAlt": "De Huur Radar — controleer huuradvertenties vóór je betaalt"
   },
   "brand": {
     "name": "De Huur Radar",
@@ -40,8 +41,8 @@
     "faqTeaser": "Vragen over fraude, kamers of bronnen? Bekijk de FAQ."
   },
   "check": {
-    "metaTitle": "De Huur Radar — gratis huurfraude-check & advertentie-risicoscore",
-    "metaDescription": "Controleer huuradvertenties op oplichting vóór je betaalt: risicoscore 0–100, huur-benchmark per stad, signalen (WhatsApp, vooruitbetaling, Western Union), Marktplaats/Funda/kamer. Regels + optionele AI. Zonder account.",
+    "metaTitle": "Advertentie-check | De Huur Radar — risicoscore & huurfraude",
+    "metaDescription": "Plak een advertentie-URL of tekst. Risicoscore 0–100 met uitleg: prijs vs. benchmark, WhatsApp, vooruitbetaling, Western Union. OCR op screenshots. Gratis, zonder account.",
     "pageTitle": "Advertentie-check",
     "pageLead": "Plak tekst of een link naar een woningadvertentie. Je krijgt een risicoscore met concrete redenen — geen black box.",
     "backHome": "Terug naar de startpagina"
@@ -183,8 +184,8 @@
     "langEn": "English"
   },
   "faq": {
-    "metaTitle": "FAQ huurfraude & bronnen — De Huur Radar (Marktplaats, kamers, veilig huren)",
-    "metaDescription": "Antwoorden op veelgestelde vragen over De Huur Radar, huurfraude, studentenkamers, WhatsApp-scams en betrouwbare bronnen (NL/EU). Contact en verder lezen.",
+    "metaTitle": "FAQ huurfraude & veilig huren | De Huur Radar",
+    "metaDescription": "Veelgestelde vragen over huurfraude, studentenkamers, WhatsApp-scams en betrouwbare bronnen. Links naar consumentenadvies en overheid. Contact en verder lezen.",
     "backToHome": "Terug naar de startpagina",
     "contactTitle": "Contact",
     "contactIntro": "Vragen over deze tool of de website? Stuur een e-mail naar:",

@@ -1,9 +1,10 @@
 {
   "meta": {
-    "homeTitle": "De Huur Radar — free rental scam check & transparent risk score",
-    "homeDescription": "Check rental listings before you pay: risk score 0–100, city benchmark, clear scam signals. No account. Start the check or read how we work.",
-    "title": "De Huur Radar — free rental scam check & listing risk score",
-    "description": "Check rental listings for fraud before you pay: rule-based risk score 0–100, city rent benchmark, scam signals (WhatsApp, upfront payment, wire transfer). Works for Marktplaats, Funda, rooms. Optional AI. No account."
+    "homeTitle": "De Huur Radar | Free rental scam check & risk score 0–100",
+    "homeDescription": "Check rental listings before you pay: risk score 0–100, city rent benchmark, scam signals (WhatsApp, upfront payment, wire transfer). For Marktplaats, Funda, rooms. No account, no hidden scores.",
+    "title": "De Huur Radar — rental scam check & transparent risk score",
+    "description": "Check rental listings for fraud before you pay. Risk score 0–100 with explanations, city benchmark, clear signals. Optional AI. No account.",
+    "ogImageAlt": "De Huur Radar — check rental listings before you pay"
   },
   "brand": {
     "name": "De Huur Radar",
@@ -40,8 +41,8 @@
     "faqTeaser": "Questions about fraud, rooms, or sources? See the FAQ."
   },
   "check": {
-    "metaTitle": "De Huur Radar — free rental scam check & listing risk score",
-    "metaDescription": "Check rental listings for fraud before you pay: rule-based risk score 0–100, city rent benchmark, scam signals (WhatsApp, upfront payment, wire transfer). Works for Marktplaats, Funda, rooms. Optional AI. No account.",
+    "metaTitle": "Listing check | De Huur Radar — risk score & rental fraud",
+    "metaDescription": "Paste a listing URL or text. Risk score 0–100 with reasons: price vs. benchmark, WhatsApp, upfront payment, wire transfer. OCR on screenshots. Free, no account.",
     "pageTitle": "Listing check",
     "pageLead": "Paste text or a link to a property listing. You get a risk score with clear reasons — not a black box.",
     "backHome": "Back to home"
@@ -183,8 +184,8 @@
     "langEn": "English"
   },
   "faq": {
-    "metaTitle": "Rental fraud FAQ & sources — De Huur Radar (Marktplaats, rooms, scams)",
-    "metaDescription": "FAQ about De Huur Radar, rental fraud, student rooms, WhatsApp scams, and trusted sources. Contact and further reading for renters in the Netherlands and EU.",
+    "metaTitle": "Rental fraud FAQ & safe renting | De Huur Radar",
+    "metaDescription": "Frequently asked questions about rental fraud, student rooms, WhatsApp scams, and trusted sources. Links to consumer and government advice. Contact and further reading.",
     "backToHome": "Back to home",
     "contactTitle": "Contact",
     "contactIntro": "Questions about this tool or the website? Email:",
