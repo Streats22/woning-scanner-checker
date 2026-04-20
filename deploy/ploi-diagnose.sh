@@ -19,15 +19,18 @@ echo ""
 echo "========== 4) Nuxt op 127.0.0.1:3000 — footer staat ONDERAAN de HTML =========="
 curl -sI --max-time 5 "http://127.0.0.1:3000/" | head -15 || true
 BODY=$(curl -s --max-time 10 "http://127.0.0.1:3000/" || true)
-if echo "$BODY" | grep -q 'Build'; then
+if echo "$BODY" | grep -qE 'name="x-wsc-build"|name=.x-wsc-build'; then
+  echo "OK: meta x-wsc-build gevonden:"
+  echo "$BODY" | grep -oE '<meta[^>]*x-wsc-build[^>]*>' | head -1
+elif echo "$BODY" | grep -q 'Build'; then
   echo "$BODY" | grep -oE 'Build[^<]{0,120}' | head -3
 else
-  echo "(geen 'Build' in HTML — check of buildId in nuxt.config staat, of pagina is leeg)"
+  echo "(geen x-wsc-build / Build in HTML — oude deploy of lege response; rebuild + pm2 restart)"
 fi
 if echo "$BODY" | grep -q 'De Huur Radar'; then
   echo "OK: merknaam 'De Huur Radar' gevonden in HTML."
 else
-  echo "Let op: 'De Huur Radar' niet gevonden (oude tekst of andere fout)."
+  echo "Let op: 'De Huur Radar' niet gevonden (oude bundle, of i18n lazy/SSR — na rebuild opnieuw testen)."
 fi
 
 echo ""
