@@ -201,7 +201,10 @@
     "high": "Elevated risk"
   },
   "errors": {
-    "generic": "Analysis failed. Try again in a moment or check your connection."
+    "generic": "Analysis failed. Try again in a moment or check your connection.",
+    "notFoundTitle": "Page not found",
+    "notFound": "This page does not exist or has been moved.",
+    "serverTitle": "Something went wrong"
   },
   "header": {
     "themeLight": "Light",

@@ -201,7 +201,10 @@
     "high": "Verhoogd risico"
   },
   "errors": {
-    "generic": "Analyse mislukt. Probeer het later opnieuw of controleer je internetverbinding."
+    "generic": "Analyse mislukt. Probeer het later opnieuw of controleer je internetverbinding.",
+    "notFoundTitle": "Pagina niet gevonden",
+    "notFound": "Deze pagina bestaat niet of is verplaatst.",
+    "serverTitle": "Er ging iets mis"
   },
   "header": {
     "themeLight": "Licht",

@@ -59,6 +59,12 @@ export default defineNuxtConfig({
     },
     workbox: {
       navigateFallback: '/',
+      /**
+       * Alleen echte app-routes krijgen offline de shell (`/`). Anders vangen onbekende paden
+       * dezelfde fallback als de startpagina (oneindig “laden” / geen echte 404) — zie o.a.
+       * https://stackoverflow.com/questions/66804699/nginx-nuxt-website-not-redirecting-to-404
+       */
+      navigateFallbackAllowlist: [/^\/$/, /^\/check\/?$/, /^\/faq\/?$/],
       navigateFallbackDenylist: [/^\/api/, /^\/report/, /^\/build/, /^\/storage/, /^\/up$/],
       globPatterns: ['**/*.{js,css,ico,png,svg,woff2}'],
       /** Standaard in vite-plugin-pwa; expliciet voor duidelijkheid bij oude precache-entries. */
