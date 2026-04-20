@@ -20,11 +20,17 @@ const buildId =
   process.env.NUXT_PUBLIC_BUILD_ID?.trim()
   || new Date().toISOString()
 
+/** GA4 measurement ID — zelfde bron als `runtimeConfig.public.googleAnalyticsId`. */
+const googleAnalyticsId =
+  process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID?.trim()
+  || process.env.NUXT_PUBLIC_GTAG_ID?.trim()
+  || ''
+
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: process.env.NODE_ENV !== 'production' },
 
-  modules: ['@vite-pwa/nuxt', '@nuxtjs/color-mode', '@nuxtjs/i18n'],
+  modules: ['@vite-pwa/nuxt', '@nuxtjs/color-mode', '@nuxtjs/i18n', 'nuxt-gtag'],
 
   /**
    * Standaard geen service worker registreren: Workbox-precache gaf op mobiel na deploys 404 op oude /_nuxt-hashes.
@@ -110,6 +116,32 @@ export default defineNuxtConfig({
     storageKey: 'wsc-color-mode',
   },
 
+  /**
+   * nuxt-gtag: geen gtag.js tot cookietoestemming (`initMode: manual` + plugin 01).
+   * Zie https://nuxt.com/modules/gtag — Consent Mode v2 default denied.
+   */
+  gtag: {
+    enabled: !!googleAnalyticsId,
+    initMode: 'manual',
+    id: googleAnalyticsId,
+    initCommands: [
+      [
+        'consent',
+        'default',
+        {
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+          ad_storage: 'denied',
+          analytics_storage: 'denied',
+          wait_for_update: 500,
+        },
+      ],
+    ],
+    config: {
+      send_page_view: false,
+    },
+  },
+
   i18n: {
     locales: [
       { code: 'nl', language: 'nl-NL', name: 'Nederlands', file: 'nl.json' },
@@ -165,7 +197,7 @@ export default defineNuxtConfig({
        * GA4 measurement ID (G-…). Leeg = geen snippet.
        * Snippet in <head> (Tag Assistant); Consent Mode denied tot functionele opslag; daarna hits.
        */
-      googleAnalyticsId: process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID?.trim() || '',
+      googleAnalyticsId,
       /**
        * Tijdelijk: zonder cookiemodal-kies “functioneel” toch GA meten (Consent update in 01-plugin).
        * Zet `NUXT_PUBLIC_GA_DEFAULT_APPROVED=0` voor strikte modus (alleen na functionele toestemming).

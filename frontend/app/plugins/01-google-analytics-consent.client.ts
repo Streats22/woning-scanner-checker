@@ -1,6 +1,7 @@
 /**
- * Consent Mode update + page_view na toestemming, of direct als `gaDefaultApproved` (tijdelijk).
- * gtag/js + basis-config staan in google-tag-bootstrap.ts (zichtbaar voor Google Tag Assistant).
+ * nuxt-gtag (initMode: manual): laadt gtag.js pas na toestemming.
+ * Consent Mode v2: default denied in nuxt.config → hier `update` + page_view bij akkoord.
+ * Zie https://nuxt.com/modules/gtag
  */
 export default defineNuxtPlugin(() => {
   if (import.meta.server)
@@ -14,15 +15,9 @@ export default defineNuxtPlugin(() => {
 
   const router = useRouter()
   const { consent } = useCookieConsent()
+  const { gtag, initialize, disableAnalytics, enableAnalytics } = useGtag()
 
   let activated = false
-
-  function sendPageView(path: string) {
-    const g = window.gtag
-    if (typeof g !== 'function')
-      return
-    g('event', 'page_view', { page_path: path })
-  }
 
   function mayUseAnalytics(): boolean {
     if (consent.value?.functional === false)
@@ -38,19 +33,32 @@ export default defineNuxtPlugin(() => {
     if (!mayUseAnalytics())
       return
     activated = true
-    window.gtag?.('consent', 'update', {
-      analytics_storage: 'granted',
+    initialize()
+    enableAnalytics()
+    nextTick(() => {
+      gtag('consent', 'update', {
+        analytics_storage: 'granted',
+        ad_storage: 'denied',
+        ad_user_data: 'denied',
+        ad_personalization: 'denied',
+      })
+      useTrackEvent('page_view', {
+        page_path: router.currentRoute.value.fullPath,
+      })
     })
-    sendPageView(router.currentRoute.value.fullPath)
   }
 
   function revokeMeasurement() {
     if (!activated)
       return
     activated = false
-    window.gtag?.('consent', 'update', {
+    gtag('consent', 'update', {
       analytics_storage: 'denied',
+      ad_storage: 'denied',
+      ad_user_data: 'denied',
+      ad_personalization: 'denied',
     })
+    disableAnalytics()
   }
 
   watch(
@@ -65,10 +73,10 @@ export default defineNuxtPlugin(() => {
   )
 
   router.afterEach((to, from) => {
-    if (!activated || typeof window.gtag !== 'function')
+    if (!activated)
       return
     if (from.matched.length === 0)
       return
-    sendPageView(to.fullPath)
+    useTrackEvent('page_view', { page_path: to.fullPath })
   })
 })
