@@ -27,20 +27,20 @@ export default defineNuxtConfig({
   modules: ['@vite-pwa/nuxt', '@nuxtjs/color-mode', '@nuxtjs/i18n'],
 
   /**
-   * Service worker cachet shell + /_nuxt-assets na eerste bezoek — helpt bij flakiness / korte uitval.
-   * Geen vervanging voor een draaiende server op eerste load; nginx 502 → zie public/offline.html.
-   *
-   * Na een deploy: oude precache kan nog naar weggehaalde chunk-URL’s wijzen → nginx 404 bij verkeerde cache.
-   * NetworkFirst op /_nuxt/ probeert eerst het netwerk (nieuwe hashes), periodicSync helpt mobiel met SW-updates.
-   * Zet NUXT_PUBLIC_DISABLE_PWA_SW=1 om geen service worker te registreren (alleen webmanifest; bij hardnekkige cache-issues).
+   * Standaard geen service worker registreren: Workbox-precache gaf op mobiel na deploys 404 op oude /_nuxt-hashes.
+   * Webmanifest blijft (icoon / “toevoegen aan startscherm”). Zie plugin 00-unregister-sw voor opruimen oude SW.
+   * Zet NUXT_PUBLIC_ENABLE_PWA_SW=1 om SW + periodicSync weer aan te zetten (experimenteel).
    */
   pwa: {
-    ...(process.env.NUXT_PUBLIC_DISABLE_PWA_SW === '1' ? { injectRegister: false as const } : {}),
+    injectRegister: process.env.NUXT_PUBLIC_ENABLE_PWA_SW === '1' ? 'auto' : false,
     registerType: 'autoUpdate',
-    client: {
-      /** Seconden tussen checks op nieuwe SW (mobiel pakt updates sneller op). */
-      periodicSyncForUpdates: 3600,
-    },
+    ...(process.env.NUXT_PUBLIC_ENABLE_PWA_SW === '1'
+      ? {
+          client: {
+            periodicSyncForUpdates: 3600,
+          },
+        }
+      : {}),
     manifest: {
       name: 'De Huur Radar',
       short_name: 'Huur Radar',
@@ -148,6 +148,8 @@ export default defineNuxtConfig({
       apiAllowHttp,
       /** ISO-tijd of git-SHA (set NUXT_PUBLIC_BUILD_ID in CI) */
       buildId,
+      /** `true` als NUXT_PUBLIC_ENABLE_PWA_SW=1 — schakelt unregister-plugin uit en registreert de SW. */
+      pwaSwEnabled: process.env.NUXT_PUBLIC_ENABLE_PWA_SW === '1',
     },
   },
 

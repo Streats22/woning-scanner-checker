@@ -2,10 +2,8 @@
 
 namespace App\Support;
 
-use App\Services\ListingDwellingClassifier;
-
 /**
- * Vertaalde weergave van {@see ListingDwellingClassifier}-output voor Blade (PDF + web).
+ * Vertaalde weergave van {@see \App\Services\ListingDwellingClassifier}-output voor Blade (PDF + web).
  */
 final class ListingDwellingPresentation
 {

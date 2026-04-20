@@ -1,0 +1,71 @@
+De Huur Radar — 403 (of vreemde fout) op POST /api/analyze op productie
+================================================================================
+
+Meest voorkomende oorzaak
+-------------------------
+Op listen **443** (HTTPS) staat in Ploi vaak alleen:
+
+    location / {
+        proxy_pass http://127.0.0.1:3000;   # Nuxt
+        ...
+    }
+
+zonder de Laravel-locations uit deploy/dehuurradar.nl.conf. Dan gaat
+**POST https://jouwdomein.nl/api/analyze** naar **Nuxt/Nitro**, niet naar **PHP/Laravel**.
+Nitro heeft geen route /api/analyze → vaak **403**, **404** of HTML i.p.v. JSON.
+
+Oplossing
+---------
+In de nginx-siteconfig voor **listen 443 ssl** (HTTPS) moeten **dezelfde** blocks staan
+als in de repo-config voor Laravel, **vóór** `location / { proxy_pass ... }`:
+
+    location ^~ /api {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location ^~ /report {
+        try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /up { ... }
+    location ^~ /build { ... }
+    location ^~ /storage { ... }
+
+    location ~ \.php$ {
+        fastcgi_pass unix:/run/php/php8.5-fpm.sock;   # pas socket aan
+        ...
+    }
+
+Daarna: `sudo nginx -t && sudo systemctl reload nginx`
+
+Controleren (op de server of lokaal tegen productie)
+----------------------------------------------------
+1) Laravel bereikt (verwacht JSON `{"ok":true}`):
+
+   curl -sS https://dehuurradar.nl/api/health
+
+2) Analyse-endpoint (verwacht JSON met scores of validatiefout, geen HTML-pagina):
+
+   curl -sS -X POST https://dehuurradar.nl/api/analyze \
+     -H "Content-Type: application/json" \
+     -H "Accept: application/json" \
+     -d '{"text":"test huur € 500 in Utrecht"}'
+
+3) Welke server blok raakt je request?
+
+   sudo nginx -T 2>/dev/null | grep -n "location.*api\|proxy_pass.*3000\|listen.*443"
+
+Als je in de response **HTML** (Nuxt) ziet i.p.v. JSON, zit /api nog achter de verkeerde location.
+
+Overige oorzaken (minder vaak)
+------------------------------
+- Cloudflare WAF / firewall: POST-body met bepaalde woorden geblokkeerd → soms 403.
+  Tijdelijk “Security Level” verlagen of regel uitzonderen voor /api/*.
+- Verkeerde PHP-FPM socket in de **443**-config (andere dan :80) → 502/403.
+- Alleen apex in server_name op 443 maar je test met www (of omgekeerd) → andere vhost.
+
+Laravel zelf
+------------
+routes/api.php heeft geen auth-middleware; een **echte** 403 JSON van Laravel
+met stacktrace is zeldzaam tenzij je middleware toevoegt. Twijfel: response-body
+en `php artisan route:list --path=api` op de server.
