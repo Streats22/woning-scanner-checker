@@ -1,18 +1,26 @@
 #!/usr/bin/env bash
 # Herbouwt Nuxt op de Ploi-server en herstart PM2 — los dit uit op de VPS (SSH).
 #
-# Gebruik (pas SITE_ROOT aan naar wat Ploi toont bij de site):
-#   SITE_ROOT=/home/ploi/humble-shore-hib6wzuau5.ploi.website bash deploy/ploi-rebuild-frontend.sh
+# 1) Echte site-paden:  ls /home/ploi/
+#     Niet elke test-URL heeft een map "humble-shore-…"; namen verschillen per server.
 #
-# Of voor dehuurradar.nl:
-#   SITE_ROOT=/home/ploi/dehuurradar.nl bash deploy/ploi-rebuild-frontend.sh
+# 2) Vaak staat de frontend alleen onder de hoofdsite, bv.:
+#      /home/ploi/dehuurradar.nl/frontend
+#    Test-URL (humble-shore-….ploi.website) kan naar dezelfde Nginx → zelfde poort →
+#    dezelfde PM2-app wijzen. Dan is één build + één restart genoeg.
 #
-# Optioneel:
-#   PM2_NAME=dehuurradar-nuxt   # naam zoals in `pm2 list`
+# 3) pm2: gebruik de exacte naam uit `pm2 list`, zonder < > haakjes.
+#    FOUT:  pm2 restart <dehuurradar-nuxt>
+#    GOED:  pm2 restart dehuurradar-nuxt
+#
+# Voorbeeld (jouw pad uit de build-log):
+#   export SITE_ROOT=/home/ploi/dehuurradar.nl
+#   export PM2_NAME=dehuurradar-nuxt
+#   bash deploy/ploi-rebuild-frontend.sh
 #
 set -euo pipefail
 
-SITE_ROOT="${SITE_ROOT:?Zet SITE_ROOT, bv. export SITE_ROOT=/home/ploi/humble-shore-hib6wzuau5.ploi.website}"
+SITE_ROOT="${SITE_ROOT:?Zet SITE_ROOT, bv. export SITE_ROOT=/home/ploi/dehuurradar.nl}"
 FRONTEND="${SITE_ROOT}/frontend"
 
 if [[ ! -d "$FRONTEND" ]]; then
@@ -33,12 +41,12 @@ echo "==> npm run build…"
 npm run build
 
 if [[ -n "${PM2_NAME:-}" ]]; then
-  echo "==> pm2 restart $PM2_NAME"
-  pm2 restart "$PM2_NAME"
+  echo "==> pm2 restart $PM2_NAME --update-env (laadt .env / ecosystem env opnieuw)"
+  pm2 restart "$PM2_NAME" --update-env
 else
-  echo "==> Geen PM2_NAME gezet — start of herstart handmatig, bv.:"
-  echo "    pm2 restart <naam>   # zie: pm2 list"
-  echo "    of: pm2 start /pad/naar/deploy/ecosystem.config.cjs"
+  echo "==> Geen PM2_NAME gezet — herstart handmatig, bv.:"
+  echo "    pm2 restart dehuurradar-nuxt"
+  echo "    (naam uit: pm2 list — geen < > gebruiken in bash)"
 fi
 
 echo "==> Klaar. Controleer footer 'Build · …' op de site en vergelijk met lokaal."
