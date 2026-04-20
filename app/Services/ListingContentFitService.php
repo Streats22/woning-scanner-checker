@@ -80,7 +80,7 @@ class ListingContentFitService
             $codes[] = 'postcode';
         }
 
-        if (preg_match('/€\s*\d/', $text)) {
+        if (preg_match('/€\s*\d/u', $text)) {
             $score += 5;
             $codes[] = 'euro_in_text';
         }

@@ -92,18 +92,18 @@ class ListingAddressParser
 
     private function shouldSkipLineAsUiOrNoise(string $line): bool
     {
-        if (preg_match('/€|EUR|euro|per\s+maand|p\.m\.|pm\b/i', $line)) {
+        if (preg_match('/€|EUR|euro|per\s+maand|p\.m\.|pm\b/iu', $line)) {
             return true;
         }
 
-        if (preg_match('/\b(add\s+to|favorites?|favourites?|favoriet|favorieten|delen|share|cookie|cookies|nieuwsbrief|inschrijven|aanmelden|inloggen|menu|zoeken|filter)\b/i', $line)) {
+        if (preg_match('/\b(add\s+to|favorites?|favourites?|favoriet|favorieten|delen|share|cookie|cookies|nieuwsbrief|inschrijven|aanmelden|inloggen|menu|zoeken|filter)\b/iu', $line)) {
             return true;
         }
 
         // Korte menuregel: "X / Y / Z" zonder echte straat-suffix in de regel
         if (substr_count($line, ' / ') >= 1
             && mb_strlen($line) < 120
-            && ! preg_match('#(?:'.self::STREET_SUFFIX_PATTERN.')#i', $line)) {
+            && ! preg_match('#(?:'.self::STREET_SUFFIX_PATTERN.')#iu', $line)) {
             return true;
         }
 
@@ -112,7 +112,7 @@ class ListingAddressParser
 
     private function isStreetCandidateNoise(string $street): bool
     {
-        if (preg_match('#favorite|favourites?|favoriet|delen|^aan\s*$|add\s+to|^\s*/\s*$#i', $street)) {
+        if (preg_match('#favorite|favourites?|favoriet|delen|^aan\s*$|add\s+to|^\s*/\s*$#iu', $street)) {
             return true;
         }
 
@@ -122,7 +122,7 @@ class ListingAddressParser
         }
 
         // Te veel leestekens / URL-achtig (geen echte straatregel)
-        if (substr_count($street, '/') >= 1 && ! preg_match('#(?:'.self::STREET_SUFFIX_PATTERN.')#i', $street)) {
+        if (substr_count($street, '/') >= 1 && ! preg_match('#(?:'.self::STREET_SUFFIX_PATTERN.')#iu', $street)) {
             return true;
         }
 
@@ -140,7 +140,7 @@ class ListingAddressParser
             return true;
         }
 
-        if (preg_match('/^\d{3,5}$/', $number) && preg_match('/huur|prijs|€|kosten/i', $street)) {
+        if (preg_match('/^\d{3,5}$/', $number) && preg_match('/huur|prijs|€|kosten/iu', $street)) {
             return true;
         }
 
