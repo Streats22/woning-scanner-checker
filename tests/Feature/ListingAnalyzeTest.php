@@ -191,6 +191,22 @@ class ListingAnalyzeTest extends TestCase
             ->assertJsonValidationErrors(['text']);
     }
 
+    public function test_analyze_returns_clear_message_when_source_returns_403(): void
+    {
+        Http::fake([
+            'https://forbidden.example/*' => Http::response('', 403),
+        ]);
+
+        $response = $this->postJson('/api/analyze', [
+            'text' => 'https://forbidden.example/page',
+        ]);
+
+        $response->assertUnprocessable()
+            ->assertJsonValidationErrors(['text']);
+
+        $this->assertStringContainsString('staat niet toe', $response->json('errors.text.0'));
+    }
+
     public function test_analyze_returns_validation_error_when_http_connection_fails(): void
     {
         Http::fake(function () {

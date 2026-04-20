@@ -250,10 +250,13 @@
     "q8": "Why do English scam phrases affect the score?",
     "a8": "Cross-border scammers often use boilerplate English. If those phrases appear in a supposedly Dutch listing, we add a small risk signal—in addition to other checks.",
     "q9": "Are student rooms different from regular rentals?",
-    "a9": "The scams are often the same: unrealistic rent, registration or “agency” fees before a viewing, pressure to pay fast, or swapping ID copies with a stranger. Room listings are a common target when demand is high. See e.g. Scholieren.com (Dutch, CCV / ministry tips: reverse image search, no brokerage fees as a tenant without a broker mandate, government Kopie ID app). De Huur Radar applies the same text patterns to room ads as to other rentals."
+    "a9": "The scams are often the same: unrealistic rent, registration or “agency” fees before a viewing, pressure to pay fast, or swapping ID copies with a stranger. Room listings are a common target when demand is high. See e.g. Scholieren.com (Dutch, CCV / ministry tips: reverse image search, no brokerage fees as a tenant without a broker mandate, government Kopie ID app). De Huur Radar applies the same text patterns to room ads as to other rentals.",
+    "q10": "The site won’t load or I see an error (especially on mobile)—what should I do?",
+    "a10": "Often this is a stale browser cache or an old “app-like” install of the site. First try refreshing the page or opening the site in a private/incognito window. If it persists, clear data for this site only. Firefox (Android): menu → Settings → Delete browsing data → Cookies & site data / Site permissions → find dehuurradar.nl → remove. Chrome (Android): ⋮ → Settings → Privacy and security → Delete browsing data → include “Site settings” or use a private tab, then open the site again. You don’t need an account; this only clears temporary files on your phone."
   },
   "footer": {
     "navAria": "Analysis and FAQ",
+    "staleCacheHint": "Site not loading? Refresh or clear site data for dehuurradar.nl — see FAQ question 10.",
     "note": "De Huur Radar gives a risk indication using fixed rules, with an optional short AI summary. It is not a substitute for your own checks or legal advice.",
     "madeBy": "Made by ",
     "contactLabel": "Contact: ",

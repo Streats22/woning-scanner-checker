@@ -1,6 +1,15 @@
-De Huur Radar — 403 (of vreemde fout) op POST /api/analyze op productie
+De Huur Radar — “403” rond /api/analyze: twee verschillende situaties
 ================================================================================
 
+A) HTTP 403 van de advertentie-site (Woningnet, gemeente-portaal, enz.)
+------------------------------------------------------------------------
+Als onze server een URL ophaalt, kan de **bronwebsite** `403 Forbidden` teruggeven:
+zij staat geen automatisch ophalen toe (alleen browser/gebruiker). Dat is **geen**
+fout in onze nginx; Laravel geeft dan **422 Unprocessable Entity** met een
+validatiefout op `text` en een uitleg dat je de tekst handmatig moet plakken.
+
+B) Echte nginx-/proxy-403 op **jouw** domein (dehuurradar.nl)
+------------------------------------------------------------
 Meest voorkomende oorzaak
 -------------------------
 Op listen **443** (HTTPS) staat in Ploi vaak alleen:
@@ -64,8 +73,10 @@ Overige oorzaken (minder vaak)
 - Verkeerde PHP-FPM socket in de **443**-config (andere dan :80) → 502/403.
 - Alleen apex in server_name op 443 maar je test met www (of omgekeerd) → andere vhost.
 
-Laravel zelf
-------------
-routes/api.php heeft geen auth-middleware; een **echte** 403 JSON van Laravel
-met stacktrace is zeldzaam tenzij je middleware toevoegt. Twijfel: response-body
-en `php artisan route:list --path=api` op de server.
+Laravel zelf (onze API)
+-----------------------
+routes/api.php heeft geen auth-middleware; een **HTTP 403** als statuscode van
+`POST /api/analyze` is daardoor ongebruikelijk. Fouten bij URL ophalen worden
+als **422** + `errors.text` teruggegeven (o.a. bij bron-HTTP 403).
+
+Twijfel: response-body (JSON vs HTML) en `php artisan route:list --path=api` op de server.

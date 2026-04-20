@@ -64,7 +64,7 @@ const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const baseUrl = useWscSiteBase()
 
-const faqQuestionIds = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const
+const faqQuestionIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const
 
 const faqJsonLd = computed(() => {
   const base = baseUrl.value

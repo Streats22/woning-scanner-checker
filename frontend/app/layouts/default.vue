@@ -278,6 +278,7 @@
 
         <div class="footer__privacy">
           <p class="footer__privacy-text">{{ t('cookies.footerSummary') }}</p>
+          <p class="footer__stale-hint">{{ t('footer.staleCacheHint') }}</p>
         </div>
 
         <div class="footer__fineprint">
@@ -1281,6 +1282,16 @@ useHead(() => ({
   font-weight: 600;
   line-height: 1.5;
   color: var(--text-secondary);
+  text-align: center;
+}
+
+.footer__stale-hint {
+  margin: 0.65rem 0 0;
+  max-width: 40rem;
+  margin-inline: auto;
+  font-size: 0.75rem;
+  line-height: 1.45;
+  color: var(--text-tertiary);
   text-align: center;
 }
 

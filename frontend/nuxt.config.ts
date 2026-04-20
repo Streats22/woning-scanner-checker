@@ -32,6 +32,11 @@ export default defineNuxtConfig({
    * Zet NUXT_PUBLIC_ENABLE_PWA_SW=1 om SW + periodicSync weer aan te zetten (experimenteel).
    */
   pwa: {
+    /**
+     * sw.js die nog binnenkomt (oude installatie) haalt zichzelf uit + caches; helpt klanten
+     * die niet meteen de nieuwe bundle laden. Werkt samen met plugin 00-unregister-sw.
+     */
+    selfDestroying: true,
     injectRegister: process.env.NUXT_PUBLIC_ENABLE_PWA_SW === '1' ? 'auto' : false,
     registerType: 'autoUpdate',
     ...(process.env.NUXT_PUBLIC_ENABLE_PWA_SW === '1'

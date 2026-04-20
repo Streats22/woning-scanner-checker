@@ -120,7 +120,15 @@ class ListingFetchService
         }
 
         if (! $response->successful()) {
-            throw new ListingFetchException('Kan de pagina niet laden (HTTP '.$response->status().').');
+            $status = $response->status();
+
+            if ($status === 403) {
+                throw new ListingFetchException(
+                    'Deze website staat niet toe dat wij de pagina automatisch ophalen (toegang geweigerd). Kopieer de advertentietekst en plak die hier handmatig.'
+                );
+            }
+
+            throw new ListingFetchException('Kan de pagina niet laden (HTTP '.$status.').');
         }
 
         $html = $response->body();

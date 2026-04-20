@@ -1,0 +1,29 @@
+De Huur Radar — klanten die op mobiel vastzitten aan 404 / oude pagina
+========================================================================
+
+Wat we server-side doen (na deploy van de nieuwste frontend)
+------------------------------------------------------------
+- Geen nieuwe service worker-registratie; oude Workbox-SW + caches worden door
+  de site opgeruimd; bij succes één automatische pagina-verversing.
+- sw.js op de server is “selfDestroying”: browsers die nog een oude SW updaten,
+  halen zichzelf uit zodra die nieuwe script binnenkomt.
+
+Wat je klanten kunt laten doen (als het nog misgaat)
+---------------------------------------------------
+1) Pagina hard vernieuwen of site in een privévenster openen.
+
+2) Alleen sitegegevens wissen voor dehuurradar.nl (niet “alles wissen”):
+   - Firefox Android: zie FAQ vraag 10 op de site (Instellingen → gegevens per site).
+   - Chrome Android: Instellingen → Privacy → browsegegevens → sitegegevens.
+
+3) PWA op startscherm: app verwijderen en daarna in de browser opnieuw naar de
+   site gaan (geen verplichte app; gewone browser is genoeg).
+
+4) Support: vraag of ze op wifi én op 4G hetzelfde zien — helpt nginx/403
+   (API) uitsluiten t.o.v. puur cache.
+
+Technische verwijzingen in deze repo
+------------------------------------
+- frontend/app/plugins/00-unregister-sw.client.ts
+- frontend/nuxt.config.ts (pwa.selfDestroying, injectRegister)
+- deploy/API-403-HTTPS.txt (als de fout een API/403 is i.p.v. 404 op assets)

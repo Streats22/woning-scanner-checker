@@ -250,10 +250,13 @@
     "q8": "Waarom staan er Engelse scam-zinnen in de regels?",
     "a8": "Internationale oplichters gebruiken vaak standaard Engelstalige templates. Als die woorden in een ogenschijnlijk Nederlandse advertentie staan, verhogen we het risico licht — los van andere signalen.",
     "q9": "Zijn studentenkamers anders dan gewone huur?",
-    "a9": "De trucs zijn vaak dezelfde: te mooie prijs, inschrijfgeld of ‘bemiddelingskosten’ vóór een bezichtiging, druk om snel te betalen, of een ID-kopie uitwisselen met iemand die je niet kent. Juist bij kamers is de vraag hoog en zijn studenten een doelgroep — zie o.a. Scholieren.com (CCV / ministerie) voor praktische tips (Google Image Search op foto’s, geen bemiddelingskosten als huurder zonder makelaarsopdracht, Kopie-ID-app van de overheid). De Huur Radar herkent dezelfde tekstpatronen in kameradvertenties als bij andere huur."
+    "a9": "De trucs zijn vaak dezelfde: te mooie prijs, inschrijfgeld of ‘bemiddelingskosten’ vóór een bezichtiging, druk om snel te betalen, of een ID-kopie uitwisselen met iemand die je niet kent. Juist bij kamers is de vraag hoog en zijn studenten een doelgroep — zie o.a. Scholieren.com (CCV / ministerie) voor praktische tips (Google Image Search op foto’s, geen bemiddelingskosten als huurder zonder makelaarsopdracht, Kopie-ID-app van de overheid). De Huur Radar herkent dezelfde tekstpatronen in kameradvertenties als bij andere huur.",
+    "q10": "De site laadt niet of ik zie een fout (vooral op mobiel) — wat nu?",
+    "a10": "Dat kan komen door een oude browsercache of een eerdere ‘app-achtige’ opslag van de site. Probeer eerst de pagina te vernieuwen of de site in een privévenster te openen. Blijft het mis? Wis de gegevens alleen voor deze site. Firefox (Android): menu → Instellingen → Gegevens wissen → ‘Cookies en sitegegevens’ of ‘Beheerde websites’ → zoek dehuurradar.nl → verwijderen. Chrome (Android): ⋮ → Instellingen → Privacy en beveiliging → Browsegegevens wissen → kies ‘Sitegegevens’ en selecteer deze site, of gebruik een privétab. Daarna opnieuw naar de site gaan. Geen zorgen: je hoeft geen account te hebben; het gaat alleen om tijdelijke bestanden op je telefoon."
   },
   "footer": {
     "navAria": "Analyse en veelgestelde vragen",
+    "staleCacheHint": "Laadt de site niet goed? Vernieuw de pagina of wis sitegegevens voor dehuurradar.nl — zie FAQ vraag 10.",
     "note": "De Huur Radar geeft een risico-indicatie op basis van vaste regels; optioneel een korte AI-toelichting. Geen vervanging voor eigen onderzoek of juridisch advies.",
     "madeBy": "Gemaakt door ",
     "contactLabel": "Contact: ",
