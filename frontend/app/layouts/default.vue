@@ -76,8 +76,8 @@
             <button
               type="button"
               class="seg__btn seg__btn--icon"
-              :class="{ 'seg__btn--active': colorMode.value === 'light' }"
-              :aria-pressed="colorMode.value === 'light'"
+              :class="{ 'seg__btn--active': themeDisplay === 'light' }"
+              :aria-pressed="themeDisplay === 'light'"
               :aria-label="t('header.themeLight')"
               :title="t('header.themeLight')"
               @click="colorMode.preference = 'light'"
@@ -87,8 +87,8 @@
             <button
               type="button"
               class="seg__btn seg__btn--icon"
-              :class="{ 'seg__btn--active': colorMode.value === 'dark' }"
-              :aria-pressed="colorMode.value === 'dark'"
+              :class="{ 'seg__btn--active': themeDisplay === 'dark' }"
+              :aria-pressed="themeDisplay === 'dark'"
               :aria-label="t('header.themeDark')"
               :title="t('header.themeDark')"
               @click="colorMode.preference = 'dark'"
@@ -218,8 +218,8 @@
                 <button
                   type="button"
                   class="seg__btn seg__btn--icon"
-                  :class="{ 'seg__btn--active': colorMode.value === 'light' }"
-                  :aria-pressed="colorMode.value === 'light'"
+                  :class="{ 'seg__btn--active': themeDisplay === 'light' }"
+                  :aria-pressed="themeDisplay === 'light'"
                   :aria-label="t('header.themeLight')"
                   @click="colorMode.preference = 'light'"
                 >
@@ -228,8 +228,8 @@
                 <button
                   type="button"
                   class="seg__btn seg__btn--icon"
-                  :class="{ 'seg__btn--active': colorMode.value === 'dark' }"
-                  :aria-pressed="colorMode.value === 'dark'"
+                  :class="{ 'seg__btn--active': themeDisplay === 'dark' }"
+                  :aria-pressed="themeDisplay === 'dark'"
                   :aria-label="t('header.themeDark')"
                   @click="colorMode.preference = 'dark'"
                 >
@@ -329,6 +329,7 @@ const buildIdDisplay = computed(() => {
 /** Alleen in development: productie-footer zonder technische build-regel. */
 const showBuildFooter = import.meta.dev
 const colorMode = useColorMode()
+const { themeDisplay } = useWscThemeDisplay()
 const { openCookieSettings, showDialog: cookieDialogOpen } = useCookieConsent()
 
 const mobileMenuPanelId = 'wsc-mobile-nav-panel'
@@ -379,8 +380,8 @@ function scrollToTop() {
   document.getElementById('main-content')?.focus({ preventScroll: true })
 }
 
-/** Twee segmenten: actieve pill volgt de weergegeven modus (ook bij preference `system`). */
-const themeSegIndex = computed(() => (colorMode.value === 'dark' ? 1 : 0))
+/** Twee segmenten: pill volgt echte `html.dark` (sync met @nuxtjs/color-mode bij system + hydratie). */
+const themeSegIndex = computed(() => (themeDisplay.value === 'dark' ? 1 : 0))
 
 const brandTheme = {
   light: '#1e40af',
@@ -438,7 +439,7 @@ const themeColor = computed(() => {
   const b = appConfig.brand
   const light = b?.themeColorLight ?? brandTheme.light
   const dark = b?.themeColorDark ?? brandTheme.dark
-  return colorMode.value === 'dark' ? dark : light
+  return themeDisplay.value === 'dark' ? dark : light
 })
 
 let mqDesktopListener: (() => void) | null = null

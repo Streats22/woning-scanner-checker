@@ -27,24 +27,31 @@
           </button>
 
           <div v-show="detailsOpen" class="cookie-panel__details">
-            <table class="cookie-table">
-              <thead>
-                <tr>
-                  <th scope="col">{{ t('cookies.tableName') }}</th>
-                  <th scope="col">{{ t('cookies.tableType') }}</th>
-                  <th scope="col">{{ t('cookies.tablePurpose') }}</th>
-                  <th scope="col">{{ t('cookies.tableDuration') }}</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr v-for="(row, i) in tableRows" :key="i">
-                  <td><code class="cookie-table__code">{{ row.name }}</code></td>
-                  <td>{{ row.type }}</td>
-                  <td>{{ row.purpose }}</td>
-                  <td>{{ row.duration }}</td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="cookie-table-wrap">
+              <table class="cookie-table">
+                <caption class="cookie-table__caption">
+                  {{ t('cookies.tableCaption') }}
+                </caption>
+                <thead>
+                  <tr>
+                    <th scope="col">{{ t('cookies.tableName') }}</th>
+                    <th scope="col">{{ t('cookies.tableType') }}</th>
+                    <th scope="col">{{ t('cookies.tablePurpose') }}</th>
+                    <th scope="col">{{ t('cookies.tableDuration') }}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(row, i) in tableRows" :key="i">
+                    <td :data-label="t('cookies.tableName')">
+                      <code class="cookie-table__code">{{ row.name }}</code>
+                    </td>
+                    <td :data-label="t('cookies.tableType')">{{ row.type }}</td>
+                    <td :data-label="t('cookies.tablePurpose')">{{ row.purpose }}</td>
+                    <td :data-label="t('cookies.tableDuration')">{{ row.duration }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <p class="cookie-panel__api-note">{{ t('cookies.apiNote') }}</p>
             <p class="cookie-panel__fonts-note">{{ t('cookies.fontsNote') }}</p>
             <p class="cookie-panel__legal">{{ t('cookies.legalNote') }}</p>
@@ -174,17 +181,35 @@ watch(showDialog, (open) => {
   margin-bottom: 1rem;
 }
 
+.cookie-table-wrap {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+  margin: 0 -0.25rem;
+  padding: 0 0.25rem 0.15rem;
+}
+
 .cookie-table {
   width: 100%;
+  min-width: min(100%, 36rem);
   border-collapse: collapse;
   font-size: 0.78rem;
   color: var(--text-secondary);
 }
 
+.cookie-table__caption {
+  caption-side: top;
+  text-align: left;
+  padding: 0 0 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  line-height: 1.35;
+}
+
 .cookie-table th,
 .cookie-table td {
   border: 1px solid var(--border-subtle);
-  padding: 0.45rem 0.5rem;
+  padding: 0.45rem 0.55rem;
   text-align: left;
   vertical-align: top;
 }
@@ -193,12 +218,80 @@ watch(showDialog, (open) => {
   background: var(--surface-muted);
   color: var(--text-primary);
   font-weight: 600;
+  white-space: nowrap;
+}
+
+.cookie-table thead th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  box-shadow: 0 1px 0 var(--border-subtle);
 }
 
 .cookie-table__code {
   font-size: 0.72rem;
   word-break: break-all;
   color: var(--text-primary);
+}
+
+/* Smalle schermen: rijen als kaarten met labels (geen geperste 4-kolommen-tabel) */
+@media (max-width: 639px) {
+  .cookie-table-wrap {
+    overflow-x: visible;
+    margin: 0;
+    padding: 0;
+  }
+
+  .cookie-table {
+    min-width: 0;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  .cookie-table thead {
+    position: static;
+  }
+
+  .cookie-table thead,
+  .cookie-table thead tr {
+    display: none;
+  }
+
+  .cookie-table tbody {
+    display: block;
+  }
+
+  .cookie-table tbody tr {
+    display: block;
+    margin-bottom: 0.75rem;
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-sm);
+    overflow: hidden;
+    background: var(--surface-muted);
+  }
+
+  .cookie-table tbody td {
+    display: block;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--border-subtle);
+    padding: 0.5rem 0.65rem;
+    box-sizing: border-box;
+  }
+
+  .cookie-table tbody td:last-child {
+    border-bottom: none;
+  }
+
+  .cookie-table tbody td::before {
+    content: attr(data-label);
+    display: block;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--text-tertiary);
+    margin-bottom: 0.25rem;
+    line-height: 1.3;
+  }
 }
 
 .cookie-panel__api-note,

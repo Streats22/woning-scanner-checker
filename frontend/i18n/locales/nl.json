@@ -268,6 +268,7 @@
     "noTrackingBanner": "Geen advertentie- of analytische tracking (geen Meta Pixel, Google Analytics, enz.). Geen verkoop van gegevens aan derden via deze website.",
     "detailsToggle": "Toon volledige tabel",
     "detailsHide": "Verberg tabel",
+    "tableCaption": "Overzicht van cookies en lokale opslag",
     "tableName": "Naam / sleutel",
     "tableType": "Type",
     "tablePurpose": "Doel",

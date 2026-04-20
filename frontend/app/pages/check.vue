@@ -452,7 +452,7 @@ type AnalyzeResponse = {
 
 const { t, locale } = useI18n()
 const localePath = useLocalePath()
-const colorMode = useColorMode()
+const { themeDisplay } = useWscThemeDisplay()
 const config = useRuntimeConfig()
 
 const emDash = '—'
@@ -684,7 +684,7 @@ const reportPdfHref = computed(() => {
     return '#'
   try {
     const u = new URL(raw, typeof window !== 'undefined' ? window.location.origin : 'http://localhost')
-    u.searchParams.set('theme', colorMode.value === 'dark' ? 'dark' : 'light')
+    u.searchParams.set('theme', themeDisplay.value === 'dark' ? 'dark' : 'light')
     u.searchParams.set('locale', locale.value === 'en' ? 'en' : 'nl')
     return u.toString()
   }
