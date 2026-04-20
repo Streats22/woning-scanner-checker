@@ -39,6 +39,7 @@
     $linkAssessment = $snap['link_assessment'] ?? null;
     $llmUsed = $snap['llm_used'] ?? false;
     $listingFit = is_array($snap['listing_fit'] ?? null) ? $snap['listing_fit'] : null;
+    $listingFacts = is_array($snap['listing_facts'] ?? null) ? $snap['listing_facts'] : null;
 @endphp
     <div class="wrap">
         <span class="badge">Gedeeld rapport</span>
@@ -50,6 +51,64 @@
                 · <a href="{{ $listing->source_url }}" style="color:var(--accent);">{{ parse_url($listing->source_url, PHP_URL_HOST) ?? 'Bronlink' }}</a>
             @endif
         </p>
+
+        @if ($listingFacts)
+            <div class="card">
+                <h2>Geëxtraheerde gegevens</h2>
+                <table class="facts-table" style="width:100%; font-size:0.9375rem; border-collapse:collapse;">
+                    <tbody>
+                        <tr>
+                            <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--muted); vertical-align:top; width:38%;">Stad (herkenning)</td>
+                            <td style="padding:0.35rem 0;">{{ $listingFacts['city'] ?? '—' }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--muted); vertical-align:top;">Straat / huisnummer</td>
+                            <td style="padding:0.35rem 0;">{{ $listingFacts['street_line'] ?? ($listingFacts['street'] ?? '—') }}</td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--muted); vertical-align:top;">Prijs in advertentie</td>
+                            <td style="padding:0.35rem 0;">
+                                @if (isset($listingFacts['price_eur']) && $listingFacts['price_eur'] !== null)
+                                    € {{ number_format((int) $listingFacts['price_eur'], 0, ',', '.') }}
+                                @else
+                                    —
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--muted); vertical-align:top;">Benchmark (model)</td>
+                            <td style="padding:0.35rem 0;">
+                                € {{ number_format((int) ($listingFacts['benchmark_monthly_eur'] ?? $listing->market_average ?? 0), 0, ',', '.') }} / maand
+                                @if (($listingFacts['benchmark_diff_percent'] ?? $listing->market_difference_percent) !== null)
+                                    · afwijking t.o.v. prijs: <strong>{{ $listingFacts['benchmark_diff_percent'] ?? $listing->market_difference_percent }}%</strong>
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--muted); vertical-align:top;">Bron</td>
+                            <td style="padding:0.35rem 0; word-break:break-all;">
+                                @if (!empty($listingFacts['source_url']))
+                                    <a href="{{ $listingFacts['source_url'] }}" style="color:var(--accent);">{{ $listingFacts['source_url'] }}</a>
+                                @else
+                                    —
+                                @endif
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--muted); vertical-align:top;">Contact (indicatie)</td>
+                            <td style="padding:0.35rem 0;">{{ $listingFacts['contact_hint'] ?? '—' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="prose muted" style="margin:0.75rem 0 0; font-size:0.85rem;">
+                    @if (($listingFacts['benchmark_scope'] ?? '') === 'national')
+                        Benchmark: landelijk gemiddelde — geen specifieke stad herkend in de tekst.
+                    @elseif (!empty($listingFacts['benchmark_city']))
+                        Benchmark: model voor <strong>{{ $listingFacts['benchmark_city'] }}</strong> (indicatief, geen taxatie).
+                    @endif
+                </p>
+            </div>
+        @endif
 
         <div class="card">
             <div class="score-row">
@@ -85,7 +144,7 @@
         @if ($methodology)
             <div class="card">
                 <h2>Hoe dit rapport tot stand komt</h2>
-                <p class="prose muted">{{ $methodology }}</p>
+                <p class="prose muted methodology-text">{!! nl2br(e($methodology)) !!}</p>
             </div>
         @endif
 

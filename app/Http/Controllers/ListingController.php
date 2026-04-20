@@ -64,7 +64,7 @@ class ListingController extends Controller
 
         $listingFit = $this->listingContentFit->assess($data);
 
-        $reportSnapshot = $this->analyzeResultAssembler->buildReportSnapshot($analysis, $priceData, $listingFit);
+        $reportSnapshot = $this->analyzeResultAssembler->buildReportSnapshot($analysis, $priceData, $listingFit, $data, $city);
 
         $listing = Listing::create([
             'raw_input' => $validated['text'],

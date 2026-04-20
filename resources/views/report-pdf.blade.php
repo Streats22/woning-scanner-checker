@@ -170,6 +170,7 @@
     $rec = $snap['recommendations'] ?? [];
     $verify = $snap['what_to_verify'] ?? [];
     $breakdown = $snap['risk_breakdown'] ?? [];
+    $listingFacts = is_array($snap['listing_facts'] ?? null) ? $snap['listing_facts'] : null;
 @endphp
     <h1>{{ __('pdf.report_title') }}</h1>
     <p class="muted">{{ $listing->report_slug ?? __('pdf.report_number', ['id' => $listing->id]) }} · {{ $listing->created_at?->format('d-m-Y H:i') ?? '—' }}</p>
@@ -197,6 +198,60 @@
             {{ ' '.__('pdf.market_diff', ['pct' => $listing->market_difference_percent]) }}
         @endif
     </p>
+
+    @if ($listingFacts)
+        <h2>{{ __('pdf.facts_title') }}</h2>
+        <table class="meta">
+            <tr>
+                <td class="muted">{{ __('pdf.facts_city') }}</td>
+                <td>{{ $listingFacts['city'] ?? __('pdf.facts_empty') }}</td>
+            </tr>
+            <tr>
+                <td class="muted">{{ __('pdf.facts_street') }}</td>
+                <td>{{ $listingFacts['street_line'] ?? ($listingFacts['street'] ?? __('pdf.facts_empty')) }}</td>
+            </tr>
+            <tr>
+                <td class="muted">{{ __('pdf.facts_price') }}</td>
+                <td>
+                    @if (isset($listingFacts['price_eur']) && $listingFacts['price_eur'] !== null)
+                        € {{ number_format((int) $listingFacts['price_eur'], 0, ',', '.') }}
+                    @else
+                        {{ __('pdf.facts_empty') }}
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td class="muted">{{ __('pdf.facts_benchmark') }}</td>
+                <td>
+                    € {{ number_format((int) ($listingFacts['benchmark_monthly_eur'] ?? $listing->market_average ?? 0), 0, ',', '.') }}
+                    @if (($listingFacts['benchmark_diff_percent'] ?? $listing->market_difference_percent) !== null)
+                        · {{ __('pdf.facts_diff') }}: <strong>{{ $listingFacts['benchmark_diff_percent'] ?? $listing->market_difference_percent }}%</strong>
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td class="muted">{{ __('pdf.facts_source') }}</td>
+                <td style="word-break:break-all;">
+                    @if (!empty($listingFacts['source_url']))
+                        {{ $listingFacts['source_url'] }}
+                    @else
+                        {{ __('pdf.facts_empty') }}
+                    @endif
+                </td>
+            </tr>
+            <tr>
+                <td class="muted">{{ __('pdf.facts_contact') }}</td>
+                <td>{{ $listingFacts['contact_hint'] ?? __('pdf.facts_empty') }}</td>
+            </tr>
+        </table>
+        <p class="muted" style="margin-top:6pt;">
+            @if (($listingFacts['benchmark_scope'] ?? '') === 'national')
+                {{ __('pdf.facts_scope_national') }}
+            @elseif (!empty($listingFacts['benchmark_city']))
+                {{ __('pdf.facts_scope_city', ['city' => $listingFacts['benchmark_city']]) }}
+            @endif
+        </p>
+    @endif
 
     @if (count($breakdown))
         <h2>{{ __('pdf.risk_breakdown_heading') }}</h2>

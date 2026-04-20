@@ -58,15 +58,24 @@ class ReportEnrichmentService
 
         $marketContext = $cityLine.'De benchmark is een vereenvoudigde schatting per stad/regio en geen taxatierapport.';
 
-        $methodology = 'Stap 1 — invoer: uit je plaktekst of URL halen we prijs, contact en beschrijving (geen “geheime” bronnen). '
-            .'Stap 2 — stad & benchmark: we proberen een stad te herkennen en vergelijken met een vaste model-benchmark (€/maand) per stad; elders geldt een standaard. Dat is een grove schatting, geen taxatie. '
-            .'Stap 3 — regels: de regel-score telt meetbare signalen op (max. 100): '
-            .'prijs ruim onder benchmark +30; WhatsApp +10; Telegram/Signal/WeChat/Skype +8; '
-            .'urgentie (o.a. “vandaag”, “snel”, “beperkte tijd”, “veel interesse”) +20; '
-            .'hoog-risico betalen (Western Union, crypto, cadeaukaarten, vooruitbetaling, enz.) +40; '
-            .'geen bezichtiging / buitenland / sleutel per post of sleutelservice +12; ID vóór afspraak +10; geld vóór bezichtiging +14; '
-            .'extern aanmeldformulier (Google Forms, Typeform, …) +10; klassiek emotioneel buitenland-verhaal +10; Engelstalige scam-sjabloonzinnen +8. '
-            .'Stap 4 — optioneel AI: tweede risicoscore; eindscore = maximum van regel-score en AI-score. Zonder AI blijft de eindscore gelijk aan de regel-score. '
+        $methodology = "Stap 1 — invoer: uit je plaktekst of URL halen we prijs, contact en beschrijving (geen “geheime” bronnen).\n\n"
+            ."Stap 2 — stad & benchmark: we proberen een stad te herkennen en vergelijken met een vaste model-benchmark (€/maand) per stad; elders geldt een standaard. Dat is een grove schatting, geen taxatie.\n\n"
+            ."Stap 3 — regels: de regel-score telt meetbare signalen op (max. 100):\n\n"
+            ."Prijs & urgentie\n"
+            ."– prijs ruim onder benchmark +30\n"
+            ."– WhatsApp +10\n"
+            ."– Telegram/Signal/WeChat/Skype +8\n"
+            ."– urgentie (o.a. “vandaag”, “snel”, “beperkte tijd”, “veel interesse”) +20\n\n"
+            ."Betaling, bezichtiging & vertrouwen\n"
+            ."– hoog-risico betalen (Western Union, crypto, cadeaukaarten, vooruitbetaling, enz.) +40\n"
+            ."– geen bezichtiging / buitenland / sleutel per post of sleutelservice +12\n"
+            ."– ID vóór afspraak +10\n"
+            ."– geld vóór bezichtiging +14\n\n"
+            ."Formulieren & taal\n"
+            ."– extern aanmeldformulier (Google Forms, Typeform, …) +10\n"
+            ."– klassiek emotioneel buitenland-verhaal +10\n"
+            ."– Engelstalige scam-sjabloonzinnen +8\n\n"
+            ."Stap 4 — optioneel AI: tweede risicoscore; eindscore = maximum van regel-score en AI-score. Zonder AI blijft de eindscore gelijk aan de regel-score.\n\n"
             .'Dit is geen juridisch of financieel advies en geen garantie tegen fraude.';
 
         return [

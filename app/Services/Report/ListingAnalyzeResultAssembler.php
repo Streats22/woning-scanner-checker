@@ -2,6 +2,7 @@
 
 namespace App\Services\Report;
 
+use App\Data\ParsedListingInput;
 use App\Models\Listing;
 
 /**
@@ -9,16 +10,20 @@ use App\Models\Listing;
  */
 final class ListingAnalyzeResultAssembler
 {
+    public function __construct(
+        private ListingFactsAssembler $listingFacts,
+    ) {}
+
     /**
      * @param  array<string, mixed>  $analysis
      * @param  array{average: int, difference_percent: ?int}  $priceData
      * @param  array{tier: string, score: int, reason_codes: array<int, string>}  $listingFit
      * @return array<string, mixed>
      */
-    public function buildReportSnapshot(array $analysis, array $priceData, array $listingFit): array
+    public function buildReportSnapshot(array $analysis, array $priceData, array $listingFit, ParsedListingInput $input, ?string $city): array
     {
         return [
-            'version' => 1,
+            'version' => 2,
             'generated_at' => now()->toIso8601String(),
             'rule_score' => $analysis['rule_score'],
             'llm_used' => $analysis['llm_used'],
@@ -33,6 +38,7 @@ final class ListingAnalyzeResultAssembler
             'observations' => $analysis['observations'] ?? [],
             'listing_fit' => $listingFit,
             'market' => $priceData,
+            'listing_facts' => $this->listingFacts->build($input, $city, $priceData),
         ];
     }
 
@@ -45,6 +51,22 @@ final class ListingAnalyzeResultAssembler
      */
     public function buildApiPayload(Listing $listing, array $analysis, array $priceData, array $urls, array $listingFit): array
     {
+        $facts = is_array($listing->report_snapshot['listing_facts'] ?? null)
+            ? $listing->report_snapshot['listing_facts']
+            : $this->listingFacts->build(
+                new ParsedListingInput(
+                    $listing->source_url,
+                    $listing->price,
+                    $listing->contact,
+                    (string) $listing->description,
+                ),
+                $listing->city,
+                [
+                    'average' => (int) $listing->market_average,
+                    'difference_percent' => $listing->market_difference_percent,
+                ],
+            );
+
         return [
             'score' => $analysis['score'],
             'flags' => $analysis['flags'],
@@ -62,6 +84,7 @@ final class ListingAnalyzeResultAssembler
             'methodology' => $analysis['methodology'],
             'market_context' => $analysis['market_context'],
             'listing_fit' => $listingFit,
+            'listing_facts' => $facts,
             'id' => $listing->id,
             'report_url' => $urls['report_url'],
             'report_pdf_url' => $urls['report_pdf_url'],
