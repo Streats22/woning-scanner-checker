@@ -4,9 +4,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="index, follow">
-    <title>Scam-rapport {{ $listing->report_slug ?? '#'.$listing->id }} — HuurRadar</title>
+    <title>Scam-rapport {{ $listing->report_slug ?? '#'.$listing->id }} — De Huur Radar</title>
     <meta name="description" content="Uitgebreid risicorapport (score {{ $listing->scam_score }}/100): signalen, benchmark, advies en controlelijst.">
-    <meta property="og:title" content="Scam-rapport — HuurRadar">
+    <meta property="og:title" content="Scam-rapport — De Huur Radar">
     <meta property="og:description" content="Risicoscore {{ $listing->scam_score }}/100 met concrete signalen en aanbevelingen.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">

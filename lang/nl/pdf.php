@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'brand_name' => 'HuurRadar',
+    'brand_name' => 'De Huur Radar',
     'brand_tagline' => 'Huuradvertentie · risicorapport',
     'report_title' => 'Rapport',
     'report_number' => 'Rapport #:id',

@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>HuurRadar</title>
+    <title>De Huur Radar</title>
     <style>
         :root {
             --bg: #0a101d;
@@ -97,7 +97,7 @@
 </head>
 <body>
     <div class="wrap">
-        <h1>HuurRadar</h1>
+        <h1>De Huur Radar</h1>
         <p class="sub">Plak een advertentie. Je krijgt een risicoscore op basis van duidelijke regels — geen black box.</p>
 
         <form id="form" action="#" method="post">
