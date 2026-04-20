@@ -158,10 +158,11 @@
     </style>
 </head>
 <body class="pdf-root--{{ $theme }}">
+{{-- Dompdf: SVG in <img> is unreliable in production (fatal/500). Use PNG only; omit logo if missing. --}}
 @php
-    $logoPath = public_path('img/huurradar-mark.svg');
+    $logoPath = public_path('img/huurradar-mark.png');
     $logoDataUri = is_readable($logoPath)
-        ? 'data:image/svg+xml;base64,'.base64_encode((string) file_get_contents($logoPath))
+        ? 'data:image/png;base64,'.base64_encode((string) file_get_contents($logoPath))
         : '';
 @endphp
     <table class="pdf-brand" cellpadding="0" cellspacing="0">

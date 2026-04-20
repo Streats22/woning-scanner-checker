@@ -239,6 +239,39 @@ class ListingAnalyzeTest extends TestCase
         $this->assertSame('en', $pdfQs['locale'] ?? null);
     }
 
+    public function test_report_pdf_survives_malformed_report_snapshot_shapes(): void
+    {
+        $listing = Listing::create([
+            'raw_input' => 'Test',
+            'price' => 1000,
+            'currency' => 'EUR',
+            'city' => 'Utrecht',
+            'description' => 'Test',
+            'contact' => null,
+            'scam_score' => 40,
+            'scam_flags' => ['Test flag'],
+            'ai_summary' => 'Samenvatting',
+            'market_average' => 1600,
+            'market_difference_percent' => -38,
+            'report_snapshot' => [],
+        ]);
+
+        $listing->getConnection()->table('listings')->where('id', $listing->id)->update([
+            'report_snapshot' => json_encode([
+                'recommendations' => 'not-an-array',
+                'what_to_verify' => 123,
+                'risk_breakdown' => [
+                    ['category' => 'X', 'points' => 1, 'detail' => 'ok'],
+                    'not-a-row',
+                ],
+            ]),
+        ]);
+
+        $this->get('/report/'.$listing->id.'/pdf?theme=dark&locale=en')
+            ->assertOk()
+            ->assertHeader('content-type', 'application/pdf');
+    }
+
     public function test_report_redirects_when_slug_prefix_differs_but_trailing_id_matches(): void
     {
         $listing = Listing::create([

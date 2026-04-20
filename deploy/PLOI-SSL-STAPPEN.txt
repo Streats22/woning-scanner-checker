@@ -1,5 +1,5 @@
-De Huur Radar — Let's Encrypt / Ploi (HTTP-01 webroot)
-======================================================
+De Huur Radar — Let's Encrypt / Ploi (HTTP-01 webroot of DNS-01)
+================================================================
 
 Waarom 404 of unauthorized?
 - Certbot schrijft naar:  WEBROOT/.well-known/acme-challenge/<token>
@@ -42,5 +42,15 @@ Waarom 404 of unauthorized?
      -d dehuurradar.nl -d www.dehuurradar.nl
 
 7) Na succes: nginx herladen, daarna eventueel weer Force SSL / Cloudflare proxy aan.
+
+8) DNS-01 via Ploi + Hetzner Cloud (manual-auth-hook) — typische fouten
+   - Log: api.hetzner.cloud → "the token you have provided is invalid"
+     → Token in Hetzner Cloud opnieuw aanmaken (Security → API tokens), rechten die DNS-zones
+       mogen lezen/schrijven in het project waar je DNS staat. In Ploi opnieuw koppelen zodat
+       /home/ploi/.ploi/.certbot-hetzner vernieuwt. Oude token intrekken als die ergens gelekt is.
+   - DNS moet bij Hetzner Cloud als zone bestaan (Console → je project → DNS).
+     Staat het domein elders (Cloudflare, registrar, TransIP, …)? Dan kan deze hook geen TXT
+     zetten — kies HTTP-01 webroot in Ploi, of DNS-01 bij die provider.
+   - NXDOMAIN op _acme-challenge.* volgt meestal op een mislukte hook (geen record gezet).
 
 Repo: zie deploy/dehuurradar.nl.conf (acme-location vóór location /).
