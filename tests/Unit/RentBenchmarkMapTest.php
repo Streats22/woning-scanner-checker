@@ -39,4 +39,13 @@ class RentBenchmarkMapTest extends TestCase
         $this->assertSame("'s-Hertogenbosch", $map['Den Bosch']);
         $this->assertSame('Den Haag', $map['The Hague']);
     }
+
+    public function test_canonical_from_path_segment_matches_gemeente_slug(): void
+    {
+        $this->assertSame('Alkmaar', RentBenchmarkMap::canonicalFromPathSegment('alkmaar'));
+        $this->assertSame('Alkmaar', RentBenchmarkMap::canonicalFromPathSegment('Alkmaar'));
+        $this->assertSame("'s-Hertogenbosch", RentBenchmarkMap::canonicalFromPathSegment('den-bosch'));
+        $this->assertNull(RentBenchmarkMap::canonicalFromPathSegment('huur'));
+        $this->assertNull(RentBenchmarkMap::canonicalFromPathSegment('nl'));
+    }
 }

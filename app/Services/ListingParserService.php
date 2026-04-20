@@ -20,13 +20,13 @@ class ListingParserService
                 return $this->fromPlainText($trimmed);
             }
 
-            $text = $this->fetch->fetchPlainText($url);
+            $out = $this->fetch->fetchPlainText($url);
 
             return new ParsedListingInput(
-                sourceUrl: $url,
-                price: $this->price($text),
-                contact: $this->phone($text),
-                description: $text,
+                sourceUrl: $out['effective_url'],
+                price: $this->price($out['text']),
+                contact: $this->phone($out['text']),
+                description: $out['text'],
             );
         }
 

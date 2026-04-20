@@ -54,4 +54,28 @@ TXT;
         $this->assertNull($r['street']);
         $this->assertNull($r['number']);
     }
+
+    public function test_derives_street_from_directwonen_url_when_text_has_no_street_line(): void
+    {
+        $p = new ListingAddressParser;
+        $url = 'https://directwonen.nl/huurwoningen-huren/alkmaar/coornhertkade/appartement-512619';
+        $text = 'Korte omschrijving zonder straatregel. Huur € 900 per maand.';
+
+        $r = $p->parseStreetAndNumber($text, $url);
+
+        $this->assertSame('Coornhertkade', $r['street']);
+        $this->assertNull($r['number']);
+    }
+
+    public function test_text_street_wins_over_url(): void
+    {
+        $p = new ListingAddressParser;
+        $url = 'https://directwonen.nl/huurwoningen-huren/alkmaar/coornhertkade/appartement-512619';
+        $text = "Te huur aan de Hoofdstraat 12 in het centrum.\nHuur € 950 per maand.";
+
+        $r = $p->parseStreetAndNumber($text, $url);
+
+        $this->assertStringContainsString('Hoofdstraat', $r['street'] ?? '');
+        $this->assertSame('12', $r['number'] ?? null);
+    }
 }

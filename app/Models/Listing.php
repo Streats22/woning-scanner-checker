@@ -35,10 +35,11 @@ class Listing extends Model
         int $id,
         ?string $city,
         ?string $description,
+        ?string $sourceUrl = null,
         ?ListingAddressParser $addressParser = null,
     ): string {
         $parser = $addressParser ?? new ListingAddressParser;
-        $addr = $parser->parseStreetAndNumber($description);
+        $addr = $parser->parseStreetAndNumber($description, $sourceUrl);
 
         $citySlug = self::slugSegment($city);
         $streetSlug = self::slugSegment($addr['street']);

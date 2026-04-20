@@ -2,9 +2,12 @@
 
 namespace App\Services;
 
+use App\Support\RentBenchmarkMap;
+
 /**
  * Best-effort straat + huisnummer uit vrije advertentietekst (NL).
  * Vermijdt UI-teksten (bijv. "Aan / add to favorite") door suffixen en filters.
+ * Als er geen straat in de tekst staat: fallback op URL-paden (bijv. directwonen.nl/…/coornhertkade/…).
  */
 class ListingAddressParser
 {
@@ -13,7 +16,20 @@ class ListingAddressParser
     /**
      * @return array{street: ?string, number: ?string}
      */
-    public function parseStreetAndNumber(?string $description): array
+    public function parseStreetAndNumber(?string $description, ?string $sourceUrl = null): array
+    {
+        $fromText = $this->parseStreetAndNumberFromText($description);
+        if ($fromText['street'] !== null) {
+            return $fromText;
+        }
+
+        return $this->parseStreetFromListingUrl($sourceUrl);
+    }
+
+    /**
+     * @return array{street: ?string, number: ?string}
+     */
+    private function parseStreetAndNumberFromText(?string $description): array
     {
         if ($description === null || trim($description) === '') {
             return ['street' => null, 'number' => null];
@@ -59,6 +75,114 @@ class ListingAddressParser
         }
 
         return ['street' => null, 'number' => null];
+    }
+
+    /**
+     * Veel woningsites zetten de straat als slug in het pad (na de gemeente), zonder dat die in de HTML-tekst staat.
+     *
+     * @return array{street: ?string, number: ?string}
+     */
+    private function parseStreetFromListingUrl(?string $url): array
+    {
+        if ($url === null || trim($url) === '') {
+            return ['street' => null, 'number' => null];
+        }
+
+        $path = parse_url($url, PHP_URL_PATH);
+        if ($path === null || $path === '' || $path === '/') {
+            return ['street' => null, 'number' => null];
+        }
+
+        $segments = preg_split('#/+#', $path, -1, PREG_SPLIT_NO_EMPTY) ?: [];
+
+        foreach ($segments as $seg) {
+            $seg = rawurldecode(trim($seg));
+            if ($seg === '' || mb_strlen($seg) < 5) {
+                continue;
+            }
+
+            if (preg_match('/\d{5,}/', $seg)) {
+                continue;
+            }
+
+            if (RentBenchmarkMap::canonicalFromPathSegment($seg) !== null) {
+                continue;
+            }
+
+            if ($this->isUrlSegmentNoise($seg)) {
+                continue;
+            }
+
+            if (preg_match('/^(appartement|woning|huis|studio|kamer|penthouse|bungalow|villa|loft|duplex)(-.+)?$/iu', $seg)) {
+                continue;
+            }
+
+            $street = $this->humanizeStreetSlug($seg);
+            if ($street !== null) {
+                return ['street' => $street, 'number' => null];
+            }
+        }
+
+        return ['street' => null, 'number' => null];
+    }
+
+    private function isUrlSegmentNoise(string $seg): bool
+    {
+        $low = mb_strtolower($seg, 'UTF-8');
+
+        if (preg_match('/^(huurwoningen|huurwoning|huur\-?woningen|woningen)(-huren)?$/iu', $low)) {
+            return true;
+        }
+
+        if (preg_match('/^(huur|huren|zoeken|search|nl|en|page|pg|pagina|results|listing|object|details|aanbod|zoek|finder|woning|te\-huur|for\-rent|rent|kopen|kopers)(-.+)?$/iu', $low)) {
+            return true;
+        }
+
+        return (bool) preg_match('/^(huur|huren|zoek|search|nl|en)$/iu', $low);
+    }
+
+    private function humanizeStreetSlug(string $slug): ?string
+    {
+        $slug = mb_strtolower(trim($slug), 'UTF-8');
+        if ($slug === '' || mb_strlen($slug) < 6) {
+            return null;
+        }
+
+        $suffixes = explode('|', self::STREET_SUFFIX_PATTERN);
+        usort($suffixes, fn ($a, $b) => mb_strlen($b) <=> mb_strlen($a));
+        $suffixAlt = implode('|', array_map(static fn ($s) => preg_quote($s, '/'), $suffixes));
+
+        if (! preg_match('/^(.+)('.$suffixAlt.')$/iu', $slug, $m)) {
+            return null;
+        }
+
+        $namePart = $m[1];
+        $suffixLower = mb_strtolower($m[2], 'UTF-8');
+
+        if ($namePart === '' || mb_strlen($namePart) < 2) {
+            return null;
+        }
+
+        if (str_contains($namePart, '-')) {
+            $words = explode('-', $namePart);
+            $out = [];
+            foreach ($words as $w) {
+                $w = trim($w);
+                if ($w === '') {
+                    continue;
+                }
+                $lw = mb_strtolower($w, 'UTF-8');
+                if (in_array($lw, ['van', 'de', 'het', 'den', 'ten', 'te', 'op', 'voor', 'aan', 'bij'], true)) {
+                    $out[] = $lw;
+                } else {
+                    $out[] = mb_convert_case($w, MB_CASE_TITLE, 'UTF-8');
+                }
+            }
+
+            return implode(' ', $out).$suffixLower;
+        }
+
+        return mb_convert_case($namePart.$suffixLower, MB_CASE_TITLE, 'UTF-8');
     }
 
     /**

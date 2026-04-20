@@ -20,7 +20,7 @@ final class ListingFactsAssembler
      */
     public function build(ParsedListingInput $input, ?string $city, array $priceData): array
     {
-        $addr = $this->addressParser->parseStreetAndNumber($input->description);
+        $addr = $this->addressParser->parseStreetAndNumber($input->description, $input->sourceUrl);
         $streetLine = null;
         if (! empty($addr['street'])) {
             $streetLine = $addr['street'];

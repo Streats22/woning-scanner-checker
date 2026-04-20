@@ -1,10 +1,19 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-// API: NUXT_PUBLIC_API_BASE (productie: https://dehuurradar.nl) of NUXT_LARAVEL_URL (lokaal: Valet/.test).
+// API: NUXT_PUBLIC_API_BASE (productie: https://… of leeg) of NUXT_LARAVEL_URL (lokaal: Valet/.test).
 // Leeg = zelfde origin → /api/... (aanbevolen als Nuxt en Laravel op één domein draaien).
-const resolvedApiBase =
+import { normalizeApiBase } from './app/utils/wscApiBase'
+
+const apiAllowHttp = process.env.NUXT_PUBLIC_API_ALLOW_HTTP === '1'
+
+const resolvedApiBase = normalizeApiBase(
   process.env.NUXT_PUBLIC_API_BASE?.trim()
-  || process.env.NUXT_LARAVEL_URL?.trim()
-  || ''
+    || process.env.NUXT_LARAVEL_URL?.trim()
+    || '',
+  {
+    serverProductionBuild: process.env.NODE_ENV === 'production',
+    allowHttp: apiAllowHttp,
+  },
+)
 
 /** Tijdstip/commit van `nuxt build` — zichtbaar in footer om productie vs lokaal te vergelijken. */
 const buildId =
@@ -77,6 +86,8 @@ export default defineNuxtConfig({
       /** Productie: canonieke URL, Open Graph, sitemap (bv. https://dehuurradar.nl) */
       siteUrl: process.env.NUXT_PUBLIC_SITE_URL?.trim() || '',
       apiBase: resolvedApiBase,
+      /** Alleen `true` als `NUXT_PUBLIC_API_ALLOW_HTTP=1` — geen http→https upgrade voor API-base. */
+      apiAllowHttp,
       /** ISO-tijd of git-SHA (set NUXT_PUBLIC_BUILD_ID in CI) */
       buildId,
     },
@@ -86,6 +97,7 @@ export default defineNuxtConfig({
   nitro: {
     routeRules: {
       '/': { headers: { 'cache-control': 'private, no-cache, must-revalidate' } },
+      '/check': { headers: { 'cache-control': 'private, no-cache, must-revalidate' } },
       '/faq': { headers: { 'cache-control': 'private, no-cache, must-revalidate' } },
     },
   },

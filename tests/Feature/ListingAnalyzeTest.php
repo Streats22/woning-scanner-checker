@@ -121,6 +121,49 @@ class ListingAnalyzeTest extends TestCase
         $this->assertStringContainsString('WhatsApp', $listing->description);
     }
 
+    public function test_analyze_tries_https_first_when_input_url_uses_http_scheme(): void
+    {
+        $body = '<html><body><p>Te huur Amsterdam € 900 per maand.</p>'
+            .str_repeat('<p>Extra context om de minimale lengte te halen.</p>', 14)
+            .'</body></html>';
+
+        Http::fake([
+            'https://public.example/*' => Http::response($body, 200),
+            'http://public.example/*' => Http::response('<html><body>wrong</body></html>', 200),
+        ]);
+
+        $input = 'http://public.example/kamer/amsterdam';
+        $response = $this->postJson('/api/analyze', ['text' => $input]);
+
+        $response->assertOk();
+        Http::assertSent(fn ($request) => str_starts_with($request->url(), 'https://public.example'));
+        Http::assertNotSent(fn ($request) => str_starts_with($request->url(), 'http://public.example'));
+
+        $listing = Listing::first();
+        $this->assertSame('https://public.example/kamer/amsterdam', $listing->source_url);
+    }
+
+    public function test_analyze_falls_back_to_http_when_https_fails(): void
+    {
+        $body = '<html><body><p>Te huur Utrecht € 850 per maand.</p>'
+            .str_repeat('<p>Extra context om de minimale lengte te halen.</p>', 14)
+            .'</body></html>';
+
+        Http::fake([
+            'https://fallback.example/*' => Http::response('', 502),
+            'http://fallback.example/*' => Http::response($body, 200),
+        ]);
+
+        $input = 'http://fallback.example/ad';
+        $response = $this->postJson('/api/analyze', ['text' => $input]);
+
+        $response->assertOk();
+
+        $listing = Listing::first();
+        $this->assertSame('http://fallback.example/ad', $listing->source_url);
+        $this->assertStringContainsString('Utrecht', $listing->description);
+    }
+
     public function test_analyze_returns_validation_error_when_fetch_fails(): void
     {
         Http::fake([

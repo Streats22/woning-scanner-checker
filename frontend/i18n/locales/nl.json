@@ -1,5 +1,7 @@
 {
   "meta": {
+    "homeTitle": "De Huur Radar — gratis huurfraude-check & transparante risicoscore",
+    "homeDescription": "Controleer huuradvertenties vóór je betaalt: risicoscore 0–100, benchmark per stad, herkenbare signalen. Geen account. Start de check of lees hoe we werken.",
     "title": "De Huur Radar — gratis huurfraude-check & advertentie-risicoscore",
     "description": "Controleer huuradvertenties op oplichting vóór je betaalt: risicoscore 0–100, huur-benchmark per stad, signalen (WhatsApp, vooruitbetaling, Western Union), Marktplaats/Funda/kamer. Regels + optionele AI. Zonder account."
   },
@@ -11,7 +13,7 @@
   "a11y": {
     "skipToContent": "Ga naar hoofdinhoud",
     "siteNav": "Paginanavigatie en voorkeuren",
-    "footerStatement": "Deze site is tekstgebaseerd: geen video of audio nodig. Je kunt inzoomen, het toetsenbord en schermlezers gebruiken."
+    "footerStatement": "Tekstgebaseerd, zonder video of audio. Inzoomen, toetsenbord en schermlezer worden ondersteund."
   },
   "trust": {
     "pillarsLabel": "Kernpunten van deze dienst",
@@ -22,10 +24,51 @@
   },
   "hero": {
     "title": "Check een advertentie voordat je betaalt",
-    "subtitle": "Plak tekst of een link naar een woningadvertentie. Je krijgt een risicoscore met concrete redenen — geen black box."
+    "subtitle": "Risicoscore 0–100 met concrete redenen — geen black box. Start hieronder of open de volledige check."
   },
   "home": {
-    "faqTeaser": "Vragen over fraude, kamers en betrouwbare bronnen? Bekijk de FAQ & bronnen."
+    "ctaCheck": "Start de advertentie-check",
+    "ctaReadStory": "Waarom, wat en hoe",
+    "ctaAfterStory": "Ga naar de advertentie-check",
+    "landingMoreTitle": "Verder op deze site",
+    "cardCheckTitle": "Advertentie-check",
+    "cardCheckBody": "Plak tekst of een URL, optioneel met OCR op een screenshot. Je ziet score, signalen en een rapport — zonder account.",
+    "cardCheckLink": "Naar de check",
+    "cardFaqTitle": "FAQ & bronnen",
+    "cardFaqBody": "Veelgestelde vragen over fraude, kamers, WhatsApp en betrouwbare informatie — plus links naar externe adviesbronnen.",
+    "cardFaqLink": "Open de FAQ",
+    "faqTeaser": "Vragen over fraude, kamers of bronnen? Bekijk de FAQ."
+  },
+  "check": {
+    "metaTitle": "De Huur Radar — gratis huurfraude-check & advertentie-risicoscore",
+    "metaDescription": "Controleer huuradvertenties op oplichting vóór je betaalt: risicoscore 0–100, huur-benchmark per stad, signalen (WhatsApp, vooruitbetaling, Western Union), Marktplaats/Funda/kamer. Regels + optionele AI. Zonder account.",
+    "pageTitle": "Advertentie-check",
+    "pageLead": "Plak tekst of een link naar een woningadvertentie. Je krijgt een risicoscore met concrete redenen — geen black box.",
+    "backHome": "Terug naar de startpagina"
+  },
+  "about": {
+    "metaTitle": "Over De Huur Radar — waarom, wat en hoe",
+    "metaDescription": "Waarom een huur-check vóór betalen, wat je krijgt (score, benchmark, signalen, rapport) en hoe De Huur Radar werkt — transparante regels, optionele AI, geen account.",
+    "title": "Waarom, wat en hoe",
+    "missionBody": "De Huur Radar helpt je een huuradvertentie te beoordelen vóór je geld of gevoelige gegevens deelt. We gebruiken vaste, controleerbare regels — geen geheime score — en optioneel een taalmodel voor extra toelichting. Geen account; je plakt tekst of een link en krijgt een risicoscore met concrete redenen.",
+    "whyTitle": "Waarom deze check?",
+    "whyLead": "Huurfraude komt veel voor op Marktplaats, Facebook, kamersites en via spam. Oplichters spelen in op schaarste, vertrouwen en haast.",
+    "whyPoint1": "Te mooie prijzen en een aantrekkelijk verhaal lokken snel reacties; daarna volgt vaak druk om borg of vooruitbetaling.",
+    "whyPoint2": "Een tweede mening vóór je betaalt bespaart stress, tijd en geld — ook als je al ervaren bent met huren.",
+    "whyPoint3": "Dit is een hulpmiddel, geen garantie: je blijft zelf verantwoordelijk, maar je krijgt wel een gestructureerde lijst met rode vlaggen en een benchmark-check.",
+    "whatTitle": "Wat krijg je?",
+    "whatPoint1": "Een risicoscore van 0–100 met uitleg welke signalen meetellen (volledige regellijst op de check-pagina, uitklapbaar onder «Wat doen wij»).",
+    "whatPoint2": "Een ruwe vergelijking met een model-huur per stad of regio — indicatief, geen taxatie.",
+    "whatPoint3": "Concrete signalen: o.a. betaalroute, urgentie, contact (WhatsApp enz.), formulieren, en optioneel AI-observaties als je die modus aanzet.",
+    "whatPoint4": "Een rapport (web en/of PDF) om te bewaren of te delen — zonder registratie.",
+    "howShortTitle": "Hoe het werkt (kort)",
+    "howShortStep1": "Plak advertentietekst, een openbare URL, of gebruik OCR op een screenshot — lokaal in je browser tot je op Analyseren klikt.",
+    "howShortStep2": "Onze server leest prijs, plaats en tekstpatronen, zet dat af tegen vaste regels en een benchmark, en rekent een score.",
+    "howShortStep3": "Je ziet score, signalen, aanbevelingen en (optioneel) AI-toelichting; de technische details en alle puntentelling staan op de check-pagina.",
+    "howShortHint": "Alle stappen, punten per regel en benchmark-uitleg? Ga naar de check en open het uitklapblok «Wat doen wij — en hoe komt de score tot stand?». Of bekijk de FAQ voor veelgestelde vragen.",
+    "backHome": "Terug naar de startpagina",
+    "ctaToCheck": "Naar de advertentie-check",
+    "ctaFaq": "FAQ & bronnen"
   },
   "howItWorks": {
     "title": "Wat doen wij — en hoe komt de score tot stand?",
@@ -133,6 +176,7 @@
     "themeDark": "Donker thema",
     "themeSystem": "Systeem",
     "language": "Taal",
+    "check": "Check",
     "faq": "FAQ & bronnen",
     "navHome": "Naar startpagina De Huur Radar",
     "langNl": "Nederlands",
@@ -141,7 +185,7 @@
   "faq": {
     "metaTitle": "FAQ huurfraude & bronnen — De Huur Radar (Marktplaats, kamers, veilig huren)",
     "metaDescription": "Antwoorden op veelgestelde vragen over De Huur Radar, huurfraude, studentenkamers, WhatsApp-scams en betrouwbare bronnen (NL/EU). Contact en verder lezen.",
-    "backToHome": "Terug naar de check",
+    "backToHome": "Terug naar de startpagina",
     "contactTitle": "Contact",
     "contactIntro": "Vragen over deze tool of de website? Stuur een e-mail naar:",
     "contactNote": "Voor juridische of financiële vragen over een concrete huur: raadpleeg een professional of officiële meldpunten (zie de bronnen hierboven).",
@@ -169,7 +213,8 @@
     "a9": "De trucs zijn vaak dezelfde: te mooie prijs, inschrijfgeld of ‘bemiddelingskosten’ vóór een bezichtiging, druk om snel te betalen, of een ID-kopie uitwisselen met iemand die je niet kent. Juist bij kamers is de vraag hoog en zijn studenten een doelgroep — zie o.a. Scholieren.com (CCV / ministerie) voor praktische tips (Google Image Search op foto’s, geen bemiddelingskosten als huurder zonder makelaarsopdracht, Kopie-ID-app van de overheid). De Huur Radar herkent dezelfde tekstpatronen in kameradvertenties als bij andere huur."
   },
   "footer": {
-    "note": "Hulpmiddel met regels en optioneel een taalmodel (OpenAI-compatible API); het vervangt geen eigen oordeel of juridisch advies.",
+    "navAria": "Check en veelgestelde vragen",
+    "note": "De Huur Radar geeft een risico-indicatie op basis van vaste regels; optioneel een korte AI-toelichting. Geen vervanging voor eigen onderzoek of juridisch advies.",
     "madeBy": "Gemaakt door ",
     "contactLabel": "Contact: ",
     "buildIdTitle": "Tijdstip van de laatste frontend-build op deze server (ter vergelijking met lokaal)"
@@ -190,9 +235,8 @@
     "apiNote": "Als je een advertentie laat analyseren, stuurt je browser een HTTPS-verzoek naar onze server met de door jou geplakte tekst. Serverlogs kunnen technische gegevens bevatten (zoals IP-adres en tijdstip) voor beveiliging en foutopsporing — niet voor advertentie-tracking via cookies in de browser.",
     "fontsNote": "Lettertypen worden geladen via Google Fonts (fonts.googleapis.com / fonts.gstatic.com). Daarbij kan je IP-adres bij Google terechtkomen. Er worden geen marketingcookies van onze kant geplaatst voor dit doel.",
     "legalNote": "Dit overzicht is bedoeld voor transparantie. Het is geen juridisch advies; raadpleeg bij twijfel een privacyprofessional.",
-    "footerSummary": "Privacy: geen marketing- of analytische cookies. Functionele opslag (taal, thema) alleen na je keuze hieronder.",
+    "footerSummary": "Geen marketing- of analytische cookies. Functionele opslag (taal, thema) alleen na je keuze. Details over lettertypen en opslag: cookie-instellingen.",
     "openSettings": "Cookie-instellingen",
-    "notApplicableLine": "Geen third-party advertentiecookies op deze site. Zie de cookiemelding voor details over functionele opslag en lettertypen.",
     "rows": [
       {
         "name": "wsc_privacy_consent",

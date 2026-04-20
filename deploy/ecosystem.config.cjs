@@ -28,9 +28,9 @@ module.exports = {
                 NODE_ENV: 'production',
                 HOST: '127.0.0.1',
                 PORT: '3000',
-                // Canonieke URL + API (zelfde domein); na wijziging: opnieuw `npm run build`.
+                // Canonieke URL; na wijziging: opnieuw `npm run build`.
+                // Geen NUXT_PUBLIC_API_BASE: leeg = relatieve /api/... (zelfde scheme/host als de pagina, geen mixed content).
                 NUXT_PUBLIC_SITE_URL: 'https://dehuurradar.nl',
-                NUXT_PUBLIC_API_BASE: 'https://dehuurradar.nl',
             },
         },
     ],

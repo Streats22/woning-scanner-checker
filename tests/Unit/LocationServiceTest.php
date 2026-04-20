@@ -67,4 +67,27 @@ class LocationServiceTest extends TestCase
 
         $this->assertSame('Voorne aan Zee', $s->detectCity('Appartement te huur Spijkenisse, € 1100'));
     }
+
+    public function test_prefers_city_from_url_path_over_footer_text(): void
+    {
+        $s = new LocationService;
+        $footer = str_repeat('Zoek ook in Arnhem. ', 120);
+
+        $text = 'Lange pagina met ruis. '.$footer;
+        $url = 'https://voorbeeld.nl/huur/alkmaar/appartement/123';
+
+        $this->assertSame('Alkmaar', $s->detectCity($text, $url));
+    }
+
+    public function test_prefers_alkmaar_in_title_over_arnhem_in_footer_on_long_scraped_page(): void
+    {
+        $s = new LocationService;
+        $title = 'Te huur in Alkmaar € 850 per maand. ';
+        $middle = str_repeat('Rustige straat, goed onderhouden. ', 400);
+        $footer = str_repeat(' ', 5000).' Ook interessant: woningen in Arnhem en omstreken.';
+
+        $text = $title.$middle.$footer;
+
+        $this->assertSame('Alkmaar', $s->detectCity($text, null));
+    }
 }

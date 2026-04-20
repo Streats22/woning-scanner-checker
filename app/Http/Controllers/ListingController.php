@@ -52,7 +52,7 @@ class ListingController extends Controller
             ]);
         }
 
-        $city = $this->location->detectCity($data->description);
+        $city = $this->location->detectCity($data->description, $data->sourceUrl);
 
         $priceData = $this->price->analyze(
             $city,
@@ -89,6 +89,7 @@ class ListingController extends Controller
                 $listing->id,
                 $listing->city,
                 $listing->description,
+                $listing->source_url,
             ),
         ]);
         $listing->refresh();

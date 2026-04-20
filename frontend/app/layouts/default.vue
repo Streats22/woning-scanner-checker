@@ -14,7 +14,22 @@
         </NuxtLink>
 
         <nav class="topbar__actions" :aria-label="t('a11y.siteNav')">
-          <NuxtLink class="topbar__faq" :to="localePath('/faq')">{{ t('header.faq') }}</NuxtLink>
+          <div class="topbar__nav-cluster" role="presentation">
+            <NuxtLink
+              class="topbar__nav-link topbar__nav-link--primary"
+              :to="localePath('/check')"
+              active-class="topbar__nav-link--active"
+            >
+              {{ t('header.check') }}
+            </NuxtLink>
+            <NuxtLink
+              class="topbar__nav-link"
+              :to="localePath('/faq')"
+              active-class="topbar__nav-link--active"
+            >
+              {{ t('header.faq') }}
+            </NuxtLink>
+          </div>
           <div
             class="seg seg--2"
             :class="locale === 'nl' ? 'seg--i0' : 'seg--i1'"
@@ -94,38 +109,51 @@
     </main>
 
     <footer class="footer">
-      <p class="footer__site-links">
-        <NuxtLink class="footer__site-link" :to="localePath('/faq')">{{ t('header.faq') }}</NuxtLink>
-      </p>
-      <p class="footer__highlight">{{ t('cookies.footerSummary') }}</p>
-      <p class="footer__a11y" role="note">{{ t('a11y.footerStatement') }}</p>
-      <p class="footer__text">{{ t('cookies.notApplicableLine') }}</p>
-      <p class="footer__text">{{ t('footer.note') }}</p>
-      <p class="footer__text footer__credit">
-        {{ t('footer.madeBy') }}
-        <a
-          class="footer__inline-link"
-          href="https://streatsdesign.nl"
-          target="_blank"
-          rel="noopener noreferrer"
-        >StreatsDesign</a>
-        <span class="footer__credit-sep" aria-hidden="true">·</span>
-        <span>{{ t('footer.contactLabel') }}</span>
-        <a
-          class="footer__inline-link"
-          href="mailto:streatsDesign@outlook.com"
-        >streatsDesign@outlook.com</a>
-      </p>
-      <button type="button" class="footer__link" @click="openCookieSettings">
-        {{ t('cookies.openSettings') }}
-      </button>
-      <p
-        v-if="buildIdDisplay"
-        class="footer__build"
-        :title="t('footer.buildIdTitle')"
-      >
-        {{ buildIdDisplay }}
-      </p>
+      <div class="footer__inner">
+        <div class="footer__top">
+          <nav class="footer__nav" :aria-label="t('footer.navAria')">
+            <NuxtLink class="footer__nav-link" :to="localePath('/check')">{{ t('header.check') }}</NuxtLink>
+            <span class="footer__nav-sep" aria-hidden="true" />
+            <NuxtLink class="footer__nav-link" :to="localePath('/faq')">{{ t('header.faq') }}</NuxtLink>
+          </nav>
+          <button type="button" class="footer__cookie" @click="openCookieSettings">
+            {{ t('cookies.openSettings') }}
+          </button>
+        </div>
+
+        <div class="footer__privacy">
+          <p class="footer__privacy-text">{{ t('cookies.footerSummary') }}</p>
+        </div>
+
+        <div class="footer__fineprint">
+          <p class="footer__fineprint-line" role="note">{{ t('a11y.footerStatement') }}</p>
+          <p class="footer__fineprint-line">{{ t('footer.note') }}</p>
+        </div>
+
+        <p class="footer__credit">
+          {{ t('footer.madeBy') }}
+          <a
+            class="footer__inline-link"
+            href="https://streatsdesign.nl"
+            target="_blank"
+            rel="noopener noreferrer"
+          >StreatsDesign</a>
+          <span class="footer__credit-sep" aria-hidden="true">·</span>
+          <span>{{ t('footer.contactLabel') }}</span>
+          <a
+            class="footer__inline-link"
+            href="mailto:streatsDesign@outlook.com"
+          >streatsDesign@outlook.com</a>
+        </p>
+
+        <p
+          v-if="buildIdDisplay && showBuildFooter"
+          class="footer__build"
+          :title="t('footer.buildIdTitle')"
+        >
+          {{ buildIdDisplay }}
+        </p>
+      </div>
     </footer>
   </div>
 </template>
@@ -141,6 +169,9 @@ const buildIdDisplay = computed(() => {
   const id = String(runtimeConfig.public.buildId ?? '').trim()
   return id ? `Build · ${id}` : ''
 })
+
+/** Alleen in development: productie-footer zonder technische build-regel. */
+const showBuildFooter = import.meta.dev
 const colorMode = useColorMode()
 const { openCookieSettings } = useCookieConsent()
 
@@ -179,7 +210,7 @@ const jsonLdGraph = computed(() => {
         publisher: { '@id': `${base}/#organization` },
         potentialAction: {
           '@type': 'ReadAction',
-          target: base,
+          target: `${base}/check`,
         },
       },
       {
@@ -196,7 +227,7 @@ const jsonLdGraph = computed(() => {
         operatingSystem: 'Any',
         browserRequirements: 'Requires JavaScript. Requires a modern browser.',
         offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
-        url: base,
+        url: `${base}/check`,
         description: t('meta.description'),
       },
     ],
@@ -312,15 +343,6 @@ useHead(() => ({
   outline-offset: 2px;
 }
 
-.footer__a11y {
-  max-width: 960px;
-  margin: 0 auto 0.75rem;
-  font-size: 0.78rem;
-  color: var(--text-tertiary);
-  text-align: center;
-  line-height: 1.5;
-}
-
 .topbar {
   position: sticky;
   top: 0;
@@ -402,19 +424,30 @@ useHead(() => ({
 .topbar__actions {
   display: flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.6rem;
   flex-wrap: wrap;
 }
 
-.topbar__faq {
-  font-size: 0.85rem;
+.topbar__nav-cluster {
+  display: inline-flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.1rem;
+  padding: 0.2rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: color-mix(in srgb, var(--surface-muted) 88%, var(--surface-page));
+  box-shadow: var(--shadow-sm);
+}
+
+.topbar__nav-link {
+  font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--accent);
+  color: var(--text-secondary);
   text-decoration: none;
   white-space: nowrap;
-  padding: 0.4rem 0.55rem;
-  border-radius: var(--radius-md);
-  margin-right: 0.25rem;
+  padding: 0.38rem 0.6rem;
+  border-radius: calc(var(--radius-md) - 2px);
   transition:
     color var(--duration-fast) var(--ease-out),
     background var(--duration-fast) var(--ease-out),
@@ -422,14 +455,29 @@ useHead(() => ({
     transform var(--duration-fast) var(--ease-out);
 }
 
-.topbar__faq:hover {
+.topbar__nav-link:hover {
   text-decoration: none;
-  color: var(--accent-hover);
-  background: var(--accent-muted);
-  box-shadow: 0 0 0 1px color-mix(in srgb, var(--accent) 18%, transparent);
+  color: var(--accent);
+  background: color-mix(in srgb, var(--accent-muted) 55%, transparent);
 }
 
-.topbar__faq:active {
+.topbar__nav-link--primary {
+  color: var(--accent);
+  font-weight: 700;
+}
+
+.topbar__nav-link--active {
+  color: var(--accent);
+  background: var(--surface-elevated);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 24%, var(--border-subtle));
+}
+
+.topbar__nav-link--active:hover {
+  color: var(--accent-hover);
+  background: var(--surface-elevated);
+}
+
+.topbar__nav-link:active {
   transform: scale(0.98);
 }
 
@@ -533,15 +581,14 @@ useHead(() => ({
   border-radius: calc(var(--radius-sm) - 2px);
 }
 
-.topbar__faq:focus-visible {
+.topbar__nav-link:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
 }
 
-.footer__link:focus-visible {
+.footer__cookie:focus-visible {
   outline: 2px solid var(--accent);
   outline-offset: 2px;
-  border-radius: var(--radius-sm);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -556,69 +603,140 @@ useHead(() => ({
 
 .footer {
   margin-top: auto;
-  padding: 1.5rem 1.25rem 2rem;
   border-top: 1px solid var(--border-subtle);
-  background: var(--surface-muted);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--surface-page) 40%, var(--surface-muted)) 0%,
+    var(--surface-muted) 100%
+  );
   animation: wsc-fade-in var(--duration-slow) var(--ease-out) 0.25s backwards;
 }
 
-.footer__site-links {
-  margin: 0 0 0.75rem;
-  font-size: 0.9rem;
+.footer__inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
 }
 
-.footer__site-link {
+.footer__top {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.65rem 1rem;
+}
+
+.footer__nav {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem 0.65rem;
+}
+
+.footer__nav-link {
+  font-size: 0.875rem;
   font-weight: 600;
   color: var(--accent);
   text-decoration: none;
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--radius-md);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
 }
 
-.footer__site-link:hover {
+.footer__nav-link:hover {
   color: var(--accent-hover);
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
+  background: var(--accent-muted);
 }
 
-.footer__build {
-  margin: 1rem 0 0;
-  font-size: 0.65rem;
-  line-height: 1.4;
-  color: var(--text-tertiary);
-  letter-spacing: 0.02em;
-  word-break: break-all;
+.footer__nav-link:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .footer {
-    animation: none;
-  }
+.footer__nav-sep {
+  width: 1px;
+  height: 0.85rem;
+  background: color-mix(in srgb, var(--border-subtle) 80%, var(--text-tertiary));
+  border-radius: 1px;
+  flex-shrink: 0;
 }
 
-.footer__highlight {
-  max-width: 960px;
-  margin: 0 auto 0.65rem;
-  font-size: 0.85rem;
+.footer__cookie {
+  font: inherit;
+  font-size: 0.8125rem;
   font-weight: 600;
   color: var(--text-secondary);
-  text-align: center;
-  line-height: 1.5;
+  cursor: pointer;
+  padding: 0.4rem 0.85rem;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-sm);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
 }
 
-.footer__text {
-  max-width: 960px;
-  margin: 0 auto 0.5rem;
-  font-size: 0.8rem;
+.footer__cookie:hover {
+  color: var(--accent);
+  border-color: color-mix(in srgb, var(--accent) 22%, var(--border-subtle));
+  background: color-mix(in srgb, var(--accent) 6%, var(--surface-elevated));
+}
+
+.footer__privacy {
+  padding: 0.85rem 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border-subtle);
+  background: var(--surface-elevated);
+  box-shadow: var(--shadow-sm);
+}
+
+.footer__privacy-text {
+  margin: 0;
+  max-width: 40rem;
+  margin-inline: auto;
+  font-size: 0.8125rem;
+  font-weight: 600;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.footer__fineprint {
+  max-width: 38rem;
+  margin-inline: auto;
+  padding: 0 0.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+}
+
+.footer__fineprint-line {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.55;
   color: var(--text-tertiary);
   text-align: center;
-  line-height: 1.5;
 }
 
 .footer__credit {
-  margin-bottom: 0.65rem;
+  margin: 0;
+  font-size: 0.8125rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+  text-align: center;
 }
 
 .footer__credit-sep {
-  margin: 0 0.45rem;
+  margin: 0 0.4rem;
   opacity: 0.45;
 }
 
@@ -634,21 +752,22 @@ useHead(() => ({
   color: var(--accent-hover);
 }
 
-.footer__link {
-  display: block;
-  margin: 0.75rem auto 0;
-  padding: 0.35rem 0.5rem;
-  border: none;
-  background: none;
-  color: var(--accent);
-  font-size: 0.8rem;
-  font-weight: 600;
-  cursor: pointer;
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
+.footer__build {
+  margin: 0;
+  padding-top: 0.25rem;
+  font-size: 0.65rem;
+  line-height: 1.45;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-tertiary);
+  letter-spacing: 0.02em;
+  text-align: center;
+  word-break: break-all;
+  opacity: 0.85;
 }
 
-.footer__link:hover {
-  color: var(--accent-hover);
+@media (prefers-reduced-motion: reduce) {
+  .footer {
+    animation: none;
+  }
 }
 </style>

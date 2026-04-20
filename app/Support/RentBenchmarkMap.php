@@ -77,6 +77,35 @@ final class RentBenchmarkMap
     }
 
     /**
+     * Map een URL-padsegment (bijv. huur/alkmaar/…) naar de canonieke gemeentenaam.
+     * Handig als de echte locatie in de link staat maar de gescrapete HTML footer-links bevat.
+     */
+    public static function canonicalFromPathSegment(string $segment): ?string
+    {
+        $segment = trim(rawurldecode($segment));
+        if ($segment === '' || mb_strlen($segment) < 3) {
+            return null;
+        }
+
+        $norm = mb_strtolower(str_replace(['-', '_'], ' ', $segment), 'UTF-8');
+        $norm = preg_replace('/\s+/u', ' ', $norm) ?? $norm;
+
+        foreach (array_keys(self::benchmarks()) as $city) {
+            if (mb_strtolower($city, 'UTF-8') === $norm) {
+                return $city;
+            }
+        }
+
+        foreach (self::aliases() as $alias => $canonical) {
+            if (mb_strtolower($alias, 'UTF-8') === $norm) {
+                return $canonical;
+            }
+        }
+
+        return null;
+    }
+
+    /**
      * @return array{benchmarks: array<string, int>, aliases: array<string, string>}
      */
     private static function loaded(): array

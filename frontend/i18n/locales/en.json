@@ -1,5 +1,7 @@
 {
   "meta": {
+    "homeTitle": "De Huur Radar — free rental scam check & transparent risk score",
+    "homeDescription": "Check rental listings before you pay: risk score 0–100, city benchmark, clear scam signals. No account. Start the check or read how we work.",
     "title": "De Huur Radar — free rental scam check & listing risk score",
     "description": "Check rental listings for fraud before you pay: rule-based risk score 0–100, city rent benchmark, scam signals (WhatsApp, upfront payment, wire transfer). Works for Marktplaats, Funda, rooms. Optional AI. No account."
   },
@@ -11,7 +13,7 @@
   "a11y": {
     "skipToContent": "Skip to main content",
     "siteNav": "Page navigation and preferences",
-    "footerStatement": "This site is text-based: no video or audio required. Zoom, keyboard navigation, and screen readers are supported."
+    "footerStatement": "Text-based, no video or audio. Zoom, keyboard, and screen reader use are supported."
   },
   "trust": {
     "pillarsLabel": "What this service stands for",
@@ -22,10 +24,51 @@
   },
   "hero": {
     "title": "Check a listing before you pay",
-    "subtitle": "Paste text or a link to a property listing. You get a risk score with clear reasons — not a black box."
+    "subtitle": "Risk score 0–100 with clear reasons — not a black box. Start below or open the full checker."
   },
   "home": {
-    "faqTeaser": "Questions about fraud, rooms, and trusted sources? See FAQ & sources."
+    "ctaCheck": "Start listing check",
+    "ctaReadStory": "Why, what & how",
+    "ctaAfterStory": "Go to the listing check",
+    "landingMoreTitle": "More on this site",
+    "cardCheckTitle": "Listing check",
+    "cardCheckBody": "Paste text or a URL, optionally with OCR from a screenshot. You get score, signals, and a report — no sign-up.",
+    "cardCheckLink": "Open the check",
+    "cardFaqTitle": "FAQ & sources",
+    "cardFaqBody": "Common questions about fraud, rooms, WhatsApp, and trusted information — plus links to external advice.",
+    "cardFaqLink": "Open the FAQ",
+    "faqTeaser": "Questions about fraud, rooms, or sources? See the FAQ."
+  },
+  "check": {
+    "metaTitle": "De Huur Radar — free rental scam check & listing risk score",
+    "metaDescription": "Check rental listings for fraud before you pay: rule-based risk score 0–100, city rent benchmark, scam signals (WhatsApp, upfront payment, wire transfer). Works for Marktplaats, Funda, rooms. Optional AI. No account.",
+    "pageTitle": "Listing check",
+    "pageLead": "Paste text or a link to a property listing. You get a risk score with clear reasons — not a black box.",
+    "backHome": "Back to home"
+  },
+  "about": {
+    "metaTitle": "About De Huur Radar — why, what, and how",
+    "metaDescription": "Why check a rental before you pay, what you get (score, benchmark, signals, report), and how De Huur Radar works — transparent rules, optional AI, no account.",
+    "title": "Why, what, and how",
+    "missionBody": "De Huur Radar helps you assess a rental listing before you send money or sensitive details. We use fixed, checkable rules — no hidden scoring — and optionally a language model for extra context. No account: paste text or a link and get a risk score with clear reasons.",
+    "whyTitle": "Why use this check?",
+    "whyLead": "Rental fraud is common on classifieds, Facebook, room sites, and spam. Scammers exploit scarcity, trust, and urgency.",
+    "whyPoint1": "Prices that look too good and a convincing story attract quick replies; then comes pressure for deposits or upfront payment.",
+    "whyPoint2": "A second look before you pay saves stress, time, and money — even if you have rented before.",
+    "whyPoint3": "This is a tool, not a guarantee: you stay responsible, but you get a structured list of red flags and a benchmark sanity check.",
+    "whatTitle": "What you get",
+    "whatPoint1": "A risk score from 0–100 with an explanation of which signals count (full rules on the check page, expandable under “What we do”).",
+    "whatPoint2": "A rough comparison to a model rent for a city or region — indicative, not a valuation.",
+    "whatPoint3": "Concrete signals: payment route, urgency, contact (WhatsApp, etc.), forms, and optional AI observations if you enable that mode.",
+    "whatPoint4": "A report (web and/or PDF) to keep or share — no sign-up required.",
+    "howShortTitle": "How it works (short)",
+    "howShortStep1": "Paste listing text, a public URL, or use OCR on a screenshot — processed locally in your browser until you click Analyze.",
+    "howShortStep2": "Our server reads price, location, and text patterns, applies fixed rules and a benchmark, and computes a score.",
+    "howShortStep3": "You see the score, signals, recommendations, and (optional) AI narrative; technical details and every point weight are on the check page.",
+    "howShortHint": "Want every step, rule points, and benchmark detail? On the check page, open the collapsible section “What we do — and how the score is built”. Or see the FAQ for common questions.",
+    "backHome": "Back to home",
+    "ctaToCheck": "Go to the listing check",
+    "ctaFaq": "FAQ & sources"
   },
   "howItWorks": {
     "title": "What we do — and how the score is built",
@@ -133,6 +176,7 @@
     "themeDark": "Dark theme",
     "themeSystem": "System",
     "language": "Language",
+    "check": "Check",
     "faq": "FAQ & sources",
     "navHome": "De Huur Radar home",
     "langNl": "Nederlands",
@@ -141,7 +185,7 @@
   "faq": {
     "metaTitle": "Rental fraud FAQ & sources — De Huur Radar (Marktplaats, rooms, scams)",
     "metaDescription": "FAQ about De Huur Radar, rental fraud, student rooms, WhatsApp scams, and trusted sources. Contact and further reading for renters in the Netherlands and EU.",
-    "backToHome": "Back to the checker",
+    "backToHome": "Back to home",
     "contactTitle": "Contact",
     "contactIntro": "Questions about this tool or the website? Email:",
     "contactNote": "For legal or financial questions about a specific tenancy, consult a professional or official channels (see the sources above).",
@@ -169,7 +213,8 @@
     "a9": "The scams are often the same: unrealistic rent, registration or “agency” fees before a viewing, pressure to pay fast, or swapping ID copies with a stranger. Room listings are a common target when demand is high. See e.g. Scholieren.com (Dutch, CCV / ministry tips: reverse image search, no brokerage fees as a tenant without a broker mandate, government Kopie ID app). De Huur Radar applies the same text patterns to room ads as to other rentals."
   },
   "footer": {
-    "note": "Support tool using rules and optionally a language model (OpenAI-compatible API); it does not replace your own judgment or legal advice.",
+    "navAria": "Check and FAQ",
+    "note": "De Huur Radar gives a risk indication using fixed rules, with an optional short AI summary. It is not a substitute for your own checks or legal advice.",
     "madeBy": "Made by ",
     "contactLabel": "Contact: ",
     "buildIdTitle": "Timestamp of the last frontend build on this server (compare with local)"
@@ -190,9 +235,8 @@
     "apiNote": "When you run an analysis, your browser sends an HTTPS request to our server with the text you pasted. Server logs may contain technical data (such as IP address and time) for security and debugging—not for ad tracking via browser cookies.",
     "fontsNote": "Fonts are loaded from Google Fonts (fonts.googleapis.com / fonts.gstatic.com). Your IP address may be processed by Google. We do not place marketing cookies for this.",
     "legalNote": "This overview is for transparency only. It is not legal advice; consult a privacy professional if in doubt.",
-    "footerSummary": "Privacy: no marketing or analytics cookies. Functional storage (language, theme) only after you choose below.",
+    "footerSummary": "No marketing or analytics cookies. Functional storage (language, theme) only after you choose. Fonts and storage details: cookie settings.",
     "openSettings": "Cookie settings",
-    "notApplicableLine": "No third-party advertising cookies on this site. See the cookie banner for functional storage and fonts.",
     "rows": [
       {
         "name": "wsc_privacy_consent",
