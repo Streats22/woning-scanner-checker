@@ -25,7 +25,11 @@ Waarom 404 of unauthorized?
    echo ping > /home/ploi/dehuurradar.nl/public/.well-known/acme-challenge/test
    curl -sS -w "\nHTTP:%{http_code}\n" http://dehuurradar.nl/.well-known/acme-challenge/test
    curl -sS -w "\nHTTP:%{http_code}\n" http://www.dehuurradar.nl/.well-known/acme-challenge/test
-   Beide: HTTP 200 en body "ping". Geen 301/404.
+   - Apex: direct HTTP 200 en body "ping" (geen redirect naar HTTPS voor dit pad).
+   - www: mag HTTP 301/302 naar http://dehuurradar.nl/... (zelfde pad). Let's Encrypt volgt
+     redirects voor HTTP-01. Check: curl -sS -L -o /dev/null -w '%{url_effective}\n%{http_code}\n' \
+     http://www.dehuurradar.nl/.well-known/acme-challenge/test  → eind-URL op apex, code 200.
+   - Fout: 404, redirect naar https://… (tenzij cert al werkt), of eind na -L geen 200.
 
 4) Cloudflare
    - Domein op "DNS only" (grijze wolk) tijdens uitgifte, anders kan de proxy een andere origin/response geven.
