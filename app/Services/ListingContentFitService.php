@@ -85,7 +85,7 @@ class ListingContentFitService
             $codes[] = 'euro_in_text';
         }
 
-        if (preg_match('/\b\d{1,4}\s*m(?:2|²)\b|\d{1,4}\s*m2\b/ui', $text)) {
+        if (preg_match('/\b\d{1,4}\s*m[2²]\b|\d{1,4}\s*m2\b/ui', $text)) {
             $score += 6;
             $codes[] = 'surface_area';
         }

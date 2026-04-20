@@ -39,12 +39,12 @@ class ListingAddressParser
             }
 
             if (preg_match(
-                '#\b([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ0-9\.\s\'\-]{0,55}(?:'.self::STREET_SUFFIX_PATTERN.'))\s+(\d{1,5}[a-zA-Z]?)\s*$#u',
+                '#\b([A-Za-zÀ-ÿ][A-Za-zÀ-ÿ0-9.\s\'\-]{0,55}('.self::STREET_SUFFIX_PATTERN.'))\s+(\d{1,5}[a-zA-Z]?)\s*$#u',
                 $line,
                 $m
             )) {
                 $street = trim(preg_replace('/\s+/u', ' ', $m[1]) ?? '');
-                $number = strtolower($m[2]);
+                $number = strtolower($m[3]);
 
                 if ($this->looksLikeYearOrPrice($street, $number)) {
                     continue;
@@ -103,7 +103,7 @@ class ListingAddressParser
         // Korte menuregel: "X / Y / Z" zonder echte straat-suffix in de regel
         if (substr_count($line, ' / ') >= 1
             && mb_strlen($line) < 120
-            && ! preg_match('#(?:'.self::STREET_SUFFIX_PATTERN.')#iu', $line)) {
+            && ! preg_match('#'.self::STREET_SUFFIX_PATTERN.'#iu', $line)) {
             return true;
         }
 
@@ -122,7 +122,7 @@ class ListingAddressParser
         }
 
         // Te veel leestekens / URL-achtig (geen echte straatregel)
-        if (substr_count($street, '/') >= 1 && ! preg_match('#(?:'.self::STREET_SUFFIX_PATTERN.')#iu', $street)) {
+        if (substr_count($street, '/') >= 1 && ! preg_match('#'.self::STREET_SUFFIX_PATTERN.'#iu', $street)) {
             return true;
         }
 
