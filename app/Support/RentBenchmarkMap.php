@@ -78,8 +78,11 @@ final class RentBenchmarkMap
     }
 
     /**
-     * Map een URL-padsegment (bijv. huur/alkmaar/…) naar de canonieke gemeentenaam.
-     * Handig als de echte locatie in de link staat maar de gescrapete HTML footer-links bevat.
+     * Map een URL-padsegment (bijv. huur/alkmaar/…, kamer-bussum, appartement-rotterdam-centrum)
+     * naar de canonieke gemeentenaam.
+     *
+     * Werkt voor: volledige slug gelijk aan gemeente/alias, én samengestelde slugs waarin een
+     * plaatsnaam als los woord voorkomt (veel verhuurplatformen: kamer-{plaats}/…).
      */
     public static function canonicalFromPathSegment(string $segment): ?string
     {
@@ -103,7 +106,93 @@ final class RentBenchmarkMap
             }
         }
 
+        /* Alleen cijfers (bijv. kamer-2371566) — geen gemeente */
+        if (preg_match('/^[\d\s]+$/u', $norm)) {
+            return null;
+        }
+
+        /*
+         * Samengevoegde pad-segmenten: elke bekende plaatsnaam (langste eerst) als heel woord.
+         * Voorkomt dat platforms zoals Kamernet (/huren/kamer-bussum/…) op de HTML (nav met o.a. Utrecht)
+         * terugvallen i.p.v. de echte plaats in de URL.
+         */
+        $needleToCanonical = self::needleToCanonical();
+        foreach (self::searchNeedlesSorted() as $needle) {
+            $n = mb_strtolower($needle, 'UTF-8');
+            if (mb_strlen($n) < 3) {
+                continue;
+            }
+            $pattern = '/(?<![\p{L}\p{N}])'.preg_quote($n, '/').'(?![\p{L}\p{N}])/u';
+            if (preg_match($pattern, $norm)) {
+                return $needleToCanonical[$needle];
+            }
+        }
+
         return null;
+    }
+
+    /**
+     * Zet een opgeslagen of gedetecteerde waarde om naar de canonieke benchmarksleutel
+     * (zelfde als in benchmarks() of via alias).
+     */
+    public static function resolveCanonicalCity(?string $city): ?string
+    {
+        if ($city === null || $city === '') {
+            return null;
+        }
+        if (array_key_exists($city, self::benchmarks())) {
+            return $city;
+        }
+        foreach (self::aliases() as $alias => $canonical) {
+            if (mb_strtolower($alias, 'UTF-8') === mb_strtolower($city, 'UTF-8')) {
+                return $canonical;
+            }
+        }
+
+        return $city;
+    }
+
+    /**
+     * Toon een herkenbare plaatsnaam (Bussum, Den Bosch) i.p.v. alleen de fusiegemeente
+     * (Gooise Meren, 's-Hertogenbosch) wanneer URL of tekst die naam bevat.
+     *
+     * @param  string  $canonicalCity  Sleutel uit benchmarks() (output van locatie-detectie).
+     */
+    public static function displayPlaceLabel(string $canonicalCity, ?string $text, ?string $url): string
+    {
+        $aliases = [];
+        foreach (self::aliases() as $alias => $canonical) {
+            if ($canonical === $canonicalCity) {
+                $aliases[] = $alias;
+            }
+        }
+        if ($aliases === []) {
+            return $canonicalCity;
+        }
+
+        usort($aliases, fn ($a, $b) => mb_strlen($b) <=> mb_strlen($a));
+
+        $hayUrl = $url !== null && $url !== ''
+            ? mb_strtolower(rawurldecode($url), 'UTF-8')
+            : '';
+        $hayText = $text !== null && $text !== ''
+            ? mb_strtolower($text, 'UTF-8')
+            : '';
+
+        foreach ($aliases as $alias) {
+            $a = mb_strtolower($alias, 'UTF-8');
+            if ($hayUrl !== '' && preg_match('/(?<![\p{L}\p{N}])'.preg_quote($a, '/').'(?![\p{L}\p{N}])/u', $hayUrl)) {
+                return $alias;
+            }
+        }
+        foreach ($aliases as $alias) {
+            $a = mb_strtolower($alias, 'UTF-8');
+            if ($hayText !== '' && preg_match('/(?<![\p{L}\p{N}])'.preg_quote($a, '/').'(?![\p{L}\p{N}])/u', $hayText)) {
+                return $alias;
+            }
+        }
+
+        return $canonicalCity;
     }
 
     /**

@@ -1,6 +1,9 @@
 /**
- * Externe bronnen over huurfraude / veilig huren (NL focus, ≥20).
+ * Externe bronnen over huurfraude / veilig huren (NL focus, EU-aanvulling).
  * Geen endorsement — ter informatie en verdere lectuur.
+ *
+ * Server-side classificatie (kamer / hele woning, particulier / sociale huur) gebruikt
+ * dezelfde soort NL-termen als in deze bronnen; zie `app/Services/ListingDwellingClassifier.php`.
  */
 export type FaqSource = { title: string; titleEn: string; url: string }
 
@@ -119,5 +122,105 @@ export const faqSources: FaqSource[] = [
     title: 'Wikipedia — rental fraud (context, internationaal)',
     titleEn: 'Wikipedia — rental scam (international context)',
     url: 'https://en.wikipedia.org/wiki/Rental_scam',
+  },
+  {
+    title: 'Huurcommissie — geschillen over huurprijs, servicekosten en meer',
+    titleEn: 'Rent Tribunal (Huurcommissie) — rental disputes (NL)',
+    url: 'https://www.huurcommissie.nl/',
+  },
+  {
+    title: 'Woonbond — zo ontmasker je online oplichting bij het zoeken naar een woning',
+    titleEn: 'Woonbond — how to spot online rental scams',
+    url: 'https://www.woonbond.nl/thema/huren-recht/zo-ontmasker-je-online-oplichting/',
+  },
+  {
+    title: 'Woonbond — honderden meldingen van verhuurfraude (nieuws)',
+    titleEn: 'Woonbond — hundreds of reported rental fraud cases',
+    url: 'https://www.woonbond.nl/nieuws/honderden-gemelde-zaken-van-verhuurfraude/',
+  },
+  {
+    title: 'Woonbond — laat je niet oplichten bij het zoeken naar woonruimte',
+    titleEn: 'Woonbond — don’t get scammed when searching for housing',
+    url: 'https://www.woonbond.nl/thema/huren-recht/laat-je-niet-oplichten-zoeken-woonruimte/',
+  },
+  {
+    title: 'ACM ConsuWijzer — let op misleiding op huurwoningwebsites',
+    titleEn: 'ACM ConsuWijzer — misleading rental listing sites',
+    url: 'https://www.consuwijzer.nl/nieuws/let-op-voor-misleiding-acm-onderzoekt-huurwoningwebsites',
+  },
+  {
+    title: 'ACM ConsuWijzer — fraude, oplichting en oneerlijke handelspraktijken',
+    titleEn: 'ACM ConsuWijzer — fraud and unfair commercial practices',
+    url: 'https://www.consuwijzer.nl/thema/fraude-oplichting-en-oneerlijke-handelspraktijken',
+  },
+  {
+    title: 'Autoriteit Persoonsgegevens — veilige kopie van je ID (o.a. KopieID)',
+    titleEn: 'Dutch DPA — safe copies of your ID document',
+    url: 'https://www.autoriteitpersoonsgegevens.nl/themas/identificatie/paspoort-en-identiteitskaart/kopie-van-uw-id-bewijs-wat-kunt-u-doen',
+  },
+  {
+    title: 'Europees Consumenten Centrum Nederland — hulp bij grensoverschrijdende consumentenzaken (EU)',
+    titleEn: 'European Consumer Centre Netherlands — cross-border consumer issues',
+    url: 'https://www.eccnederland.nl/',
+  },
+  {
+    title: 'RvIG — Centraal Meldpunt Identiteitsfraude (CMI)',
+    titleEn: 'RvIG — Central Identity Fraud Hotline (CMI)',
+    url: 'https://www.rvig.nl/centraal-meldpunt-identiteitsfraude',
+  },
+  {
+    title: 'NCSC — hoe herken je een phishingmail?',
+    titleEn: 'NCSC (NL) — how to recognise phishing email',
+    url: 'https://www.ncsc.nl/phishing/hoe-herken-ik-een-phishing-e-mail',
+  },
+  {
+    title: 'Kamernet — hoe herken ik een oplichter? (support)',
+    titleEn: 'Kamernet — how to recognise a scammer (support)',
+    url: 'https://support.kamernet.nl/hoe-herken-ik-een-oplichter',
+  },
+  {
+    title: 'Rijksoverheid — welke rechten en plichten heb ik als huurder?',
+    titleEn: 'Dutch government — tenant rights and obligations',
+    url: 'https://www.rijksoverheid.nl/onderwerpen/woning-huren/vraag-en-antwoord/welke-rechten-en-plichten-heb-ik-als-huurder',
+  },
+  {
+    title: 'Meld Misdaad Anoniem',
+    titleEn: 'Report Crime Anonymously (NL)',
+    url: 'https://www.meldmisdaadanoniem.nl/',
+  },
+  {
+    title: 'ACM — onderzoek naar huurwoningwebsites die consumenten misleiden',
+    titleEn: 'ACM — investigation into misleading rental listing websites',
+    url: 'https://www.acm.nl/nl/publicaties/acm-doet-onderzoek-naar-huurwoningwebsites-die-consumenten-misleiden',
+  },
+  {
+    title: 'Politie — internetoplichting (uitleg en wat je kunt doen)',
+    titleEn: 'Dutch police — internet fraud',
+    url: 'https://www.politie.nl/onderwerpen/internetoplichting.html',
+  },
+  {
+    title: 'Rijksoverheid — veilige kopie van je identiteitsbewijs (KopieID-app)',
+    titleEn: 'Dutch government — secure ID copy (KopieID app)',
+    url: 'https://www.rijksoverheid.nl/onderwerpen/identiteitsfraude/vraag-en-antwoord/veilige-kopie-identiteitsbewijs',
+  },
+  {
+    title: 'Europese Commissie — housing checklist: veilig studentenhuis in Europa',
+    titleEn: 'European Commission — housing checklist for students in Europe',
+    url: 'https://education.ec.europa.eu/node/3200',
+  },
+  {
+    title: 'LSVb — hulp bij het vinden van een studentenkamer',
+    titleEn: 'National Union of Students (NL) — finding a student room',
+    url: 'https://lsvb.nl/alles-over-je-studententijd/huisvesting/hulp-bij-het-vinden-van-een-studentenkamer/',
+  },
+  {
+    title: 'LSVb — Housing Hotline (advies bij huisvesting / fraude)',
+    titleEn: 'LSVb — Housing Hotline',
+    url: 'https://lsvb.nl/diensten/housing-hotline/',
+  },
+  {
+    title: 'Veilig Bankieren (NVB) — phishing en betaalfraude',
+    titleEn: 'Veilig Bankieren — phishing and payment fraud (NL banks)',
+    url: 'https://www.veiligbankieren.nl/fraude/phishing',
   },
 ]

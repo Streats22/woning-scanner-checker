@@ -98,6 +98,10 @@
                             <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--muted); vertical-align:top;">Contact (indicatie)</td>
                             <td style="padding:0.35rem 0;">{{ $listingFacts['contact_hint'] ?? '—' }}</td>
                         </tr>
+                        @if (! empty($listingFacts['dwelling']) && is_array($listingFacts['dwelling']))
+                            <x-listing-dwelling-facts :dwelling="$listingFacts['dwelling']" variant="web" />
+                        @endif
+                        <x-listing-surface-facts :listing-facts="$listingFacts" variant="web" />
                     </tbody>
                 </table>
                 <p class="prose muted" style="margin:0.75rem 0 0; font-size:0.85rem;">
@@ -233,8 +237,8 @@
             <div class="prose muted prose-pre-wrap">{{ $listing->ai_summary }}</div>
         </div>
 
-        @if ($listing->city)
-            <p class="prose muted" style="margin:0 0 1rem;">Gedetecteerde plaats in tekst: <strong>{{ $listing->city }}</strong></p>
+        @if (($listingFacts['city'] ?? null) ?: $listing->city)
+            <p class="prose muted" style="margin:0 0 1rem;">Herkenning (plaats): <strong>{{ $listingFacts['city'] ?? $listing->city }}</strong></p>
         @endif
 
         <p class="back"><a href="{{ url('/') }}">← Nieuwe analyse</a></p>

@@ -370,5 +370,8 @@ return [
         'The Hague' => 'Den Haag',
         'Uden' => 'Maashorst',
         'Veghel' => 'Maashorst',
+        /* Voormalige kernen / zoektermen → huidige gemeente (Gooise Meren sinds 2016) */
+        'Bussum' => 'Gooise Meren',
+        'Naarden' => 'Gooise Meren',
     ],
 ];

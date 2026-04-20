@@ -11,6 +11,7 @@ class LlmScamAnalysisService
     public function __construct(
         private AiAnalysisService $ruleSummary,
         private ReportEnrichmentService $reportEnrichment,
+        private ListingDwellingClassifier $dwellingClassifier,
     ) {}
 
     /**
@@ -48,8 +49,9 @@ class LlmScamAnalysisService
                     'role' => 'system',
                     'content' => <<<'PROMPT'
 Je bent een Nederlandse expert in huur-/kamerverhuur-fraude en misleidende advertenties.
-Je krijgt tekst (en soms een bron-URL) plus een eenvoudige regel-analyse (score, vlaggen, onderdelen).
+Je krijgt tekst (en soms een bron-URL) plus een eenvoudige regel-analyse (score, vlaggen, onderdelen) en een automatische schatting van type woning (kamer vs hele woning) en sector (particulier vs sociale huur vs onbekend).
 De server herkent o.a.: onderprijs vs. benchmark, WhatsApp/Telegram/Signal/Skype, tijdsdruk (o.a. “veel interesse”), Western Union/crypto/cadeaukaarten, geen bezichtiging of buitenland-verhaal, sleutelservice, vroeg om ID/paspoort, voorafkosten, Google Forms/Typeform, copy-paste verhalen, Engelstalige sjablonen.
+Gebruik de meegegeven dwelling_classificatie als hulp — het is geen juridische kwalificatie.
 
 Taken:
 1) Beoordeel of de inhoud consistent lijkt met een echte huuradvertentie of op scam/phishing wijst.
@@ -87,6 +89,7 @@ PROMPT,
                         'bron_url' => $url,
                         'prijs_geëxtraheerd' => $data->price,
                         'contact_hint' => $data->contact,
+                        'dwelling_classificatie' => $this->dwellingClassifier->classify($data),
                         'markt_gemiddelde_richtprijs' => $market['average'],
                         'markt_verschil_pct' => $market['difference_percent'],
                         'regel_score' => $ruleScam['score'],

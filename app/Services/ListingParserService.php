@@ -8,6 +8,7 @@ class ListingParserService
 {
     public function __construct(
         private ListingFetchService $fetch,
+        private ListingSurfaceParser $surfaceParser,
     ) {}
 
     public function parseInput(string $input): ParsedListingInput
@@ -22,11 +23,14 @@ class ListingParserService
 
             $out = $this->fetch->fetchPlainText($url);
 
+            $text = $out['text'];
+
             return new ParsedListingInput(
                 sourceUrl: $out['effective_url'],
-                price: $this->price($out['text']),
-                contact: $this->phone($out['text']),
-                description: $out['text'],
+                price: $this->price($text),
+                contact: $this->phone($text),
+                description: $text,
+                surfaceM2: $this->surfaceParser->parse($text),
             );
         }
 
@@ -40,6 +44,7 @@ class ListingParserService
             price: $this->price($text),
             contact: $this->phone($text),
             description: $text,
+            surfaceM2: $this->surfaceParser->parse($text),
         );
     }
 

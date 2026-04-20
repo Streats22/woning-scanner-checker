@@ -319,14 +319,44 @@ body {
   }
 }
 
+/**
+ * Standaardtekstlinks: underline vult in op hover + lichte lift (alleen fijne pointer, geen reduced-motion).
+ */
 a {
   color: var(--accent);
-  text-decoration: none;
-  text-underline-offset: 2px;
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.22em;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    text-decoration-color var(--duration-fast) var(--ease-out),
+    text-decoration-thickness var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 a:hover {
-  text-decoration: underline;
+  color: var(--accent-hover);
+  text-decoration-color: color-mix(in srgb, var(--accent-hover) 58%, transparent);
+  text-decoration-thickness: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  a:hover {
+    transform: translateY(-1px);
+  }
+
+  /* Geen verticale shift: merk + terug (eigen micro-animaties). */
+  a.wsc-back-link:hover,
+  a.brand--link:hover {
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  a:hover {
+    transform: none;
+  }
 }
 
 a:focus-visible {

@@ -251,11 +251,26 @@ useWscSeo({
   font-weight: 600;
   color: var(--accent);
   text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
+  text-decoration-thickness: 1.5px;
   text-underline-offset: 0.18em;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    text-decoration-color var(--duration-fast) var(--ease-out),
+    text-decoration-thickness var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 .hero__cta-secondary:hover {
   color: var(--accent-hover);
+  text-decoration-color: color-mix(in srgb, var(--accent-hover) 75%, transparent);
+  text-decoration-thickness: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .hero__cta-secondary:hover {
+    transform: translateY(-1px);
+  }
 }
 
 .main--landing {
@@ -392,14 +407,29 @@ useWscSeo({
   font-size: 0.875rem;
   font-weight: 600;
   color: var(--accent);
-  text-decoration: none;
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 0.2em;
   align-self: flex-start;
   touch-action: manipulation;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    text-decoration-color var(--duration-fast) var(--ease-out),
+    text-decoration-thickness var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-spring);
 }
 
 .landing-card__link:hover {
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
+  color: var(--accent-hover);
+  text-decoration-color: color-mix(in srgb, var(--accent-hover) 65%, transparent);
+  text-decoration-thickness: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .landing-card__link:hover {
+    transform: translateY(-2px);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {

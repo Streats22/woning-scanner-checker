@@ -24,18 +24,25 @@
           <p class="body-text faq-item__body">{{ t('faq.a' + n) }}</p>
         </details>
       </div>
-      <h2 class="faq-sources__title font-display">{{ t('faq.sourcesTitle') }}</h2>
-      <p class="body-text muted faq-sources__intro">{{ t('faq.sourcesIntro') }}</p>
-      <ul class="faq-sources">
-        <li v-for="(src, i) in faqSources" :key="i">
-          <a
-            class="faq-sources__link"
-            :href="src.url"
-            target="_blank"
-            rel="noopener noreferrer"
-          >{{ locale === 'nl' ? src.title : src.titleEn }}</a>
-        </li>
-      </ul>
+      <details id="faq-sources" class="faq-sources-details">
+        <summary class="faq-sources-details__summary font-display">
+          <span class="faq-sources-details__title">{{ t('faq.sourcesTitle') }}</span>
+          <span class="faq-sources-details__count muted" aria-hidden="true">({{ faqSources.length }})</span>
+        </summary>
+        <div class="faq-sources-details__panel">
+          <p class="body-text muted faq-sources__intro">{{ t('faq.sourcesIntro') }}</p>
+          <ul class="faq-sources">
+            <li v-for="(src, i) in faqSources" :key="i">
+              <a
+                class="faq-sources__link"
+                :href="src.url"
+                target="_blank"
+                rel="noopener noreferrer"
+              >{{ locale === 'nl' ? src.title : src.titleEn }}</a>
+            </li>
+          </ul>
+        </div>
+      </details>
     </section>
 
     <section class="panel panel--contact panel--rise panel--rise-delay" aria-labelledby="contact-title">
@@ -320,9 +327,104 @@ useHead(() => ({
   }
 }
 
-.faq-sources__title {
+.faq-sources-details {
+  margin-top: 1.25rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  background: var(--surface-muted);
+  overflow: hidden;
+  transition:
+    border-color var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .faq-sources-details[open] {
+    border-color: color-mix(in srgb, var(--accent) 28%, var(--border-subtle));
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .faq-sources-details:hover {
+    border-color: color-mix(in srgb, var(--accent) 18%, var(--border-subtle));
+    box-shadow: var(--shadow-sm);
+  }
+}
+
+.faq-sources-details__summary {
+  cursor: pointer;
   font-size: 1.05rem;
-  margin: 1.25rem 0 0.5rem;
+  font-weight: 600;
+  padding: 0.85rem 2.35rem 0.85rem 1rem;
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.35rem 0.5rem;
+  list-style: none;
+  color: var(--text-primary);
+  position: relative;
+  touch-action: manipulation;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    transform 0.12s var(--ease-out);
+}
+
+.faq-sources-details__summary::after {
+  content: '▸';
+  position: absolute;
+  right: 0.85rem;
+  top: 50%;
+  font-size: 0.7rem;
+  line-height: 1;
+  opacity: 0.5;
+  transform: translateY(-50%) rotate(0deg);
+  transition: transform 0.38s var(--ease-spring), opacity var(--duration-fast) var(--ease-out);
+}
+
+.faq-sources-details[open] .faq-sources-details__summary::after {
+  transform: translateY(-50%) rotate(90deg);
+  opacity: 0.75;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .faq-sources-details__summary::after {
+    transition: none;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .faq-sources-details__summary:hover {
+    color: var(--accent);
+    background: color-mix(in srgb, var(--surface-page) 55%, var(--surface-muted));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .faq-sources-details__summary:active {
+    transform: scale(0.985);
+  }
+}
+
+.faq-sources-details__summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-sources-details__title {
+  flex: 1;
+  min-width: min(100%, 12rem);
+}
+
+.faq-sources-details__count {
+  font-size: 0.88rem;
+  font-weight: 500;
+}
+
+.faq-sources-details__panel {
+  border-top: 1px solid var(--border-subtle);
+  padding: 0.65rem 1rem 0.9rem;
 }
 
 .faq-sources__intro {
@@ -345,17 +447,31 @@ useHead(() => ({
 .faq-sources__link {
   color: var(--accent);
   text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 38%, transparent);
+  text-decoration-thickness: 1.5px;
   text-underline-offset: 0.15em;
-  transition: color var(--duration-fast) var(--ease-out);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    text-decoration-color var(--duration-fast) var(--ease-out),
+    text-decoration-thickness var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 .faq-sources__link:hover {
   color: var(--accent-hover);
+  text-decoration-color: color-mix(in srgb, var(--accent-hover) 72%, transparent);
+  text-decoration-thickness: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .faq-sources__link:hover {
+    transform: translateY(-1px);
+  }
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  .faq-sources {
-    animation: wsc-fade-in 0.5s var(--ease-out) 0.28s backwards;
+  .faq-sources-details[open] .faq-sources-details__panel {
+    animation: wsc-fade-in 0.32s var(--ease-out) both;
   }
 }
 

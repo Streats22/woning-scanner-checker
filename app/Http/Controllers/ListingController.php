@@ -14,6 +14,7 @@ use App\Services\Report\ReportListingResolver;
 use App\Services\Report\ReportPdfService;
 use App\Services\Report\ReportUrlGenerator;
 use App\Services\ScamAnalysisService;
+use App\Support\RentBenchmarkMap;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -83,11 +84,15 @@ class ListingController extends Controller
             'report_snapshot' => $reportSnapshot,
         ]);
 
+        $displayForSlug = ($listing->city !== null && $listing->city !== '')
+            ? (RentBenchmarkMap::displayPlaceLabel($listing->city, $listing->description, $listing->source_url) ?? $listing->city)
+            : null;
+
         $listing->update([
             'report_slug' => Listing::buildReportSlug(
                 $listing->created_at,
                 $listing->id,
-                $listing->city,
+                $displayForSlug ?? $listing->city,
                 $listing->description,
                 $listing->source_url,
             ),

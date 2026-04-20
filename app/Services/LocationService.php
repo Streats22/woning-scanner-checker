@@ -7,22 +7,97 @@ use App\Support\RentBenchmarkMap;
 class LocationService
 {
     /**
+     * Grote steden die vaak in navigatie, filters of voorbeeldadressen staan (", Utrecht", "Ook in Amsterdam").
+     * Als de URL wél een andere (vaak kleinere) gemeente aangeeft — o.a. kamer-bussum — is dat meestal
+     * betrouwbaarder dan een sterke tekstmatch op zo'n hub.
+     *
+     * @var list<string>
+     */
+    private const HUB_BENCHMARK_CITIES = [
+        'Amsterdam',
+        'Rotterdam',
+        "'s-Gravenhage",
+        'Utrecht',
+        'Eindhoven',
+        'Groningen',
+    ];
+
+    /**
      * Detecteert de meest waarschijnlijke stad voor de benchmark.
      *
      * Volgorde:
-     * 1) Gemeente in het pad van de bron-URL (huur/alkmaar/…) — sterk signaal bij gedeelde links.
-     * 2) Tekst: hele woorden, nav-prefix overslaan, footer-downrank als er eerder een advertentie-context is.
+     * 1) Gemeente in het pad van de bron-URL (huur/alkmaar/…) — tenzij de tekst een veel
+     *    sterker signaal geeft (bijv. "Straat, Plaats" met komma vóór de plaatsnaam in de
+     *    advertentie-body, niet in navigatie met “, Utrecht”-achtige patronen).
+     *    Ook: als de URL een niet-hubgemeente geeft (bijv. kamer-bussum → Gooise Meren) maar de
+     *    tekst een sterke match op een veelvoorkomende hub (Utrecht, Amsterdam, …) — dan wint de URL,
+     *    zodat voorbeeldadressen / filters in HTML de benchmark niet overschrijven.
+     * 2) Tekst: hele woorden + score (komma-adres, advertentie-context, nav-downrank).
      *
-     * Aliassen (bijv. Den Bosch) worden naar de canonieke sleutel in RentBenchmarkMap opgelost.
+     * Aliassen (bijv. Den Bosch, Bussum → Gooise Meren) worden naar de canonieke sleutel opgelost.
      */
     public function detectCity(string $text, ?string $sourceUrl = null): ?string
     {
         $fromUrl = $this->cityFromListingUrl($sourceUrl);
-        if ($fromUrl !== null) {
+        $textResult = $this->detectCityFromTextResult($text);
+
+        if ($fromUrl === null) {
+            return $textResult['city'] ?? null;
+        }
+        if ($textResult === null) {
+            return $fromUrl;
+        }
+        if ($fromUrl === $textResult['city']) {
             return $fromUrl;
         }
 
-        return $this->detectCityFromText($text);
+        /*
+         * Tekst wint bij duidelijk adres (…, plaats) — o.a. regionale URL met verkeerde filterstad.
+         * Een match met score ≥ 95 kan ook uit navigatie komen (bijv. “…, Utrecht” in de header);
+         * dat is geen betrouwbaarder signaal dan een expliciete plaats in de URL (kamer-bussum/…).
+         */
+        if ($textResult['score'] >= 95) {
+            $skipPrefix = $this->boilerplateSkipLength($text);
+            if ($textResult['pos'] < $skipPrefix) {
+                return $fromUrl;
+            }
+
+            if ($this->shouldPreferUrlOverHubTextCity($fromUrl, $textResult['city'])) {
+                return $fromUrl;
+            }
+
+            return $textResult['city'];
+        }
+
+        return $fromUrl;
+    }
+
+    /**
+     * URL wint als die een niet-hubgemeente aangeeft en de tekst vooral een "grote stad" matcht
+     * (typisch ruis t.o.v. kamer-{plaats} in het pad, zie Kamernet).
+     */
+    private function shouldPreferUrlOverHubTextCity(string $fromUrlCity, string $textCity): bool
+    {
+        if ($fromUrlCity === $textCity) {
+            return false;
+        }
+
+        if (! $this->isHubBenchmarkCity($textCity)) {
+            return false;
+        }
+
+        return ! $this->isHubBenchmarkCity($fromUrlCity);
+    }
+
+    private function isHubBenchmarkCity(string $canonical): bool
+    {
+        foreach (self::HUB_BENCHMARK_CITIES as $hub) {
+            if ($hub === $canonical) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function cityFromListingUrl(?string $url): ?string
@@ -48,7 +123,10 @@ class LocationService
         return null;
     }
 
-    private function detectCityFromText(string $text): ?string
+    /**
+     * @return array{city: string, score: int, pos: int}|null
+     */
+    private function detectCityFromTextResult(string $text): ?array
     {
         $text = trim($text);
         if ($text === '') {
@@ -76,33 +154,62 @@ class LocationService
             return null;
         }
 
-        usort($matches, fn ($a, $b) => $a['pos'] <=> $b['pos']);
-
         $skipPrefix = $this->boilerplateSkipLength($text);
 
-        $afterNav = array_values(array_filter($matches, fn ($m) => $m['pos'] >= $skipPrefix));
-
-        if ($afterNav !== []) {
-            usort($afterNav, fn ($a, $b) => $a['pos'] <=> $b['pos']);
-
-            return $afterNav[0]['city'];
-        }
-
-        $firstByCity = [];
+        $bestPerCity = [];
         foreach ($matches as $m) {
             $c = $m['city'];
-            if (! isset($firstByCity[$c]) || $m['pos'] < $firstByCity[$c]) {
-                $firstByCity[$c] = $m['pos'];
+            $s = $this->matchScore($text, $m['pos'], $skipPrefix);
+            if (! isset($bestPerCity[$c]) || $s > $bestPerCity[$c]['score']) {
+                $bestPerCity[$c] = ['city' => $c, 'score' => $s, 'pos' => $m['pos']];
             }
         }
 
-        if (count($firstByCity) > 1) {
-            arsort($firstByCity);
+        $candidates = array_values($bestPerCity);
+        usort($candidates, function ($a, $b) {
+            if ($a['score'] !== $b['score']) {
+                return $b['score'] <=> $a['score'];
+            }
 
-            return array_key_first($firstByCity);
+            return $a['pos'] <=> $b['pos'];
+        });
+
+        $winner = $candidates[0];
+
+        return ['city' => $winner['city'], 'score' => $winner['score'], 'pos' => $winner['pos']];
+    }
+
+    /**
+     * Score per match: komma-regel (sterk), advertentie-context, downrank vroege boilerplate.
+     */
+    private function matchScore(string $text, int $bytePos, int $skipPrefix): int
+    {
+        $score = 0;
+        if ($this->hasCommaBeforeCity($text, $bytePos)) {
+            $score += 100;
+        }
+        if ($this->hasListingContextNearMatch($text, $bytePos)) {
+            $score += 10;
+        }
+        if ($bytePos < $skipPrefix) {
+            $score -= 15;
         }
 
-        return array_key_first($firstByCity);
+        return $score;
+    }
+
+    /**
+     * Typisch: "Veerplein, Bussum" — komma direct vóór de plaatsnaam.
+     */
+    private function hasCommaBeforeCity(string $text, int $bytePos): bool
+    {
+        if ($bytePos < 1) {
+            return false;
+        }
+
+        $before = substr($text, max(0, $bytePos - 10), 10);
+
+        return (bool) preg_match('/,\s*$/u', $before);
     }
 
     /**
@@ -180,9 +287,6 @@ class LocationService
      * Eerste regels van een lange geëxporteerde HTML-pagina bevatten vaak navigatie
      * ("Amsterdam" als voorbeeldstad); de echte locatie staat verderop. Bij korte
      * teksten (handmatig geplakt) slaan we niets over.
-     *
-     * De skip mag niet te groot worden: anders valt de echte plaats in de titel (boven €/huur)
-     * buiten de "after nav"-zone en wint een willekeurige stad uit de footer.
      */
     private function boilerplateSkipLength(string $text): int
     {

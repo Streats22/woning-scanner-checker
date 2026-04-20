@@ -11,6 +11,22 @@ use App\Data\ParsedListingInput;
 class ScamAnalysisService
 {
     /**
+     * Prijs t.o.v. gemeentelijke model-benchmark (€/maand, hele woning).
+     * Onder deze fractie telt “ruim onder benchmark” mee voor de score.
+     */
+    private const BENCHMARK_PRICE_RATIO_WHOLE_OR_UNKNOWN = 0.7;
+
+    /**
+     * Kamers horen vaak honderden euro’s onder een gemiddelde voor een hele woning; alleen extreem lage
+     * bedragen tellen nog mee als hetzelfde signaal (smallere fractie).
+     */
+    private const BENCHMARK_PRICE_RATIO_ROOM = 0.27;
+
+    public function __construct(
+        private ListingDwellingClassifier $dwellingClassifier,
+    ) {}
+
+    /**
      * @param  array{average: int, difference_percent: ?int}  $market
      * @return array{
      *     score: int,
@@ -26,17 +42,29 @@ class ScamAnalysisService
         $t = $data->description;
         $lower = mb_strtolower($t, 'UTF-8');
 
-        if ($data->price && $data->price < ($market['average'] * 0.7)) {
+        $dwellingKind = $this->dwellingClassifier->classify($data)['kind'];
+        $priceRatio = $dwellingKind === 'room'
+            ? self::BENCHMARK_PRICE_RATIO_ROOM
+            : self::BENCHMARK_PRICE_RATIO_WHOLE_OR_UNKNOWN;
+
+        if ($data->price && $data->price < ($market['average'] * $priceRatio)) {
             $score += 30;
             $flags[] = 'Prijs significant onder marktwaarde';
-            $breakdown[] = [
-                'category' => 'Prijs vs. benchmark',
-                'points' => 30,
-                'detail' => sprintf(
+            $detail = $dwellingKind === 'room'
+                ? sprintf(
+                    'Geëxtraheerde prijs €%s ligt sterk onder het model (€%s/maand; gemiddelde voor een hele woning in de gemeente). Voor een kamer is een veel lagere huur normaal; dit signaal telt daarom alleen bij opvallend lage bedragen.',
+                    number_format($data->price, 0, ',', '.'),
+                    number_format($market['average'], 0, ',', '.')
+                )
+                : sprintf(
                     'Geëxtraheerde prijs €%s ligt ruim onder de gebruikte benchmark (€%s/maand). Dat kan legitiem zijn, maar past ook bij onderprijsing om vertrouwen te winnen.',
                     number_format($data->price, 0, ',', '.'),
                     number_format($market['average'], 0, ',', '.')
-                ),
+                );
+            $breakdown[] = [
+                'category' => 'Prijs vs. benchmark',
+                'points' => 30,
+                'detail' => $detail,
             ];
         }
 

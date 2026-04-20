@@ -160,7 +160,7 @@
 <body class="pdf-root--{{ $theme }}">
 {{-- Dompdf: alleen PNG data-URI; zie App\Support\PdfBrandLogo (public + resources fallback). --}}
 @php
-    $logoDataUri = \App\Support\PdfBrandLogo::dataUri();
+    $logoDataUri = \App\Support\PdfBrandLogo::dataUri($theme);
 @endphp
     <table class="pdf-brand" cellpadding="0" cellspacing="0">
         <tr>
@@ -259,6 +259,10 @@
                 <td class="muted">{{ __('pdf.facts_contact') }}</td>
                 <td>{{ $listingFacts['contact_hint'] ?? __('pdf.facts_empty') }}</td>
             </tr>
+            @if (! empty($listingFacts['dwelling']) && is_array($listingFacts['dwelling']))
+                <x-listing-dwelling-facts :dwelling="$listingFacts['dwelling']" variant="pdf" />
+            @endif
+            <x-listing-surface-facts :listing-facts="$listingFacts" variant="pdf" />
         </table>
         <p class="muted" style="margin-top:6pt;">
             @if (($listingFacts['benchmark_scope'] ?? '') === 'national')

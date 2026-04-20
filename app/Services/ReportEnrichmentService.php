@@ -3,9 +3,14 @@
 namespace App\Services;
 
 use App\Data\ParsedListingInput;
+use App\Support\ListingDwellingRecommendationHints;
 
 class ReportEnrichmentService
 {
+    public function __construct(
+        private ListingDwellingClassifier $dwellingClassifier,
+    ) {}
+
     /**
      * Vult aanbevelingen en controles op basis van regels + score (zonder LLM-extras).
      *
@@ -17,6 +22,7 @@ class ReportEnrichmentService
     {
         $recommendations = [];
         $checks = [];
+        $dwelling = $this->dwellingClassifier->classify($data);
 
         if ($ruleScam['score'] >= 61) {
             $recommendations[] = 'Stuur geen geld of persoonsgegevens voordat je de woning en verhuurder hebt geverifieerd.';
@@ -39,12 +45,20 @@ class ReportEnrichmentService
             $checks[] = 'Vraag een vast telefoonnummer of e-mail van een bedrijfsdomein; wees wantrouwig bij alleen chat-apps zonder traceerbaar kanaal.';
         }
 
-        if ($data->price && $market['difference_percent'] !== null && $market['difference_percent'] < -25) {
+        $cheapVsBenchmark = $data->price && $market['difference_percent'] !== null && $market['difference_percent'] < -25;
+        if ($cheapVsBenchmark && $dwelling['kind'] !== 'room') {
             $checks[] = 'Vergelijk de prijs met vergelijkbare woningen in dezelfde buurt (minimaal 3 referenties).';
+        }
+        if ($cheapVsBenchmark && $dwelling['kind'] === 'room' && $market['difference_percent'] < -65) {
+            $checks[] = 'Vergelijk deze kamerprijs met vergelijkbare kamers in dezelfde buurt (minimaal 3 referenties) — een grote afwijking t.o.v. een hele-woning-benchmark is voor kamers vaak normaal.';
         }
 
         $checks[] = 'Betaal nooit voor een “reservering” via Western Union, giftcards of crypto.';
         $checks[] = 'Vraag schriftelijk om legitimatie (ID) en bewijs van verhuurrecht voordat je een storting doet.';
+
+        foreach (ListingDwellingRecommendationHints::contextualVerifyChecks($dwelling) as $hint) {
+            $checks[] = $hint;
+        }
 
         $cityLine = $market['average']
             ? sprintf(
@@ -56,20 +70,27 @@ class ReportEnrichmentService
             )
             : '';
 
-        $marketContext = $cityLine.'De benchmark is een vereenvoudigde schatting per stad/regio en geen taxatierapport.';
+        $roomBenchNote = $dwelling['kind'] === 'room'
+            ? 'Voor een kamer is een veel lagere huur dan dit model (gemiddelde hele woning in de gemeente) gebruikelijk; dat zegt op zich weinig over betrouwbaarheid. '
+            : '';
 
-        $methodology = "Stap 1 — invoer: uit je plaktekst of URL halen we prijs, contact en beschrijving (geen “geheime” bronnen).\n\n"
-            ."Stap 2 — stad & benchmark: we proberen een stad te herkennen en vergelijken met een vaste model-benchmark (€/maand) per stad; elders geldt een standaard. Dat is een grove schatting, geen taxatie.\n\n"
+        $marketContext = $cityLine.$roomBenchNote.'De benchmark is een vereenvoudigde schatting per stad/regio en geen taxatierapport.';
+
+        $methodology = "Stap 1 — invoer: uit je plaktekst of URL halen we prijs, contact en beschrijving (geen “geheime” bronnen). Zo mogelijk lezen we ook oppervlakte (m²) uit de tekst.\n\n"
+            ."Stap 1b — type woning: we lezen de tekst en link en schatten of het om een kamer of een hele woning/studio gaat, en of het waarschijnlijk particuliere huur, sociale huur of onbekend is. Dat is een automatische inschatting op veelvoorkomende woorden en URL-patronen — geen juridische kwalificatie.\n\n"
+            ."Stap 1c (informatief): we geven apart aan hoe sterk de tekst op een huuradvertentie lijkt — dat wijzigt de risicoscore niet.\n\n"
+            ."Stap 2 — stad & benchmark: we proberen een gemeente te herkennen (tekst en URL-pad; o.a. komma-regels zoals “straat, plaats”) en vergelijken met een vaste model-benchmark (€/maand) per gemeente; elders geldt een standaard. Dat is een grove schatting, geen taxatie.\n\n"
+            ."Stap 2b — prijs per m² (alleen als prijs én m² uit de tekst komen): we tonen een indicatieve €/m² naast het model en een band die voor kleine oppervlaktes hoger mag zijn — nog steeds geen taxatie.\n\n"
             ."Stap 3 — regels: de regel-score telt meetbare signalen op (max. 100):\n\n"
             ."Prijs & urgentie\n"
-            ."– prijs ruim onder benchmark +30\n"
+            ."– prijs ruim onder benchmark +30 (voor een kamer: alleen bij opvallend laag t.o.v. hetzelfde model, want kamers liggen normaal veel onder een gemiddelde voor een hele woning)\n"
             ."– WhatsApp +10\n"
             ."– Telegram/Signal/WeChat/Skype +8\n"
             ."– urgentie (o.a. “vandaag”, “snel”, “beperkte tijd”, “veel interesse”) +20\n\n"
             ."Betaling, bezichtiging & vertrouwen\n"
             ."– hoog-risico betalen (Western Union, crypto, cadeaukaarten, vooruitbetaling, enz.) +40\n"
             ."– geen bezichtiging / buitenland / sleutel per post of sleutelservice +12\n"
-            ."– ID vóór afspraak +10\n"
+            ."– identiteit/privacy: o.a. ID vóór afspraak +10; “ID uitwisselen”-patroon +10 (elk kan afzonderlijk meetellen)\n"
             ."– geld vóór bezichtiging +14\n\n"
             ."Formulieren & taal\n"
             ."– extern aanmeldformulier (Google Forms, Typeform, …) +10\n"

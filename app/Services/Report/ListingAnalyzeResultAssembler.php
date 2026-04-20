@@ -4,6 +4,7 @@ namespace App\Services\Report;
 
 use App\Data\ParsedListingInput;
 use App\Models\Listing;
+use App\Services\ListingSurfaceParser;
 
 /**
  * Bouwt report_snapshot en de JSON-payload voor POST /analyze (één plek, geen dubbele veldnamen verspreid).
@@ -12,6 +13,7 @@ final class ListingAnalyzeResultAssembler
 {
     public function __construct(
         private ListingFactsAssembler $listingFacts,
+        private ListingSurfaceParser $surfaceParser,
     ) {}
 
     /**
@@ -59,6 +61,7 @@ final class ListingAnalyzeResultAssembler
                     $listing->price,
                     $listing->contact,
                     (string) $listing->description,
+                    surfaceM2: $this->surfaceParser->parse((string) $listing->description),
                 ),
                 $listing->city,
                 [

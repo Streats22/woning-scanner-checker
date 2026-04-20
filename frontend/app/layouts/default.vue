@@ -16,6 +16,13 @@
         <nav class="topbar__actions topbar__actions--desktop" :aria-label="t('a11y.siteNav')">
           <div class="topbar__nav-cluster" role="presentation">
             <NuxtLink
+              class="topbar__nav-link"
+              :to="localePath('/')"
+              exact-active-class="topbar__nav-link--active"
+            >
+              {{ t('header.home') }}
+            </NuxtLink>
+            <NuxtLink
               class="topbar__nav-link topbar__nav-link--primary"
               :to="localePath('/check')"
               active-class="topbar__nav-link--active"
@@ -60,44 +67,37 @@
           </div>
 
           <div
-            class="seg seg--3"
+            class="seg seg--2"
             :class="'seg--i' + themeSegIndex"
             role="group"
-            :aria-label="`${t('header.themeLight')}, ${t('header.themeSystem')}, ${t('header.themeDark')}`"
+            :aria-label="t('header.menuSectionAppearance')"
           >
             <span class="seg__pill" aria-hidden="true" />
             <button
               type="button"
               class="seg__btn seg__btn--icon"
-              :class="{ 'seg__btn--active': colorMode.preference === 'light' }"
-              :aria-pressed="colorMode.preference === 'light'"
+              :class="{ 'seg__btn--active': colorMode.value === 'light' }"
+              :aria-pressed="colorMode.value === 'light'"
               :aria-label="t('header.themeLight')"
               :title="t('header.themeLight')"
               @click="colorMode.preference = 'light'"
             >
-              <span class="seg__glyph" aria-hidden="true">☀</span>
+              <span class="seg__glyph seg__glyph--icon" aria-hidden="true">☀</span>
             </button>
             <button
               type="button"
               class="seg__btn seg__btn--icon"
-              :class="{ 'seg__btn--active': colorMode.preference === 'system' }"
-              :aria-pressed="colorMode.preference === 'system'"
-              :aria-label="t('header.themeSystem')"
-              :title="t('header.themeSystem')"
-              @click="colorMode.preference = 'system'"
-            >
-              <span class="seg__glyph" aria-hidden="true">◐</span>
-            </button>
-            <button
-              type="button"
-              class="seg__btn seg__btn--icon"
-              :class="{ 'seg__btn--active': colorMode.preference === 'dark' }"
-              :aria-pressed="colorMode.preference === 'dark'"
+              :class="{ 'seg__btn--active': colorMode.value === 'dark' }"
+              :aria-pressed="colorMode.value === 'dark'"
               :aria-label="t('header.themeDark')"
               :title="t('header.themeDark')"
               @click="colorMode.preference = 'dark'"
             >
-              <span class="seg__glyph" aria-hidden="true">☾</span>
+              <span class="seg__glyph seg__glyph--icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1.15em" height="1.15em" aria-hidden="true">
+                  <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z" clip-rule="evenodd" />
+                </svg>
+              </span>
             </button>
           </div>
         </nav>
@@ -153,6 +153,14 @@
               <nav class="mobile-nav__links" :aria-label="t('header.menuSectionPages')">
                 <NuxtLink
                   class="mobile-nav__link"
+                  :to="localePath('/')"
+                  exact-active-class="mobile-nav__link--active"
+                  @click="closeMobileMenu"
+                >
+                  {{ t('header.home') }}
+                </NuxtLink>
+                <NuxtLink
+                  class="mobile-nav__link"
                   :to="localePath('/check')"
                   active-class="mobile-nav__link--active"
                   @click="closeMobileMenu"
@@ -201,41 +209,35 @@
 
               <p class="mobile-nav__section-label">{{ t('header.menuSectionAppearance') }}</p>
               <div
-                class="seg seg--3 mobile-nav__seg"
+                class="seg seg--2 mobile-nav__seg"
                 :class="'seg--i' + themeSegIndex"
                 role="group"
-                :aria-label="`${t('header.themeLight')}, ${t('header.themeSystem')}, ${t('header.themeDark')}`"
+                :aria-label="t('header.menuSectionAppearance')"
               >
                 <span class="seg__pill" aria-hidden="true" />
                 <button
                   type="button"
                   class="seg__btn seg__btn--icon"
-                  :class="{ 'seg__btn--active': colorMode.preference === 'light' }"
-                  :aria-pressed="colorMode.preference === 'light'"
+                  :class="{ 'seg__btn--active': colorMode.value === 'light' }"
+                  :aria-pressed="colorMode.value === 'light'"
                   :aria-label="t('header.themeLight')"
                   @click="colorMode.preference = 'light'"
                 >
-                  <span class="seg__glyph" aria-hidden="true">☀</span>
+                  <span class="seg__glyph seg__glyph--icon" aria-hidden="true">☀</span>
                 </button>
                 <button
                   type="button"
                   class="seg__btn seg__btn--icon"
-                  :class="{ 'seg__btn--active': colorMode.preference === 'system' }"
-                  :aria-pressed="colorMode.preference === 'system'"
-                  :aria-label="t('header.themeSystem')"
-                  @click="colorMode.preference = 'system'"
-                >
-                  <span class="seg__glyph" aria-hidden="true">◐</span>
-                </button>
-                <button
-                  type="button"
-                  class="seg__btn seg__btn--icon"
-                  :class="{ 'seg__btn--active': colorMode.preference === 'dark' }"
-                  :aria-pressed="colorMode.preference === 'dark'"
+                  :class="{ 'seg__btn--active': colorMode.value === 'dark' }"
+                  :aria-pressed="colorMode.value === 'dark'"
                   :aria-label="t('header.themeDark')"
                   @click="colorMode.preference = 'dark'"
                 >
-                  <span class="seg__glyph" aria-hidden="true">☾</span>
+                  <span class="seg__glyph seg__glyph--icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1.15em" height="1.15em" aria-hidden="true">
+                      <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
                 </button>
               </div>
             </div>
@@ -263,6 +265,8 @@
       <div class="footer__inner">
         <div class="footer__top">
           <nav class="footer__nav" :aria-label="t('footer.navAria')">
+            <NuxtLink class="footer__nav-link" :to="localePath('/')">{{ t('header.home') }}</NuxtLink>
+            <span class="footer__nav-sep" aria-hidden="true" />
             <NuxtLink class="footer__nav-link" :to="localePath('/check')">{{ t('header.check') }}</NuxtLink>
             <span class="footer__nav-sep" aria-hidden="true" />
             <NuxtLink class="footer__nav-link" :to="localePath('/faq')">{{ t('header.faq') }}</NuxtLink>
@@ -374,14 +378,8 @@ function scrollToTop() {
   document.getElementById('main-content')?.focus({ preventScroll: true })
 }
 
-const themeSegIndex = computed(() => {
-  const p = colorMode.preference
-  if (p === 'light')
-    return 0
-  if (p === 'system')
-    return 1
-  return 2
-})
+/** Twee segmenten: actieve pill volgt de weergegeven modus (ook bij preference `system`). */
+const themeSegIndex = computed(() => (colorMode.value === 'dark' ? 1 : 0))
 
 const brandTheme = {
   light: '#1e40af',
@@ -790,11 +788,20 @@ useHead(() => ({
   text-decoration: none;
   transition:
     background var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out);
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-spring),
+    box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .mobile-nav__link:hover {
   background: var(--surface-muted);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .mobile-nav__link:hover {
+    transform: translateX(-3px);
+    box-shadow: inset 3px 0 0 0 var(--accent);
+  }
 }
 
 .mobile-nav__link--active {
@@ -920,7 +927,7 @@ useHead(() => ({
     color var(--duration-fast) var(--ease-out),
     background var(--duration-fast) var(--ease-out),
     box-shadow var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
+    transform var(--duration-fast) var(--ease-spring);
 }
 
 @media (hover: hover) and (pointer: fine) {
@@ -928,6 +935,12 @@ useHead(() => ({
     text-decoration: none;
     color: var(--accent);
     background: color-mix(in srgb, var(--accent-muted) 55%, transparent);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .topbar__nav-link:hover {
+    transform: translateY(-2px);
   }
 }
 
@@ -985,18 +998,6 @@ useHead(() => ({
   transform: translateX(calc(100% + 2px));
 }
 
-.seg--3 .seg__pill {
-  width: calc(33.333% - 2.5px);
-}
-
-.seg--3.seg--i1 .seg__pill {
-  transform: translateX(calc(100% + 2px));
-}
-
-.seg--3.seg--i2 .seg__pill {
-  transform: translateX(calc(200% + 4px));
-}
-
 .seg__btn {
   position: relative;
   z-index: 1;
@@ -1028,6 +1029,12 @@ useHead(() => ({
   display: inline-block;
   transition: transform 0.38s var(--ease-spring);
   transform-origin: center;
+}
+
+.seg__glyph--icon svg {
+  display: block;
+  width: 1.15em;
+  height: 1.15em;
 }
 
 .seg__btn--active .seg__glyph {
@@ -1204,12 +1211,21 @@ useHead(() => ({
   border-radius: var(--radius-md);
   transition:
     color var(--duration-fast) var(--ease-out),
-    background var(--duration-fast) var(--ease-out);
+    background var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-spring),
+    box-shadow var(--duration-fast) var(--ease-out);
 }
 
 .footer__nav-link:hover {
   color: var(--accent-hover);
   background: var(--accent-muted);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .footer__nav-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 14px color-mix(in srgb, var(--accent) 18%, transparent);
+  }
 }
 
 .footer__nav-link:focus-visible {
@@ -1302,12 +1318,26 @@ useHead(() => ({
   color: var(--accent);
   font-weight: 600;
   text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 35%, transparent);
+  text-decoration-thickness: 1.5px;
   text-underline-offset: 0.15em;
-  transition: color var(--duration-fast) var(--ease-out);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    text-decoration-color var(--duration-fast) var(--ease-out),
+    text-decoration-thickness var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 .footer__inline-link:hover {
   color: var(--accent-hover);
+  text-decoration-color: color-mix(in srgb, var(--accent-hover) 72%, transparent);
+  text-decoration-thickness: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .footer__inline-link:hover {
+    transform: translateY(-1px);
+  }
 }
 
 .footer__build {
@@ -1326,6 +1356,21 @@ useHead(() => ({
 @media (prefers-reduced-motion: reduce) {
   .footer {
     animation: none;
+  }
+
+  .topbar__nav-link:hover,
+  .mobile-nav__link:hover,
+  .footer__nav-link:hover,
+  .footer__inline-link:hover {
+    transform: none;
+  }
+
+  .footer__nav-link:hover {
+    box-shadow: none;
+  }
+
+  .mobile-nav__link:hover {
+    box-shadow: none;
   }
 }
 </style>

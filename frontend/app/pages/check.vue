@@ -36,6 +36,7 @@
               <li class="how-rules__item">{{ t('howItWorks.ruleUrgency') }}</li>
               <li class="how-rules__item">{{ t('howItWorks.rulePayment') }}</li>
               <li class="how-rules__item">{{ t('howItWorks.ruleTrust') }}</li>
+              <li class="how-rules__item">{{ t('howItWorks.ruleIdentity') }}</li>
               <li class="how-rules__item">{{ t('howItWorks.ruleFees') }}</li>
               <li class="how-rules__item">{{ t('howItWorks.ruleForms') }}</li>
               <li class="how-rules__item">{{ t('howItWorks.ruleNarrative') }}</li>
@@ -199,6 +200,46 @@
               <dd class="facts-grid__dd">{{ formatFactsPrice(result.listing_facts.benchmark_monthly_eur) }} / {{ t('result.listingFactsMonth') }}</dd>
               <dt class="facts-grid__dt">{{ t('result.listingFactsBenchmarkDiff') }}</dt>
               <dd class="facts-grid__dd">{{ listingFactsDiffLabel }}</dd>
+              <template v-if="result.listing_facts.surface_m2 != null">
+                <dt class="facts-grid__dt">{{ t('result.listingFactsSurfaceM2') }}</dt>
+                <dd class="facts-grid__dd">{{ listingFactsSurfaceM2Label }}</dd>
+                <template v-if="result.listing_facts.price_per_m2_month_eur != null">
+                  <dt class="facts-grid__dt">{{ t('result.listingFactsPricePerM2') }}</dt>
+                  <dd class="facts-grid__dd">
+                    {{ formatFactsPrice(result.listing_facts.price_per_m2_month_eur) }} {{ t('result.listingFactsPerM2Suffix') }}
+                  </dd>
+                </template>
+                <dt class="facts-grid__dt">{{ t('result.listingFactsBenchmarkPerM2') }}</dt>
+                <dd class="facts-grid__dd">
+                  {{ formatFactsPrice(result.listing_facts.benchmark_per_m2_month_eur) }} {{ t('result.listingFactsPerM2Suffix') }}
+                  <span class="body-text muted"> · {{ t('result.listingFactsPerM2ModelNote', { m2: 55 }) }}</span>
+                </dd>
+                <template
+                  v-if="
+                    result.listing_facts.adjusted_benchmark_per_m2_month_eur != null
+                      && result.listing_facts.price_per_m2_month_eur != null
+                  "
+                >
+                  <dt class="facts-grid__dt">{{ t('result.listingFactsAdjustedPerM2') }}</dt>
+                  <dd class="facts-grid__dd">
+                    {{
+                      new Intl.NumberFormat(locale.value === 'nl' ? 'nl-NL' : 'en-GB', {
+                        style: 'currency',
+                        currency: 'EUR',
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                      }).format(result.listing_facts.adjusted_benchmark_per_m2_month_eur)
+                    }}
+                    {{ t('result.listingFactsPerM2Suffix') }}
+                  </dd>
+                  <dt class="facts-grid__dt">{{ t('result.listingFactsPerM2VsAdjusted') }}</dt>
+                  <dd class="facts-grid__dd">{{ listingFactsPerM2DiffLabel }}</dd>
+                </template>
+                <template v-if="result.listing_facts.small_surface">
+                  <dt class="facts-grid__dt">{{ t('result.listingFactsSmallSurfaceTitle') }}</dt>
+                  <dd class="facts-grid__dd body-text muted">{{ t('result.listingFactsSmallSurfaceNote') }}</dd>
+                </template>
+              </template>
               <dt class="facts-grid__dt">{{ t('result.listingFactsSource') }}</dt>
               <dd class="facts-grid__dd">
                 <a
@@ -212,6 +253,16 @@
               </dd>
               <dt class="facts-grid__dt">{{ t('result.listingFactsContact') }}</dt>
               <dd class="facts-grid__dd">{{ result.listing_facts.contact_hint ?? emDash }}</dd>
+              <template v-if="result.listing_facts.dwelling">
+                <dt class="facts-grid__dt">{{ t('result.listingFactsDwellingKind') }}</dt>
+                <dd class="facts-grid__dd">{{ dwellingKindLine }}</dd>
+                <dt class="facts-grid__dt">{{ t('result.listingFactsDwellingSector') }}</dt>
+                <dd class="facts-grid__dd">{{ dwellingSectorLine }}</dd>
+                <template v-if="result.listing_facts.dwelling.signals?.length">
+                  <dt class="facts-grid__dt">{{ t('result.listingFactsDwellingSignals') }}</dt>
+                  <dd class="facts-grid__dd">{{ result.listing_facts.dwelling.signals.join(', ') }}</dd>
+                </template>
+              </template>
             </dl>
           </template>
 
@@ -316,23 +367,15 @@
           <p v-if="result.narrative" class="body-text narrative">{{ result.narrative }}</p>
           <p class="body-text summary">{{ result.summary }}</p>
 
-          <div v-if="result.report_pdf_url || result.report_url" class="share">
+          <div v-if="result.report_pdf_url" class="share">
             <span class="share__label">{{ t('result.share') }}</span>
             <div class="share__actions">
               <a
-                v-if="result.report_pdf_url"
                 class="share__btn"
                 :href="reportPdfHref"
                 target="_blank"
                 rel="noopener"
               >{{ t('result.downloadPdf') }}</a>
-              <a
-                v-if="result.report_url"
-                class="share__link"
-                :href="result.report_url"
-                target="_blank"
-                rel="noopener"
-              >{{ t('result.webReport') }}</a>
             </div>
           </div>
         </section>
@@ -351,6 +394,14 @@ type RiskBreakdownRow = {
   detail?: string
 }
 
+type DwellingFacts = {
+  kind: 'room' | 'whole' | 'unknown'
+  kind_confidence: 'high' | 'medium' | 'low'
+  rental_sector: 'private' | 'social' | 'unknown'
+  sector_confidence: 'high' | 'medium' | 'low'
+  signals: string[]
+}
+
 type ListingFacts = {
   city: string | null
   street: string | null
@@ -363,6 +414,13 @@ type ListingFacts = {
   benchmark_diff_percent: number | null
   benchmark_city: string | null
   benchmark_scope: 'national' | 'municipality'
+  dwelling?: DwellingFacts
+  surface_m2?: number | null
+  price_per_m2_month_eur?: number | null
+  benchmark_per_m2_month_eur?: number
+  adjusted_benchmark_per_m2_month_eur?: number | null
+  per_m2_vs_adjusted_percent?: number | null
+  small_surface?: boolean
 }
 
 type AnalyzeResponse = {
@@ -382,7 +440,6 @@ type AnalyzeResponse = {
   market_context?: string | null
   observations?: string[]
   id?: number
-  report_url?: string
   report_pdf_url?: string
   report_slug?: string
   listing_facts?: ListingFacts
@@ -426,6 +483,57 @@ const listingFactsDiffLabel = computed(() => {
   if (!f || f.benchmark_diff_percent == null)
     return emDash
   return `${f.benchmark_diff_percent > 0 ? '+' : ''}${f.benchmark_diff_percent}%`
+})
+
+function dwellingConfLabel(c: string): string {
+  if (c === 'high')
+    return t('result.dwellingConfHigh')
+  if (c === 'medium')
+    return t('result.dwellingConfMedium')
+  return t('result.dwellingConfLow')
+}
+
+const dwellingKindLine = computed(() => {
+  const d = result.value?.listing_facts?.dwelling
+  if (!d)
+    return emDash
+  const label = d.kind === 'room'
+    ? t('result.dwellingKindRoom')
+    : d.kind === 'whole'
+      ? t('result.dwellingKindWhole')
+      : t('result.dwellingKindUnknown')
+  return `${label} · ${dwellingConfLabel(d.kind_confidence)}`
+})
+
+const dwellingSectorLine = computed(() => {
+  const d = result.value?.listing_facts?.dwelling
+  if (!d)
+    return emDash
+  const label = d.rental_sector === 'private'
+    ? t('result.dwellingSectorPrivate')
+    : d.rental_sector === 'social'
+      ? t('result.dwellingSectorSocial')
+      : t('result.dwellingSectorUnknown')
+  return `${label} · ${dwellingConfLabel(d.sector_confidence)}`
+})
+
+const listingFactsSurfaceM2Label = computed(() => {
+  const s = result.value?.listing_facts?.surface_m2
+  if (s == null || Number.isNaN(Number(s)))
+    return emDash
+  const n = Number(s)
+  const maxFrac = Number.isInteger(n) ? 0 : 1
+  return `${new Intl.NumberFormat(locale.value === 'nl' ? 'nl-NL' : 'en-GB', {
+    minimumFractionDigits: maxFrac,
+    maximumFractionDigits: maxFrac,
+  }).format(n)} m²`
+})
+
+const listingFactsPerM2DiffLabel = computed(() => {
+  const p = result.value?.listing_facts?.per_m2_vs_adjusted_percent
+  if (p == null)
+    return emDash
+  return `${p > 0 ? '+' : ''}${p}%`
 })
 
 const benchmarkIntro = computed(() => {
@@ -861,11 +969,26 @@ async function onSubmit(e?: Event) {
   color: var(--accent);
   font-weight: 600;
   text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 38%, transparent);
+  text-decoration-thickness: 1.5px;
   text-underline-offset: 0.18em;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    text-decoration-color var(--duration-fast) var(--ease-out),
+    text-decoration-thickness var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 .home-faq-teaser__link:hover {
   color: var(--accent-hover);
+  text-decoration-color: color-mix(in srgb, var(--accent-hover) 72%, transparent);
+  text-decoration-thickness: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .home-faq-teaser__link:hover {
+    transform: translateY(-1px);
+  }
 }
 
 .form {
@@ -1336,7 +1459,26 @@ async function onSubmit(e?: Event) {
   color: var(--accent);
   font-weight: 600;
   text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--accent) 42%, transparent);
+  text-decoration-thickness: 1.5px;
   text-underline-offset: 0.12em;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    text-decoration-color var(--duration-fast) var(--ease-out),
+    text-decoration-thickness var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.facts-grid__link:hover {
+  color: var(--accent-hover);
+  text-decoration-color: color-mix(in srgb, var(--accent-hover) 75%, transparent);
+  text-decoration-thickness: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .facts-grid__link:hover {
+    transform: translateY(-1px);
+  }
 }
 
 @media (max-width: 520px) {
@@ -1755,20 +1897,5 @@ async function onSubmit(e?: Event) {
     min-height: 48px;
     padding: 0.65rem 1rem;
   }
-}
-
-.share__link {
-  font-size: 0.85rem;
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 0.2em;
-  word-break: break-word;
-  transition:
-    color var(--duration-fast) var(--ease-out),
-    text-underline-offset var(--duration-fast) var(--ease-out);
-}
-
-.share__link:hover {
-  text-decoration-thickness: 2px;
 }
 </style>

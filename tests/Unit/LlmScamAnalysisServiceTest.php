@@ -3,9 +3,7 @@
 namespace Tests\Unit;
 
 use App\Data\ParsedListingInput;
-use App\Services\AiAnalysisService;
 use App\Services\LlmScamAnalysisService;
-use App\Services\ReportEnrichmentService;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
@@ -16,7 +14,7 @@ class LlmScamAnalysisServiceTest extends TestCase
     {
         Config::set('services.openai.key', '');
 
-        $service = new LlmScamAnalysisService(new AiAnalysisService, new ReportEnrichmentService);
+        $service = $this->app->make(LlmScamAnalysisService::class);
         $data = new ParsedListingInput(null, 500, null, 'Test Amsterdam');
         $market = ['average' => 1800, 'difference_percent' => -72];
         $rule = ['score' => 30, 'flags' => ['Prijs'], 'breakdown' => []];
@@ -40,7 +38,7 @@ class LlmScamAnalysisServiceTest extends TestCase
 
         Http::fake();
 
-        $service = new LlmScamAnalysisService(new AiAnalysisService, new ReportEnrichmentService);
+        $service = $this->app->make(LlmScamAnalysisService::class);
         $data = new ParsedListingInput(null, 500, null, 'Test Amsterdam');
         $market = ['average' => 1800, 'difference_percent' => -72];
         $rule = ['score' => 30, 'flags' => ['Prijs'], 'breakdown' => []];
@@ -80,7 +78,7 @@ class LlmScamAnalysisServiceTest extends TestCase
             ], 200),
         ]);
 
-        $service = new LlmScamAnalysisService(new AiAnalysisService, new ReportEnrichmentService);
+        $service = $this->app->make(LlmScamAnalysisService::class);
         $data = new ParsedListingInput(null, 500, null, str_repeat('x', 200));
         $market = ['average' => 1800, 'difference_percent' => -72];
         $rule = ['score' => 30, 'flags' => ['Prijs'], 'breakdown' => []];
@@ -124,7 +122,7 @@ class LlmScamAnalysisServiceTest extends TestCase
             ], 200),
         ]);
 
-        $service = new LlmScamAnalysisService(new AiAnalysisService, new ReportEnrichmentService);
+        $service = $this->app->make(LlmScamAnalysisService::class);
         $data = new ParsedListingInput('https://example.com/ad', 800, null, str_repeat('y', 200));
         $market = ['average' => 1300, 'difference_percent' => -38];
         $rule = ['score' => 10, 'flags' => [], 'breakdown' => []];

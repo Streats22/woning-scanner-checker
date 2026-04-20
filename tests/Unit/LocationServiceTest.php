@@ -90,4 +90,53 @@ class LocationServiceTest extends TestCase
 
         $this->assertSame('Alkmaar', $s->detectCity($text, null));
     }
+
+    public function test_bussum_alias_and_comma_line_beats_amsterdam_in_nav(): void
+    {
+        $s = new LocationService;
+        $nav = str_repeat('Huur Amsterdam Utrecht Pararius ', 4);
+        $listing = 'Gestoffeerd Kamer te huur. Veerplein, Bussum. € 650 per maand.';
+
+        $this->assertSame('Gooise Meren', $s->detectCity($nav.$listing, null));
+    }
+
+    public function test_comma_address_in_text_overrides_wrong_city_in_url(): void
+    {
+        $s = new LocationService;
+        $text = 'Kamer te huur. Adres: Hoofdstraat, Bussum. € 700 p.m.';
+        $url = 'https://voorbeeld.nl/huur/amsterdam/kamer/999';
+
+        $this->assertSame('Gooise Meren', $s->detectCity($text, $url));
+    }
+
+    public function test_kamernet_style_url_prefers_city_in_slug_over_listing_text(): void
+    {
+        $s = new LocationService;
+        $nav = str_repeat('Ook in Utrecht en Amsterdam. ', 30);
+        $url = 'https://kamernet.nl/huren/kamer-bussum/veerplein/kamer-2371566';
+
+        $this->assertSame('Gooise Meren', $s->detectCity($nav, $url));
+    }
+
+    public function test_url_slug_beats_early_nav_comma_city_even_when_veerplein_only_in_body(): void
+    {
+        $s = new LocationService;
+        /* Nav: “, Utrecht” geeft komma-score + context; veel sites hebben zulke patronen bovenaan. */
+        $nav = str_repeat('x', 35).', Utrecht € 450 huur per maand. ';
+        $body = str_repeat('Lichte kamer. ', 120).'Adres: Veerplein. € 650 p.m. Geen Bussum in deze snippet.';
+        $url = 'https://kamernet.nl/huren/kamer-bussum/veerplein/kamer-2371566';
+
+        $this->assertSame('Gooise Meren', $s->detectCity($nav.$body, $url));
+    }
+
+    public function test_kamernet_slug_beats_utrecht_comma_later_in_scraped_html(): void
+    {
+        $s = new LocationService;
+        /* Ver in de HTML: “…, Utrecht” met €/huur — zou anders URL overschrijven; hub-ruis t.o.v. kamer-bussum. */
+        $prefix = str_repeat('Blok met algemene tekst. ', 120);
+        $tail = 'Voorbeeld: Veerplein 12, Utrecht. € 900 p.m. te huur.';
+        $url = 'https://kamernet.nl/huren/kamer-bussum/veerplein/kamer-2371566';
+
+        $this->assertSame('Gooise Meren', $s->detectCity($prefix.$tail, $url));
+    }
 }

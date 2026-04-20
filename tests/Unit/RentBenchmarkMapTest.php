@@ -48,4 +48,42 @@ class RentBenchmarkMapTest extends TestCase
         $this->assertNull(RentBenchmarkMap::canonicalFromPathSegment('huur'));
         $this->assertNull(RentBenchmarkMap::canonicalFromPathSegment('nl'));
     }
+
+    public function test_canonical_from_path_segment_finds_city_inside_compound_slug(): void
+    {
+        $this->assertSame('Gooise Meren', RentBenchmarkMap::canonicalFromPathSegment('kamer-bussum'));
+        $this->assertSame('Rotterdam', RentBenchmarkMap::canonicalFromPathSegment('appartement-rotterdam-centrum'));
+        $this->assertSame('Utrecht', RentBenchmarkMap::canonicalFromPathSegment('huis-te-huur-utrecht'));
+    }
+
+    public function test_canonical_from_path_segment_numeric_only_returns_null(): void
+    {
+        $this->assertNull(RentBenchmarkMap::canonicalFromPathSegment('kamer-2371566'));
+    }
+
+    public function test_display_place_label_prefers_alias_from_url(): void
+    {
+        $this->assertSame(
+            'Bussum',
+            RentBenchmarkMap::displayPlaceLabel(
+                'Gooise Meren',
+                'lange html met Utrecht',
+                'https://kamernet.nl/huren/kamer-bussum/veerplein/kamer-2371566'
+            )
+        );
+    }
+
+    public function test_display_place_label_falls_back_to_canonical_without_alias_match(): void
+    {
+        $this->assertSame(
+            'Gooise Meren',
+            RentBenchmarkMap::displayPlaceLabel('Gooise Meren', 'korte tekst zonder plaats', null)
+        );
+    }
+
+    public function test_resolve_canonical_city_from_alias(): void
+    {
+        $this->assertSame('Gooise Meren', RentBenchmarkMap::resolveCanonicalCity('Bussum'));
+        $this->assertSame('Gooise Meren', RentBenchmarkMap::resolveCanonicalCity('Gooise Meren'));
+    }
 }
