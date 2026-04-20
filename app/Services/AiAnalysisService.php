@@ -11,20 +11,20 @@ class AiAnalysisService
     {
         $parts = [];
         if ($ruleScam['score'] >= 61) {
-            $parts[] = 'De analyse wijst op een verhoogd risico op fraude.';
+            $parts[] = __('ai.summary_high');
         } elseif ($ruleScam['score'] >= 31) {
-            $parts[] = 'Er zijn enkele signalen die voorzichtigheid adviseren.';
+            $parts[] = __('ai.summary_mid');
         } else {
-            $parts[] = 'Er zijn beperkt aanwijzingen voor verhoogd scam-risico.';
+            $parts[] = __('ai.summary_low');
         }
 
         if ($ruleScam['flags'] !== []) {
-            $parts[] = 'Let op: '.implode('; ', $ruleScam['flags']).'.';
+            $parts[] = __('ai.summary_flags', ['flags' => implode('; ', $ruleScam['flags'])]);
         } else {
-            $parts[] = 'Er zijn geen automatisch gedetecteerde rode vlaggen.';
+            $parts[] = __('ai.summary_no_flags');
         }
 
-        $parts[] = 'Dit is een samenvatting op basis van regels; het vervangt geen eigen oordeel.';
+        $parts[] = __('ai.summary_footer');
 
         return implode(' ', $parts);
     }

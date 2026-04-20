@@ -91,6 +91,21 @@ class ListingAnalyzeTest extends TestCase
         $this->assertStringContainsString($listing->report_slug.'/pdf', $response->json('report_pdf_url'));
     }
 
+    public function test_analyze_locale_en_returns_english_rule_strings(): void
+    {
+        $text = 'Te huur Amsterdam € 500 per maand. Neem alleen WhatsApp contact op. Western Union betaling.';
+        $response = $this->postJson('/api/analyze', [
+            'text' => $text,
+            'locale' => 'en',
+            'use_ai' => false,
+        ]);
+
+        $response->assertOk()->assertJson(['llm_used' => false]);
+        $joined = implode(' ', $response->json('flags'));
+        $this->assertStringContainsString('WhatsApp mentioned as contact', $joined);
+        $this->assertStringContainsString('High-risk payment pattern', $joined);
+    }
+
     public function test_analyze_does_not_call_openai_when_use_ai_is_false(): void
     {
         Config::set('services.openai.key', 'sk-test');

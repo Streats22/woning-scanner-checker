@@ -162,10 +162,15 @@ export default defineNuxtConfig({
       /** `true` als NUXT_PUBLIC_ENABLE_PWA_SW=1 — schakelt unregister-plugin uit en registreert de SW. */
       pwaSwEnabled: process.env.NUXT_PUBLIC_ENABLE_PWA_SW === '1',
       /**
-       * Google Analytics 4 measurement ID (bijv. G-XXXXXXXX). Leeg = geen GA.
-       * Wordt alleen geladen na expliciete keuze “Functionele opslag toestaan” (geen laden bij “Alleen noodzakelijk”).
+       * GA4 measurement ID (G-…). Leeg = geen snippet.
+       * Snippet in <head> (Tag Assistant); Consent Mode denied tot functionele opslag; daarna hits.
        */
       googleAnalyticsId: process.env.NUXT_PUBLIC_GOOGLE_ANALYTICS_ID?.trim() || '',
+      /**
+       * Tijdelijk: zonder cookiemodal-kies “functioneel” toch GA meten (Consent update in 01-plugin).
+       * Zet `NUXT_PUBLIC_GA_DEFAULT_APPROVED=0` voor strikte modus (alleen na functionele toestemming).
+       */
+      gaDefaultApproved: process.env.NUXT_PUBLIC_GA_DEFAULT_APPROVED !== '0',
     },
   },
 

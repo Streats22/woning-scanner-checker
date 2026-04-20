@@ -23,15 +23,15 @@ final class ListingDwellingRecommendationHints
         $out = [];
 
         if (self::isConfidentRoom($dwelling)) {
-            $out[] = 'Bij een kamer: check huisgenoten en huisregels, en vraag schriftelijk wat er in de huur is inbegrepen (servicekosten, internet).';
+            $out[] = __('report_enrichment.hint_room');
         }
 
         if (self::isConfidentSocial($dwelling)) {
-            $out[] = 'Bij sociale huur: controleer of de aanbieder echt een woningcorporatie of erkend toewijzingskanaal is; let op phishing met vervalste “Woonnet”-links.';
+            $out[] = __('report_enrichment.hint_social');
         }
 
         if (self::isConfidentPrivate($dwelling)) {
-            $out[] = 'Bij particuliere verhuur: controleer eigendom (Kadaster) en identiteit van de verhuurder; wees extra alert op vooruitbetaling zonder bezichtiging.';
+            $out[] = __('report_enrichment.hint_private');
         }
 
         return $out;

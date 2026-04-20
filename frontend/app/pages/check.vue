@@ -747,7 +747,11 @@ async function onSubmit(e?: Event) {
   try {
     const data = await $fetch<AnalyzeResponse>(apiUrl('/api/analyze'), {
       method: 'POST',
-      body: { text: text.value, use_ai: useAiEnabled.value },
+      body: {
+        text: text.value,
+        use_ai: useAiEnabled.value,
+        locale: locale.value === 'en' ? 'en' : 'nl',
+      },
     })
     result.value = data
   }

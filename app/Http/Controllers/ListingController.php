@@ -41,68 +41,77 @@ class ListingController extends Controller
         $validated = $request->validate([
             'text' => ['required', 'string', 'max:65535'],
             'use_ai' => ['sometimes', 'boolean'],
+            'locale' => ['sometimes', 'string', 'in:nl,en'],
         ]);
 
         $useAi = $request->boolean('use_ai');
 
+        $locale = $validated['locale'] ?? 'nl';
+        $previousLocale = app()->getLocale();
+        app()->setLocale($locale);
+
         try {
-            $data = $this->parser->parseInput($validated['text']);
-        } catch (ListingFetchException $e) {
-            throw ValidationException::withMessages([
-                'text' => $e->getMessage(),
+            try {
+                $data = $this->parser->parseInput($validated['text']);
+            } catch (ListingFetchException $e) {
+                throw ValidationException::withMessages([
+                    'text' => $e->getMessage(),
+                ]);
+            }
+
+            $city = $this->location->detectCity($data->description, $data->sourceUrl);
+
+            $priceData = $this->price->analyze(
+                $city,
+                $data->price
+            );
+
+            $ruleScam = $this->scam->analyze($data, $priceData);
+            $analysis = $this->llmScam->enhance($data, $priceData, $ruleScam, $useAi);
+
+            $listingFit = $this->listingContentFit->assess($data);
+
+            $reportSnapshot = $this->analyzeResultAssembler->buildReportSnapshot($analysis, $priceData, $listingFit, $data, $city);
+
+            $listing = Listing::create([
+                'raw_input' => $validated['text'],
+                'source_url' => $data->sourceUrl,
+                'price' => $data->price,
+                'currency' => 'EUR',
+                'city' => $city,
+                'postal_code' => null,
+                'description' => $data->description,
+                'contact' => $data->contact,
+                'scam_score' => $analysis['score'],
+                'scam_flags' => $analysis['flags'],
+                'ai_summary' => $analysis['summary'],
+                'market_average' => $priceData['average'],
+                'market_difference_percent' => $priceData['difference_percent'],
+                'report_snapshot' => $reportSnapshot,
             ]);
+
+            $displayForSlug = ($listing->city !== null && $listing->city !== '')
+                ? (RentBenchmarkMap::displayPlaceLabel($listing->city, $listing->description, $listing->source_url) ?? $listing->city)
+                : null;
+
+            $listing->update([
+                'report_slug' => Listing::buildReportSlug(
+                    $listing->created_at,
+                    $listing->id,
+                    $displayForSlug ?? $listing->city,
+                    $listing->description,
+                    $listing->source_url,
+                ),
+            ]);
+            $listing->refresh();
+
+            $urls = $this->reportUrlGenerator->absoluteUrls($request, $listing);
+            $payload = $this->analyzeResultAssembler->buildApiPayload($listing, $analysis, $priceData, $urls, $listingFit);
+
+            return response()->json($payload);
+        } finally {
+            app()->setLocale($previousLocale);
         }
-
-        $city = $this->location->detectCity($data->description, $data->sourceUrl);
-
-        $priceData = $this->price->analyze(
-            $city,
-            $data->price
-        );
-
-        $ruleScam = $this->scam->analyze($data, $priceData);
-        $analysis = $this->llmScam->enhance($data, $priceData, $ruleScam, $useAi);
-
-        $listingFit = $this->listingContentFit->assess($data);
-
-        $reportSnapshot = $this->analyzeResultAssembler->buildReportSnapshot($analysis, $priceData, $listingFit, $data, $city);
-
-        $listing = Listing::create([
-            'raw_input' => $validated['text'],
-            'source_url' => $data->sourceUrl,
-            'price' => $data->price,
-            'currency' => 'EUR',
-            'city' => $city,
-            'postal_code' => null,
-            'description' => $data->description,
-            'contact' => $data->contact,
-            'scam_score' => $analysis['score'],
-            'scam_flags' => $analysis['flags'],
-            'ai_summary' => $analysis['summary'],
-            'market_average' => $priceData['average'],
-            'market_difference_percent' => $priceData['difference_percent'],
-            'report_snapshot' => $reportSnapshot,
-        ]);
-
-        $displayForSlug = ($listing->city !== null && $listing->city !== '')
-            ? (RentBenchmarkMap::displayPlaceLabel($listing->city, $listing->description, $listing->source_url) ?? $listing->city)
-            : null;
-
-        $listing->update([
-            'report_slug' => Listing::buildReportSlug(
-                $listing->created_at,
-                $listing->id,
-                $displayForSlug ?? $listing->city,
-                $listing->description,
-                $listing->source_url,
-            ),
-        ]);
-        $listing->refresh();
-
-        $urls = $this->reportUrlGenerator->absoluteUrls($request, $listing);
-        $payload = $this->analyzeResultAssembler->buildApiPayload($listing, $analysis, $priceData, $urls, $listingFit);
-
-        return response()->json($payload);
     }
 
     public function showReport(string $idOrSlug): View|RedirectResponse

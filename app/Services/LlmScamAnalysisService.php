@@ -16,6 +16,7 @@ class LlmScamAnalysisService
 
     /**
      * Combineert regel-gebaseerde score met een LLM-analyse (alleen als $useLlm true en API-key gezet).
+     * Gebruikt {@see app()} locale voor NL/EN prompts en output (zet locale vóór aanroep in de controller).
      *
      * @param  array{average: int, difference_percent: ?int}  $market
      * @param  array{score: int, flags: array<int, string>, breakdown: array<int, array{category: string, points: int, detail: string}>}  $ruleScam
@@ -33,11 +34,37 @@ class LlmScamAnalysisService
         }
 
         $description = mb_substr($data->description, 0, 14000);
-        $url = $data->sourceUrl ?? 'geen (alleen geplakte tekst)';
+        $url = $data->sourceUrl ?? __('llm.no_url_label');
 
         $rawMax = config('services.openai.max_tokens');
         $maxTokens = is_numeric($rawMax) ? (int) $rawMax : 4096;
         $maxTokens = max(512, min(16384, $maxTokens));
+
+        $userPayload = app()->getLocale() === 'en'
+            ? [
+                'source_url' => $url,
+                'extracted_price' => $data->price,
+                'contact_hint' => $data->contact,
+                'dwelling_classification' => $this->dwellingClassifier->classify($data),
+                'market_average_benchmark' => $market['average'],
+                'market_difference_percent' => $market['difference_percent'],
+                'rule_score' => $ruleScam['score'],
+                'rule_flags' => $ruleScam['flags'],
+                'rule_breakdown' => $ruleScam['breakdown'],
+                'listing_text' => $description,
+            ]
+            : [
+                'bron_url' => $url,
+                'prijs_geëxtraheerd' => $data->price,
+                'contact_hint' => $data->contact,
+                'dwelling_classificatie' => $this->dwellingClassifier->classify($data),
+                'markt_gemiddelde_richtprijs' => $market['average'],
+                'markt_verschil_pct' => $market['difference_percent'],
+                'regel_score' => $ruleScam['score'],
+                'regel_vlaggen' => $ruleScam['flags'],
+                'regel_breakdown' => $ruleScam['breakdown'],
+                'advertentietekst' => $description,
+            ];
 
         $payload = [
             'model' => config('services.openai.model'),
@@ -47,56 +74,11 @@ class LlmScamAnalysisService
             'messages' => [
                 [
                     'role' => 'system',
-                    'content' => <<<'PROMPT'
-Je bent een Nederlandse expert in huur-/kamerverhuur-fraude en misleidende advertenties.
-Je krijgt tekst (en soms een bron-URL) plus een eenvoudige regel-analyse (score, vlaggen, onderdelen) en een automatische schatting van type woning (kamer vs hele woning) en sector (particulier vs sociale huur vs onbekend).
-De server herkent o.a.: onderprijs vs. benchmark, WhatsApp/Telegram/Signal/Skype, tijdsdruk (o.a. “veel interesse”), Western Union/crypto/cadeaukaarten, geen bezichtiging of buitenland-verhaal, sleutelservice, vroeg om ID/paspoort, voorafkosten, Google Forms/Typeform, copy-paste verhalen, Engelstalige sjablonen.
-Gebruik de meegegeven dwelling_classificatie als hulp — het is geen juridische kwalificatie.
-
-Taken:
-1) Beoordeel of de inhoud consistent lijkt met een echte huuradvertentie of op scam/phishing wijst.
-2) Als er een URL is: beoordeel inhoudelijk of de tekst past bij een woningadvertentie (geen technische URL-check).
-3) Geef een risicoscore 0-100 en concrete rode vlaggen (korte zinnen).
-4) Lever uitgebreide, praktische aanbevelingen en wat de lezer moet controleren vóór betaling.
-5) Geef per risicocategorie punten (0-100 totaal niet overschrijven in de som — het zijn deelnemers aan het risico).
-6) Combineer met de meegegeven regel-score: wees conservatief bij twijfel.
-
-Antwoord ALLEEN met geldige JSON, dit schema:
-{
-  "score": number,
-  "flags": string[],
-  "summary": string,
-  "narrative": string,
-  "observations": string[],
-  "link_data_quality": "consistent"|"twijfelachtig"|"onvoldoende_data"|null,
-  "link_note": string|null,
-  "recommendations": string[],
-  "what_to_verify": string[],
-  "risk_breakdown": [{"category": string, "points": number, "detail": string}]
-}
-
-- narrative: 5-10 zinnen Nederlands, diepgaander dan summary.
-- summary: 2-3 zinnen kern.
-- observations: 4-8 korte observaties (1 zin elk) over taal, structuur, inconsistenties, contactpatronen — niet herhalen van flags, wel extra detail.
-- recommendations: minimaal 4, maximaal 10 concrete acties voor de huurder.
-- what_to_verify: minimaal 4, maximaal 10 controle-stappen.
-- link_data_quality: null als er geen URL was.
-PROMPT,
+                    'content' => $this->systemPrompt(),
                 ],
                 [
                     'role' => 'user',
-                    'content' => json_encode([
-                        'bron_url' => $url,
-                        'prijs_geëxtraheerd' => $data->price,
-                        'contact_hint' => $data->contact,
-                        'dwelling_classificatie' => $this->dwellingClassifier->classify($data),
-                        'markt_gemiddelde_richtprijs' => $market['average'],
-                        'markt_verschil_pct' => $market['difference_percent'],
-                        'regel_score' => $ruleScam['score'],
-                        'regel_vlaggen' => $ruleScam['flags'],
-                        'regel_breakdown' => $ruleScam['breakdown'],
-                        'advertentietekst' => $description,
-                    ], JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE),
+                    'content' => json_encode($userPayload, JSON_UNESCAPED_UNICODE | JSON_INVALID_UTF8_SUBSTITUTE),
                 ],
             ],
         ];
@@ -189,6 +171,91 @@ PROMPT,
 
             return $this->fallbackFromRules($data, $market, $ruleScam);
         }
+    }
+
+    private function systemPrompt(): string
+    {
+        return app()->getLocale() === 'en'
+            ? $this->systemPromptEn()
+            : $this->systemPromptNl();
+    }
+
+    private function systemPromptNl(): string
+    {
+        return <<<'PROMPT'
+Je bent een Nederlandse expert in huur-/kamerverhuur-fraude en misleidende advertenties.
+Je krijgt tekst (en soms een bron-URL) plus een eenvoudige regel-analyse (score, vlaggen, onderdelen) en een automatische schatting van type woning (kamer vs hele woning) en sector (particulier vs sociale huur vs onbekend).
+De server herkent o.a.: onderprijs vs. benchmark, WhatsApp/Telegram/Signal/Skype, tijdsdruk (o.a. “veel interesse”), Western Union/crypto/cadeaukaarten, geen bezichtiging of buitenland-verhaal, sleutelservice, vroeg om ID/paspoort, voorafkosten, Google Forms/Typeform, copy-paste verhalen, Engelstalige sjablonen.
+Gebruik de meegegeven dwelling_classificatie als hulp — het is geen juridische kwalificatie.
+
+Taken:
+1) Beoordeel of de inhoud consistent lijkt met een echte huuradvertentie of op scam/phishing wijst.
+2) Als er een URL is: beoordeel inhoudelijk of de tekst past bij een woningadvertentie (geen technische URL-check).
+3) Geef een risicoscore 0-100 en concrete rode vlaggen (korte zinnen).
+4) Lever uitgebreide, praktische aanbevelingen en wat de lezer moet controleren vóór betaling.
+5) Geef per risicocategorie punten (0-100 totaal niet overschrijven in de som — het zijn deelnemers aan het risico).
+6) Combineer met de meegegeven regel-score: wees conservatief bij twijfel.
+
+Antwoord ALLEEN met geldige JSON, dit schema:
+{
+  "score": number,
+  "flags": string[],
+  "summary": string,
+  "narrative": string,
+  "observations": string[],
+  "link_data_quality": "consistent"|"twijfelachtig"|"onvoldoende_data"|null,
+  "link_note": string|null,
+  "recommendations": string[],
+  "what_to_verify": string[],
+  "risk_breakdown": [{"category": string, "points": number, "detail": string}]
+}
+
+- narrative: 5-10 zinnen Nederlands, diepgaander dan summary.
+- summary: 2-3 zinnen kern.
+- observations: 4-8 korte observaties (1 zin elk) over taal, structuur, inconsistenties, contactpatronen — niet herhalen van flags, wel extra detail.
+- recommendations: minimaal 4, maximaal 10 concrete acties voor de huurder.
+- what_to_verify: minimaal 4, maximaal 10 controle-stappen.
+- link_data_quality: null als er geen URL was.
+PROMPT;
+    }
+
+    private function systemPromptEn(): string
+    {
+        return <<<'PROMPT'
+You are an expert in rental and room-rental fraud and misleading listings (Netherlands/EU context).
+You receive text (and sometimes a source URL), a simple rule-based analysis (score, flags, breakdown), and an automatic estimate of dwelling type (room vs whole home) and sector (private vs social vs unknown).
+The server detects e.g.: under-pricing vs benchmark, WhatsApp/Telegram/Signal/Skype, time pressure, Western Union/crypto/gift cards, no viewing or abroad story, key services, early ID requests, upfront fees, Google Forms/Typeform, copy-paste stories, English template phrases.
+Use the supplied dwelling classification as a hint — it is not a legal classification.
+
+Tasks:
+1) Assess whether the content looks like a genuine rental listing or scam/phishing.
+2) If a URL is present: assess whether the text fits a property listing in substance (no technical URL inspection).
+3) Give a risk score 0-100 and concrete red flags (short lines).
+4) Provide practical recommendations and what the reader should verify before paying.
+5) Give points per risk category (do not let the sum exceed 100 across categories — they contribute to risk).
+6) Combine with the given rule score: be conservative when unsure.
+
+Reply ONLY with valid JSON, this schema:
+{
+  "score": number,
+  "flags": string[],
+  "summary": string,
+  "narrative": string,
+  "observations": string[],
+  "link_data_quality": "consistent"|"doubtful"|"insufficient_data"|null,
+  "link_note": string|null,
+  "recommendations": string[],
+  "what_to_verify": string[],
+  "risk_breakdown": [{"category": string, "points": number, "detail": string}]
+}
+
+- narrative: 5-10 sentences in English, deeper than summary.
+- summary: 2-3 sentence core.
+- observations: 4-8 short observations (one sentence each) on language, structure, inconsistencies, contact patterns — do not repeat flags verbatim.
+- recommendations: at least 4, at most 10 concrete renter actions.
+- what_to_verify: at least 4, at most 10 verification steps.
+- link_data_quality: null if there was no URL.
+PROMPT;
     }
 
     /**
@@ -308,12 +375,31 @@ PROMPT,
 
         $parts = [];
         if (is_string($quality) && $quality !== '') {
-            $parts[] = 'Datakwaliteit link: '.$quality.'.';
+            $parts[] = __('llm.link_assessment_quality', [
+                'quality' => $this->normalizeLinkQualityLabel($quality),
+            ]);
         }
         if ($note !== '') {
             $parts[] = $note;
         }
 
         return $parts !== [] ? implode(' ', $parts) : null;
+    }
+
+    private function normalizeLinkQualityLabel(string $raw): string
+    {
+        $n = mb_strtolower(trim($raw));
+        $key = match ($n) {
+            'consistent' => 'consistent',
+            'twijfelachtig', 'doubtful' => 'doubtful',
+            'onvoldoende_data', 'insufficient_data' => 'insufficient',
+            default => null,
+        };
+
+        if ($key === null) {
+            return $raw;
+        }
+
+        return __('llm.quality.'.$key);
     }
 }

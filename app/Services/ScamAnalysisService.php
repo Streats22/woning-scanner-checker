@@ -7,6 +7,8 @@ use App\Data\ParsedListingInput;
 /**
  * Regel-engine: meetbare tekstpatronen die vaak voorkomen bij misleidende huuradvertenties,
  * plus enkele subtielere signalen (lagere weging) die minder vaak maar wél bij geavanceerde scams voorkomen.
+ *
+ * Alle zichtbare teksten via lang/scam.php — afhankelijk van app-locale (POST /api/analyze: locale).
  */
 class ScamAnalysisService
 {
@@ -47,22 +49,17 @@ class ScamAnalysisService
             ? self::BENCHMARK_PRICE_RATIO_ROOM
             : self::BENCHMARK_PRICE_RATIO_WHOLE_OR_UNKNOWN;
 
+        $priceFmt = $data->price ? number_format((float) $data->price, 0, ',', '.') : '';
+        $avgFmt = number_format((float) $market['average'], 0, ',', '.');
+
         if ($data->price && $data->price < ($market['average'] * $priceRatio)) {
             $score += 30;
-            $flags[] = 'Prijs significant onder marktwaarde';
+            $flags[] = __('scam.flags.price_below_market');
             $detail = $dwellingKind === 'room'
-                ? sprintf(
-                    'Geëxtraheerde prijs €%s ligt sterk onder het model (€%s/maand; gemiddelde voor een hele woning in de gemeente). Voor een kamer is een veel lagere huur normaal; dit signaal telt daarom alleen bij opvallend lage bedragen.',
-                    number_format($data->price, 0, ',', '.'),
-                    number_format($market['average'], 0, ',', '.')
-                )
-                : sprintf(
-                    'Geëxtraheerde prijs €%s ligt ruim onder de gebruikte benchmark (€%s/maand). Dat kan legitiem zijn, maar past ook bij onderprijsing om vertrouwen te winnen.',
-                    number_format($data->price, 0, ',', '.'),
-                    number_format($market['average'], 0, ',', '.')
-                );
+                ? __('scam.breakdown.price_detail_room', ['price' => $priceFmt, 'average' => $avgFmt])
+                : __('scam.breakdown.price_detail_whole', ['price' => $priceFmt, 'average' => $avgFmt]);
             $breakdown[] = [
-                'category' => 'Prijs vs. benchmark',
+                'category' => __('scam.categories.price_vs_benchmark'),
                 'points' => 30,
                 'detail' => $detail,
             ];
@@ -70,21 +67,21 @@ class ScamAnalysisService
 
         if (str_contains($lower, 'whatsapp')) {
             $score += 10;
-            $flags[] = 'WhatsApp genoemd als contact';
+            $flags[] = __('scam.flags.whatsapp_contact');
             $breakdown[] = [
-                'category' => 'Contactkanaal',
+                'category' => __('scam.categories.contact_channel'),
                 'points' => 10,
-                'detail' => 'WhatsApp wordt genoemd — veel scams vermijden traceerbare kanalen (e-mail/vast nummer).',
+                'detail' => __('scam.breakdown.whatsapp_detail'),
             ];
         }
 
         if (preg_match('/\b(telegram|signal|wechat|skype)\b/iu', $t)) {
             $score += 8;
-            $flags[] = 'Alternatieve chat-app (Telegram/Signal/WeChat/Skype)';
+            $flags[] = __('scam.flags.alt_chat_app');
             $breakdown[] = [
-                'category' => 'Contactkanaal',
+                'category' => __('scam.categories.contact_channel'),
                 'points' => 8,
-                'detail' => 'Er wordt een alternatieve chat-app genoemd naast of in plaats van regulier contact — past bij anonieme communicatie.',
+                'detail' => __('scam.breakdown.alt_chat_detail'),
             ];
         }
 
@@ -93,21 +90,21 @@ class ScamAnalysisService
             $t
         )) {
             $score += 20;
-            $flags[] = 'Urgente verkoopdruk (scam patroon)';
+            $flags[] = __('scam.flags.urgency');
             $breakdown[] = [
-                'category' => 'Druk & urgentie',
+                'category' => __('scam.categories.urgency'),
                 'points' => 20,
-                'detail' => 'Tekst creëert tijdsdruk (o.a. “vandaag”, “snel”, “beperkte tijd”) — veel gebruikt om kritisch nadenken te verminderen.',
+                'detail' => __('scam.breakdown.urgency_detail'),
             ];
         }
 
         if ($this->matchesHighRiskPayment($lower)) {
             $score += 40;
-            $flags[] = 'Hoog-risico betaalpatroon';
+            $flags[] = __('scam.flags.high_risk_payment');
             $breakdown[] = [
-                'category' => 'Betalingswijze',
+                'category' => __('scam.categories.payment'),
                 'points' => 40,
-                'detail' => 'Vermelding van Western Union, MoneyGram, vooruitbetaling zonder zicht op woning, crypto-tegoed, cadeaukaarten of vergelijkbare moeilijk terug te halen routes.',
+                'detail' => __('scam.breakdown.high_risk_payment_detail'),
             ];
         }
 
@@ -116,11 +113,11 @@ class ScamAnalysisService
             $t
         )) {
             $score += 12;
-            $flags[] = 'Geen echte bezichtiging of afstands-verhaal';
+            $flags[] = __('scam.flags.no_viewing');
             $breakdown[] = [
-                'category' => 'Bezichtiging & vertrouwen',
+                'category' => __('scam.categories.viewing_trust'),
                 'points' => 12,
-                'detail' => 'Geen (normale) bezichtiging, sleutel per post/koerier/sleutelservice of een verhaal over verhuur vanuit het buitenland — veel voorkomend bij oplichting.',
+                'detail' => __('scam.breakdown.no_viewing_detail'),
             ];
         }
 
@@ -129,11 +126,11 @@ class ScamAnalysisService
             $t
         )) {
             $score += 10;
-            $flags[] = 'Identiteitsbewijs vragen vóór afspraak (risico identiteitsfraude)';
+            $flags[] = __('scam.flags.id_before_visit');
             $breakdown[] = [
-                'category' => 'Identiteit & privacy',
+                'category' => __('scam.categories.identity_privacy'),
                 'points' => 10,
-                'detail' => 'Verzoek om een kopie ID/paspoort vóór een bezichtiging of contract — komt voor bij phishing en identiteitsfraude; betrouwbare partijen vragen dit meestal in een later, afgesloten stadium.',
+                'detail' => __('scam.breakdown.id_before_detail'),
             ];
         }
 
@@ -142,11 +139,11 @@ class ScamAnalysisService
             $t
         )) {
             $score += 10;
-            $flags[] = 'ID uitwisselen met onbekende verhuurder (studenten-/kamer-scam)';
+            $flags[] = __('scam.flags.id_exchange');
             $breakdown[] = [
-                'category' => 'Identiteit & privacy',
+                'category' => __('scam.categories.identity_privacy'),
                 'points' => 10,
-                'detail' => 'Patroon van “ID’s uitwisselen” met iemand die je niet kent — expliciet genoemd als risico bij kamerfraude; gebruik liever de Kopie-ID-app en geen onbeschermde kopie via chat.',
+                'detail' => __('scam.breakdown.id_exchange_detail'),
             ];
         }
 
@@ -155,21 +152,21 @@ class ScamAnalysisService
             $t
         )) {
             $score += 14;
-            $flags[] = 'Geld vragen vóór bezichtiging of reservering';
+            $flags[] = __('scam.flags.money_before_viewing');
             $breakdown[] = [
-                'category' => 'Vooraf betalen',
+                'category' => __('scam.categories.advance_payment'),
                 'points' => 14,
-                'detail' => 'Er wordt om geld gevraagd vóór een bezichtiging, “reservering” of onder valse naam (bemiddelings-/contract-/advieskosten) — bij studentenkamers vaak gecombineerd met inschrijfgeld. Controleer of dit wettelijk/sector past en nooit via anonieme betaalroutes.',
+                'detail' => __('scam.breakdown.money_before_detail'),
             ];
         }
 
         if (preg_match('/forms\.gle|google\.com\/forms|typeform\.com|jotform\.com|surveymonkey\.com/i', $t)) {
             $score += 10;
-            $flags[] = 'Aanmelding via extern webformulier';
+            $flags[] = __('scam.flags.external_form');
             $breakdown[] = [
-                'category' => 'Aanmeldproces',
+                'category' => __('scam.categories.signup_process'),
                 'points' => 10,
-                'detail' => 'Doorverwijzing naar een generiek formulier (Google Forms, Typeform, …) — komt voor bij massale phishing en gekloonde advertenties.',
+                'detail' => __('scam.breakdown.external_form_detail'),
             ];
         }
 
@@ -178,11 +175,11 @@ class ScamAnalysisService
             $t
         )) {
             $score += 10;
-            $flags[] = 'Klassiek emotioneel / buitenland-verhaal';
+            $flags[] = __('scam.flags.emotional_story');
             $breakdown[] = [
-                'category' => 'Verhaallijn',
+                'category' => __('scam.categories.storyline'),
                 'points' => 10,
-                'detail' => 'Patronen zoals verhuizing naar het buitenland, erfenis of “goed doel” — vaker gebruikt in copy-paste scamteksten dan in standaard NL-huurdersadvertenties.',
+                'detail' => __('scam.breakdown.emotional_story_detail'),
             ];
         }
 
@@ -191,11 +188,11 @@ class ScamAnalysisService
             $t
         )) {
             $score += 8;
-            $flags[] = 'Engelse sjabloonfrase (internationale scam)';
+            $flags[] = __('scam.flags.english_template');
             $breakdown[] = [
-                'category' => 'Taal & stijl',
+                'category' => __('scam.categories.language_style'),
                 'points' => 8,
-                'detail' => 'Formele Engelstalige standaardzinnen die vaak voorkomen in internationale oplichtingsmails, minder in echte Nederlandse particuliere advertenties.',
+                'detail' => __('scam.breakdown.english_template_detail'),
             ];
         }
 
