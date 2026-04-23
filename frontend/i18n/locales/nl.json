@@ -209,6 +209,7 @@
   "header": {
     "themeLight": "Licht",
     "themeDark": "Donker",
+    "themeSystem": "Mee met systeem (licht of donker volgens apparaat)",
     "language": "Taal",
     "home": "Start",
     "check": "Analyse",
@@ -279,11 +280,11 @@
     "tableDuration": "Bewaartermijn",
     "acceptFunctional": "Functionele opslag toestaan",
     "necessaryOnly": "Alleen noodzakelijk",
-    "necessaryOnlyHelp": "Alleen noodzakelijk: we bewaren alleen je keuze voor deze melding en verwijderen opgeslagen taal- en thema-voorkeuren. De pagina wordt daarna vernieuwd.",
+    "necessaryOnlyHelp": "Alleen noodzakelijk: we bewaren je keuze voor deze melding en wissen analytics-gerelateerde data. Taal- en weergavevoorkeur blijven lokaal bewaard (geen marketing). De pagina wordt daarna vernieuwd.",
     "apiNote": "Als je een advertentie laat analyseren, stuurt je browser een HTTPS-verzoek naar onze server met de door jou geplakte tekst. Serverlogs kunnen technische gegevens bevatten (zoals IP-adres en tijdstip) voor beveiliging en foutopsporing — niet voor advertentie-tracking via cookies in de browser.",
     "fontsNote": "Lettertypen worden geladen via Google Fonts (fonts.googleapis.com / fonts.gstatic.com). Daarbij kan je IP-adres bij Google terechtkomen. Er worden geen marketingcookies van onze kant geplaatst voor dit doel.",
     "legalNote": "Dit overzicht is bedoeld voor transparantie. Het is geen juridisch advies; raadpleeg bij twijfel een privacyprofessional.",
-    "footerSummary": "Geen marketingcookies. Optioneel Google Analytics alleen na je keuze voor functionele opslag. Taal en thema hetzelfde. Details: cookie-instellingen.",
+    "footerSummary": "Geen marketingcookies. Optioneel Google Analytics alleen na functionele opslag. Taal en thema blijven lokaal bewaard als weergavevoorkeur. Details: cookie-instellingen.",
     "openSettings": "Privacy- en cookievoorkeuren",
     "rows": [
       {
@@ -295,13 +296,13 @@
       {
         "name": "wsc_locale_pref",
         "type": "localStorage",
-        "purpose": "Taalvoorkeur (NL/EN), alleen als je functionele opslag accepteert.",
+        "purpose": "Taalvoorkeur (NL/EN); lokaal opgeslagen voor de weergave — geen advertentieprofilering.",
         "duration": "Tot je gegevens wist of je keuze wijzigt"
       },
       {
         "name": "wsc-color-mode",
         "type": "localStorage",
-        "purpose": "Thema (licht/donker/systeem) via de site-instelling.",
+        "purpose": "Weergave (licht/donker/systeem); lokaal opgeslagen — geen advertentieprofilering.",
         "duration": "Tot je gegevens wist of je keuze wijzigt"
       },
       {

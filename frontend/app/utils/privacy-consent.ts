@@ -64,14 +64,12 @@ export function clearGoogleAnalyticsCookies(): void {
   }
 }
 
+/**
+ * “Alleen noodzakelijk”: analytics + legacy i18n-cookie wissen.
+ * Taal- en thema-preferentie (localStorage) bewaard: strikt functioneel, geen marketing;
+ * anders krijgen gebruikers zonder functionele toestemming elke bezoeken opnieuw NL + default thema.
+ */
 export function clearFunctionalStorage(): void {
-  try {
-    localStorage.removeItem(LOCALE_PREF_KEY)
-    localStorage.removeItem('wsc-color-mode')
-  }
-  catch {
-    /* ignore */
-  }
   if (typeof document === 'undefined')
     return
   document.cookie = `${LEGACY_I18N_COOKIE}=; Max-Age=0; path=/; SameSite=Lax`

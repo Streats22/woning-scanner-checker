@@ -111,7 +111,8 @@ export default defineNuxtConfig({
 
   colorMode: {
     classSuffix: '',
-    preference: 'system',
+    /** Standaard licht; “systeem” pas in de UI zodra cookiekeuze gedaan is. */
+    preference: 'light',
     fallback: 'light',
     storageKey: 'wsc-color-mode',
   },
@@ -152,12 +153,8 @@ export default defineNuxtConfig({
     lazy: false,
     langDir: 'locales',
     strategy: 'no_prefix',
-    detectBrowserLanguage: {
-      // Geen taal-cookie: voorkeur alleen na expliciete toestemming (localStorage via plugin).
-      useCookie: false,
-      cookieKey: 'wsc_i18n',
-      fallbackLocale: 'nl',
-    },
+    /** Geen auto-switch op browser-taal: start altijd NL; wsc_locale_pref vult desgewenst EN. */
+    detectBrowserLanguage: false,
   },
 
   app: {

@@ -5,17 +5,48 @@
  *
  * Zet NUXT_PUBLIC_ENABLE_PWA_SW=1 om dit te overslaan en de service worker weer te gebruiken.
  */
-const RELOAD_FLAG = 'wsc-sw-cleared-reload-v2'
+const RELOAD_FLAG = 'wsc-sw-cleared-reload-v3'
+
+function isFirefox(): boolean {
+  if (typeof navigator === 'undefined')
+    return false
+  return /firefox/i.test(navigator.userAgent) && !/seamonkey/i.test(navigator.userAgent)
+}
+
+/** Workbox kan IndexedDB naast Cache API gebruiken; Firefox houdt dat soms vast na unregister. */
+async function deleteWorkboxIndexedDatabases(): Promise<void> {
+  const idb = globalThis.indexedDB
+  if (!idb || typeof idb.databases !== 'function')
+    return
+  try {
+    const list = await idb.databases()
+    await Promise.all(
+      list
+        .filter((d): d is { name: string } => typeof d?.name === 'string')
+        .filter(d => /workbox|precache|webpack|wsc-/i.test(d.name))
+        .map(d => new Promise<void>((resolve) => {
+          const req = idb.deleteDatabase(d.name)
+          req.onsuccess = req.onerror = () => resolve()
+        })),
+    )
+  }
+  catch {
+    /* ignore */
+  }
+}
 
 async function clearServiceWorkerAndCaches(): Promise<{ hadRegs: boolean; deletedCaches: number }> {
   let hadRegs = false
 
+  const swAttempts = isFirefox() ? 6 : 2
+  const swDelayMs = isFirefox() ? 500 : 400
+
   if ('serviceWorker' in navigator) {
     try {
-      // Firefox mobiel: soms pas na korte delay alle registraties zichtbaar
-      for (let attempt = 0; attempt < 2; attempt++) {
+      // Firefox (zeker mobiel): registraties zijn vaak later zichtbaar — meerdere rondes + langere delay.
+      for (let attempt = 0; attempt < swAttempts; attempt++) {
         if (attempt > 0)
-          await new Promise(r => setTimeout(r, 400))
+          await new Promise(r => setTimeout(r, swDelayMs))
         const regs = await navigator.serviceWorker.getRegistrations()
         if (regs.length)
           hadRegs = true
@@ -49,6 +80,9 @@ async function clearServiceWorkerAndCaches(): Promise<{ hadRegs: boolean; delete
       /* ignore */
     }
   }
+
+  if (isFirefox())
+    await deleteWorkboxIndexedDatabases()
 
   return { hadRegs, deletedCaches }
 }

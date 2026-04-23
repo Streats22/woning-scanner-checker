@@ -3,7 +3,8 @@
   "type": "module",
   "private": true,
   "overrides": {
-    "serialize-javascript": "^7.0.5"
+    "serialize-javascript": "^7.0.5",
+    "unimport": "6.1.1"
   },
   "scripts": {
     "build": "nuxt build",

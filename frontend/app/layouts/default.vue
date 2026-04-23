@@ -67,8 +67,7 @@
           </div>
 
           <div
-            class="seg seg--2"
-            :class="'seg--i' + themeSegIndex"
+            :class="['seg', showThemeSystemOption ? 'seg--3' : 'seg--2', 'seg--i' + themeSegIndex]"
             role="group"
             :aria-label="t('header.menuSectionAppearance')"
           >
@@ -76,8 +75,8 @@
             <button
               type="button"
               class="seg__btn seg__btn--icon"
-              :class="{ 'seg__btn--active': themeDisplay === 'light' }"
-              :aria-pressed="themeDisplay === 'light'"
+              :class="{ 'seg__btn--active': themeLightActive }"
+              :aria-pressed="themeLightActive"
               :aria-label="t('header.themeLight')"
               :title="t('header.themeLight')"
               @click="colorMode.preference = 'light'"
@@ -87,8 +86,8 @@
             <button
               type="button"
               class="seg__btn seg__btn--icon"
-              :class="{ 'seg__btn--active': themeDisplay === 'dark' }"
-              :aria-pressed="themeDisplay === 'dark'"
+              :class="{ 'seg__btn--active': themeDarkActive }"
+              :aria-pressed="themeDarkActive"
               :aria-label="t('header.themeDark')"
               :title="t('header.themeDark')"
               @click="colorMode.preference = 'dark'"
@@ -96,6 +95,24 @@
               <span class="seg__glyph seg__glyph--icon" aria-hidden="true">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1.15em" height="1.15em" aria-hidden="true">
                   <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z" clip-rule="evenodd" />
+                </svg>
+              </span>
+            </button>
+            <button
+              v-if="showThemeSystemOption"
+              type="button"
+              class="seg__btn seg__btn--icon"
+              :class="{ 'seg__btn--active': colorMode.preference === 'system' }"
+              :aria-pressed="colorMode.preference === 'system'"
+              :aria-label="t('header.themeSystem')"
+              :title="t('header.themeSystem')"
+              @click="colorMode.preference = 'system'"
+            >
+              <span class="seg__glyph seg__glyph--icon" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1.1em" height="1.1em" aria-hidden="true">
+                  <path
+                    d="M2 5.5A2.5 2.5 0 0 1 4.5 3h15A2.5 2.5 0 0 1 22 5.5v9a2.5 2.5 0 0 1-2.5 2.5h-4.1l.2 1h1.4a.75.75 0 0 1 0 1.5H7a.75.75 0 0 1 0-1.5h1.4l.2-1H4.5A2.5 2.5 0 0 1 2 14.5v-9Zm2.5-1A1 1 0 0 0 4 5.5v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1h-14Z"
+                  />
                 </svg>
               </span>
             </button>
@@ -209,8 +226,7 @@
 
               <p class="mobile-nav__section-label">{{ t('header.menuSectionAppearance') }}</p>
               <div
-                class="seg seg--2 mobile-nav__seg"
-                :class="'seg--i' + themeSegIndex"
+                :class="['seg', 'mobile-nav__seg', showThemeSystemOption ? 'seg--3' : 'seg--2', 'seg--i' + themeSegIndex]"
                 role="group"
                 :aria-label="t('header.menuSectionAppearance')"
               >
@@ -218,8 +234,8 @@
                 <button
                   type="button"
                   class="seg__btn seg__btn--icon"
-                  :class="{ 'seg__btn--active': themeDisplay === 'light' }"
-                  :aria-pressed="themeDisplay === 'light'"
+                  :class="{ 'seg__btn--active': themeLightActive }"
+                  :aria-pressed="themeLightActive"
                   :aria-label="t('header.themeLight')"
                   @click="colorMode.preference = 'light'"
                 >
@@ -228,14 +244,31 @@
                 <button
                   type="button"
                   class="seg__btn seg__btn--icon"
-                  :class="{ 'seg__btn--active': themeDisplay === 'dark' }"
-                  :aria-pressed="themeDisplay === 'dark'"
+                  :class="{ 'seg__btn--active': themeDarkActive }"
+                  :aria-pressed="themeDarkActive"
                   :aria-label="t('header.themeDark')"
                   @click="colorMode.preference = 'dark'"
                 >
                   <span class="seg__glyph seg__glyph--icon" aria-hidden="true">
                     <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1.15em" height="1.15em" aria-hidden="true">
                       <path fill-rule="evenodd" d="M9.528 1.718a.75.75 0 0 1 .162.819A8.97 8.97 0 0 0 9 6a9 9 0 0 0 9 9 8.97 8.97 0 0 0 3.463-.69.75.75 0 0 1 .981.98 10.503 10.503 0 0 1-9.694 6.46c-5.799 0-10.5-4.701-10.5-10.5 0-4.368 2.667-8.112 6.46-9.694a.75.75 0 0 1 .818.162Z" clip-rule="evenodd" />
+                    </svg>
+                  </span>
+                </button>
+                <button
+                  v-if="showThemeSystemOption"
+                  type="button"
+                  class="seg__btn seg__btn--icon"
+                  :class="{ 'seg__btn--active': colorMode.preference === 'system' }"
+                  :aria-pressed="colorMode.preference === 'system'"
+                  :aria-label="t('header.themeSystem')"
+                  @click="colorMode.preference = 'system'"
+                >
+                  <span class="seg__glyph seg__glyph--icon" aria-hidden="true">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" width="1.1em" height="1.1em" aria-hidden="true">
+                      <path
+                        d="M2 5.5A2.5 2.5 0 0 1 4.5 3h15A2.5 2.5 0 0 1 22 5.5v9a2.5 2.5 0 0 1-2.5 2.5h-4.1l.2 1h1.4a.75.75 0 0 1 0 1.5H7a.75.75 0 0 1 0-1.5h1.4l.2-1H4.5A2.5 2.5 0 0 1 2 14.5v-9Zm2.5-1A1 1 0 0 0 4 5.5v9a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-9a1 1 0 0 0-1-1h-14Z"
+                      />
                     </svg>
                   </span>
                 </button>
@@ -315,7 +348,7 @@
 </template>
 
 <script setup lang="ts">
-import { LOCALE_PREF_KEY, readConsent } from '~/utils/privacy-consent'
+import { LOCALE_PREF_KEY } from '~/utils/privacy-consent'
 
 const { t, locale, setLocale } = useI18n()
 const localePath = useLocalePath()
@@ -330,7 +363,15 @@ const buildIdDisplay = computed(() => {
 const showBuildFooter = import.meta.dev
 const colorMode = useColorMode()
 const { themeDisplay } = useWscThemeDisplay()
-const { openCookieSettings, showDialog: cookieDialogOpen } = useCookieConsent()
+const { openCookieSettings, showDialog: cookieDialogOpen, needsChoice } = useCookieConsent()
+
+/**
+ * Derde optie (systeem) pas na mount: zo matcht de eerste client-render met SSR (twee knoppen)
+ * en vermijden we hydratatieverschil wanneer localStorage al een cookiekeuze had.
+ */
+const themeExtraControlsMounted = ref(false)
+/** Derde weergave-optie (systeem) pas zodra de gebruiker de cookiemelding heeft beantwoord. */
+const showThemeSystemOption = computed(() => themeExtraControlsMounted.value && !needsChoice.value)
 
 const mobileMenuPanelId = 'wsc-mobile-nav-panel'
 const mobileMenuOpen = ref(false)
@@ -380,8 +421,37 @@ function scrollToTop() {
   document.getElementById('main-content')?.focus({ preventScroll: true })
 }
 
-/** Twee segmenten: pill volgt echte `html.dark` (sync met @nuxtjs/color-mode bij system + hydratie). */
-const themeSegIndex = computed(() => (themeDisplay.value === 'dark' ? 1 : 0))
+/**
+ * Pills: vóór cookiekeuze alleen licht/donker; daarna + systeem.
+ * Bij voorkeur `system` in 2-koloms weergave volgt de pill de actuele `themeDisplay`.
+ */
+const themeSegIndex = computed(() => {
+  if (showThemeSystemOption.value) {
+    const p = colorMode.preference
+    if (p === 'system')
+      return 2
+    if (p === 'dark')
+      return 1
+    return 0
+  }
+  if (colorMode.preference === 'system')
+    return themeDisplay.value === 'dark' ? 1 : 0
+  return colorMode.preference === 'dark' ? 1 : 0
+})
+
+const themeLightActive = computed(() => {
+  if (showThemeSystemOption.value)
+    return colorMode.preference === 'light'
+  return colorMode.preference === 'light'
+    || (colorMode.preference === 'system' && themeDisplay.value === 'light')
+})
+
+const themeDarkActive = computed(() => {
+  if (showThemeSystemOption.value)
+    return colorMode.preference === 'dark'
+  return colorMode.preference === 'dark'
+    || (colorMode.preference === 'system' && themeDisplay.value === 'dark')
+})
 
 const brandTheme = {
   light: '#1e40af',
@@ -447,18 +517,18 @@ let mqDesktopListener: (() => void) | null = null
 onMounted(() => {
   if (!import.meta.client)
     return
+  themeExtraControlsMounted.value = true
   onWindowScroll()
   window.addEventListener('scroll', onWindowScroll, { passive: true })
-  const c = readConsent()
-  if (c?.functional) {
-    try {
-      const saved = localStorage.getItem(LOCALE_PREF_KEY)
-      if (saved === 'nl' || saved === 'en')
-        void setLocale(saved)
-    }
-    catch {
-      /* ignore */
-    }
+  if (needsChoice.value && colorMode.preference === 'system')
+    colorMode.preference = 'light'
+  try {
+    const saved = localStorage.getItem(LOCALE_PREF_KEY)
+    if (saved === 'nl' || saved === 'en')
+      void setLocale(saved)
+  }
+  catch {
+    /* ignore */
   }
   const mq = window.matchMedia('(min-width: 768px)')
   mqDesktopListener = () => {
@@ -483,8 +553,7 @@ onUnmounted(() => {
 watch(locale, (val) => {
   if (!import.meta.client)
     return
-  const c = readConsent()
-  if (c?.functional && (val === 'nl' || val === 'en')) {
+  if (val === 'nl' || val === 'en') {
     try {
       localStorage.setItem(LOCALE_PREF_KEY, val)
     }
@@ -998,6 +1067,18 @@ useHead(() => ({
 
 .seg--2.seg--i1 .seg__pill {
   transform: translateX(calc(100% + 2px));
+}
+
+.seg--3 .seg__pill {
+  width: calc(33.333% - 2.1px);
+}
+
+.seg--3.seg--i1 .seg__pill {
+  transform: translateX(calc(100% + 2px));
+}
+
+.seg--3.seg--i2 .seg__pill {
+  transform: translateX(calc(200% + 4px));
 }
 
 .seg__btn {

@@ -209,6 +209,7 @@
   "header": {
     "themeLight": "Light",
     "themeDark": "Dark",
+    "themeSystem": "Match system (light or dark)",
     "language": "Language",
     "home": "Home",
     "check": "Analyze",
@@ -279,11 +280,11 @@
     "tableDuration": "Retention",
     "acceptFunctional": "Allow functional storage",
     "necessaryOnly": "Necessary only",
-    "necessaryOnlyHelp": "Necessary only: we only store your choice for this banner and remove saved language and theme preferences. The page will reload.",
+    "necessaryOnlyHelp": "Necessary only: we keep your choice for this banner and clear analytics-related data. Language and display preferences stay stored locally (not used for marketing). The page will reload.",
     "apiNote": "When you run an analysis, your browser sends an HTTPS request to our server with the text you pasted. Server logs may contain technical data (such as IP address and time) for security and debugging—not for ad tracking via browser cookies.",
     "fontsNote": "Fonts are loaded from Google Fonts (fonts.googleapis.com / fonts.gstatic.com). Your IP address may be processed by Google. We do not place marketing cookies for this.",
     "legalNote": "This overview is for transparency only. It is not legal advice; consult a privacy professional if in doubt.",
-    "footerSummary": "No marketing cookies. Optional Google Analytics only after you allow functional storage. Language and theme the same. Details: cookie settings.",
+    "footerSummary": "No marketing cookies. Optional Google Analytics only after you allow functional storage. Language and theme are kept locally as display preferences. Details: cookie settings.",
     "openSettings": "Privacy & cookie preferences",
     "rows": [
       {
@@ -295,13 +296,13 @@
       {
         "name": "wsc_locale_pref",
         "type": "localStorage",
-        "purpose": "Language preference (EN/NL), only if you accept functional storage.",
+        "purpose": "Language preference (EN/NL) stored locally for display—not used for ad profiling.",
         "duration": "Until you clear data or change your choice"
       },
       {
         "name": "wsc-color-mode",
         "type": "localStorage",
-        "purpose": "Theme (light/dark/system) from the site controls.",
+        "purpose": "Display (light/dark/system) stored locally—not used for ad profiling.",
         "duration": "Until you clear data or change your choice"
       },
       {
