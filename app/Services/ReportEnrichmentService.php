@@ -9,7 +9,9 @@ class ReportEnrichmentService
 {
     public function __construct(
         private ListingDwellingClassifier $dwellingClassifier,
-    ) {}
+    )
+    {
+    }
 
     /**
      * Vult aanbevelingen en controles op basis van regels + score (zonder LLM-extras).

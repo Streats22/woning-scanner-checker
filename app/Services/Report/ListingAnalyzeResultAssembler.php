@@ -14,7 +14,9 @@ final class ListingAnalyzeResultAssembler
     public function __construct(
         private ListingFactsAssembler $listingFacts,
         private ListingSurfaceParser $surfaceParser,
-    ) {}
+    )
+    {
+    }
 
     /**
      * @param  array<string, mixed>  $analysis

@@ -1,40 +1,40 @@
 #!/usr/bin/env bash
-# Voer uit op de Ploi-server (SSH). Geen sudo nodig.
+# Run on the Ploi server (SSH). No sudo required.
 #   bash deploy/ploi-diagnose.sh
 #
 set -u
 
-echo "========== 1) PM2: welke Nuxt-apps draaien? =========="
+echo "========== 1) PM2: which Nuxt apps are running? =========="
 pm2 list 2>/dev/null || true
 
 echo ""
 echo "========== 2) PM2 detail =========="
-pm2 show dehuurradar-nuxt 2>/dev/null || echo "(geen dehuurradar-nuxt)"
+pm2 show dehuurradar-nuxt 2>/dev/null || echo "(no dehuurradar-nuxt)"
 
 echo ""
-echo "========== 3) Poorten 3000–3005 =========="
+echo "========== 3) Ports 3000–3005 =========="
 ss -tlnp 2>/dev/null | grep -E ':300[0-5] ' || true
 
 echo ""
-echo "========== 4) Nuxt op 127.0.0.1:3000 — footer staat ONDERAAN de HTML =========="
+echo "========== 4) Nuxt on 127.0.0.1:3000 — footer is at the BOTTOM of the HTML =========="
 curl -sI --max-time 5 "http://127.0.0.1:3000/" | head -15 || true
 BODY=$(curl -s --max-time 10 "http://127.0.0.1:3000/" || true)
 if echo "$BODY" | grep -qE 'name="x-wsc-build"|name=.x-wsc-build'; then
-  echo "OK: meta x-wsc-build gevonden:"
+  echo "OK: meta x-wsc-build found:"
   echo "$BODY" | grep -oE '<meta[^>]*x-wsc-build[^>]*>' | head -1
 elif echo "$BODY" | grep -q 'Build'; then
   echo "$BODY" | grep -oE 'Build[^<]{0,120}' | head -3
 else
-  echo "(geen x-wsc-build / Build in HTML — oude deploy of lege response; rebuild + pm2 restart)"
+  echo "(no x-wsc-build / Build in HTML — old deploy or empty response; rebuild + pm2 restart)"
 fi
 if echo "$BODY" | grep -q 'De Huur Radar'; then
-  echo "OK: merknaam 'De Huur Radar' gevonden in HTML."
+  echo "OK: brand name 'De Huur Radar' found in HTML."
 else
-  echo "Let op: 'De Huur Radar' niet gevonden (oude bundle, of i18n lazy/SSR — na rebuild opnieuw testen)."
+  echo "Note: 'De Huur Radar' not found (old bundle, or i18n lazy/SSR — test again after rebuild)."
 fi
 
 echo ""
-echo "========== 5) Nginx (zonder sudo) =========="
+echo "========== 5) Nginx (no sudo) =========="
 FOUND=0
 for f in /etc/nginx/sites-enabled/*; do
   [[ -r "$f" ]] || continue
@@ -45,9 +45,9 @@ for f in /etc/nginx/sites-enabled/*; do
   fi
 done
 if [[ "$FOUND" -eq 0 ]]; then
-  echo "Geen leesbare site-config in /etc/nginx/sites-enabled/ (rechten)."
-  echo "→ In Ploi: elke site → NGINX → zoek per domein 'proxy_pass http://127.0.0.1:3000'"
-  echo "→ humble-shore en dehuurradar moeten naar hetzelfde poort wijzen als PM2."
+  echo "No readable site config in /etc/nginx/sites-enabled/ (permissions)."
+  echo "→ In Ploi: each site → NGINX → find 'proxy_pass http://127.0.0.1:3000' per domain"
+  echo "→ humble-shore and dehuurradar should point to the same port as PM2."
 fi
 
 echo ""
@@ -55,8 +55,8 @@ echo "========== 6) Git (frontend) =========="
 if [[ -d /home/ploi/dehuurradar.nl/frontend/.git ]]; then
   (cd /home/ploi/dehuurradar.nl/frontend && git log -1 --oneline && git status -sb)
 else
-  echo "Geen .git in frontend (deploy zonder git?)."
+  echo "No .git in frontend (deploy without git?)."
 fi
 
 echo ""
-echo "Klaar."
+echo "Done."

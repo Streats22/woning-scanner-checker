@@ -16,7 +16,7 @@ class ScamAnalysisServiceTest extends TestCase
 
     public function test_price_under_benchmark_adds_thirty_points(): void
     {
-        $s = new ScamAnalysisService(new ListingDwellingClassifier);
+        $s = new ScamAnalysisService(new ListingDwellingClassifier());
         $data = new ParsedListingInput(null, 500, null, 'Appartement Amsterdam');
         $out = $s->analyze($data, $this->market(1850));
 
@@ -26,7 +26,7 @@ class ScamAnalysisServiceTest extends TestCase
 
     public function test_typical_room_price_does_not_trigger_under_benchmark_points(): void
     {
-        $s = new ScamAnalysisService(new ListingDwellingClassifier);
+        $s = new ScamAnalysisService(new ListingDwellingClassifier());
         $data = new ParsedListingInput(
             'https://kamernet.nl/huren/kamer-amsterdam/x',
             550,
@@ -41,7 +41,7 @@ class ScamAnalysisServiceTest extends TestCase
 
     public function test_extreme_low_room_price_still_triggers_under_benchmark_points(): void
     {
-        $s = new ScamAnalysisService(new ListingDwellingClassifier);
+        $s = new ScamAnalysisService(new ListingDwellingClassifier());
         $data = new ParsedListingInput(null, 150, null, 'Studentenkamer te huur, €150 p.m. Amsterdam');
         $out = $s->analyze($data, $this->market(1850));
 
@@ -51,7 +51,7 @@ class ScamAnalysisServiceTest extends TestCase
 
     public function test_telegram_adds_messaging_points(): void
     {
-        $s = new ScamAnalysisService(new ListingDwellingClassifier);
+        $s = new ScamAnalysisService(new ListingDwellingClassifier());
         $data = new ParsedListingInput(null, null, null, 'Reageer via Telegram voor snelle reactie.');
         $out = $s->analyze($data, $this->market());
 
@@ -61,7 +61,7 @@ class ScamAnalysisServiceTest extends TestCase
 
     public function test_crypto_triggers_high_risk_payment(): void
     {
-        $s = new ScamAnalysisService(new ListingDwellingClassifier);
+        $s = new ScamAnalysisService(new ListingDwellingClassifier());
         $data = new ParsedListingInput(null, null, null, 'Betaal de borg in USDT naar ons walletadres.');
         $out = $s->analyze($data, $this->market());
 
@@ -71,7 +71,7 @@ class ScamAnalysisServiceTest extends TestCase
 
     public function test_no_viewing_and_abroad_narrative(): void
     {
-        $s = new ScamAnalysisService(new ListingDwellingClassifier);
+        $s = new ScamAnalysisService(new ListingDwellingClassifier());
         $data = new ParsedListingInput(null, null, null, 'Geen bezichtiging mogelijk, ik woon in het buitenland voor mijn werk.');
         $out = $s->analyze($data, $this->market());
 
@@ -80,7 +80,7 @@ class ScamAnalysisServiceTest extends TestCase
 
     public function test_google_forms_flag(): void
     {
-        $s = new ScamAnalysisService(new ListingDwellingClassifier);
+        $s = new ScamAnalysisService(new ListingDwellingClassifier());
         $data = new ParsedListingInput(null, null, null, 'Meld je aan via https://forms.gle/abc123');
         $out = $s->analyze($data, $this->market());
 
@@ -89,7 +89,7 @@ class ScamAnalysisServiceTest extends TestCase
 
     public function test_bemiddelingskosten_studentenkamer_triggers_upfront_fee(): void
     {
-        $s = new ScamAnalysisService(new ListingDwellingClassifier);
+        $s = new ScamAnalysisService(new ListingDwellingClassifier());
         $data = new ParsedListingInput(null, null, null, 'Eenmalige bemiddelingskosten voor deze studentenkamer graag vooraf overmaken.');
         $out = $s->analyze($data, $this->market());
 
@@ -98,7 +98,7 @@ class ScamAnalysisServiceTest extends TestCase
 
     public function test_id_ruil_student_scam_flag(): void
     {
-        $s = new ScamAnalysisService(new ListingDwellingClassifier);
+        $s = new ScamAnalysisService(new ListingDwellingClassifier());
         $data = new ParsedListingInput(null, null, null, 'Stuur een kopie paspoort, we wisselen ID uit zodat je mij kunt vertrouwen als bewijs.');
         $out = $s->analyze($data, $this->market());
 
@@ -107,7 +107,7 @@ class ScamAnalysisServiceTest extends TestCase
 
     public function test_score_caps_at_one_hundred(): void
     {
-        $s = new ScamAnalysisService(new ListingDwellingClassifier);
+        $s = new ScamAnalysisService(new ListingDwellingClassifier());
         $text = implode(' ', [
             'Amsterdam',
             '€ 400 per maand',

@@ -1,12 +1,12 @@
 <?php
 
+use Carbon\Carbon;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class () extends Migration {
     public function up(): void
     {
         Schema::table('listings', function (Blueprint $table) {
@@ -16,7 +16,7 @@ return new class extends Migration
 
         $rows = DB::table('listings')->orderBy('id')->get();
         foreach ($rows as $row) {
-            $created = \Carbon\Carbon::parse($row->created_at);
+            $created = Carbon::parse($row->created_at);
             $slug = sprintf(
                 'advertentie-%s-%s-%d',
                 $created->format('Y-m-d'),

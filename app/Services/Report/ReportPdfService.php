@@ -3,6 +3,7 @@
 namespace App\Services\Report;
 
 use App\Models\Listing;
+use App\Support\LocaleContext;
 use Dompdf\Dompdf;
 use Dompdf\Options;
 use Illuminate\Http\Response;
@@ -20,20 +21,17 @@ final class ReportPdfService
         $theme = in_array($theme, ['light', 'dark'], true) ? $theme : 'light';
         $locale = in_array($locale, ['nl', 'en'], true) ? $locale : 'nl';
 
-        $previousLocale = app()->getLocale();
-        app()->setLocale($locale);
-        try {
+        $html = LocaleContext::run($locale, function () use ($listing, $theme, $locale) {
             $listingForPdf = $this->listingWithSanitizedPdfFields($listing);
-            $html = view('report-pdf', [
+
+            return view('report-pdf', [
                 'listing' => $listingForPdf,
                 'theme' => $theme,
                 'locale' => $locale,
             ])->render();
-        } finally {
-            app()->setLocale($previousLocale);
-        }
+        });
 
-        $options = new Options;
+        $options = new Options();
         $options->set('defaultFont', 'DejaVu Sans');
         // data:-URI (logo in PDF) en lokale assets onder public/
         $options->set('isRemoteEnabled', true);

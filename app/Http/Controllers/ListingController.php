@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exceptions\ListingFetchException;
+use App\Http\Requests\AnalyzeListingRequest;
+use App\Http\Requests\ReportPdfRequest;
 use App\Models\Listing;
 use App\Services\ListingContentFitService;
 use App\Services\ListingParserService;
@@ -14,9 +16,9 @@ use App\Services\Report\ReportListingResolver;
 use App\Services\Report\ReportPdfService;
 use App\Services\Report\ReportUrlGenerator;
 use App\Services\ScamAnalysisService;
+use App\Support\LocaleContext;
 use App\Support\RentBenchmarkMap;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Illuminate\View\View;
@@ -34,23 +36,17 @@ class ListingController extends Controller
         private ReportUrlGenerator $reportUrlGenerator,
         private ListingAnalyzeResultAssembler $analyzeResultAssembler,
         private ListingContentFitService $listingContentFit,
-    ) {}
-
-    public function analyze(Request $request)
+    )
     {
-        $validated = $request->validate([
-            'text' => ['required', 'string', 'max:65535'],
-            'use_ai' => ['sometimes', 'boolean'],
-            'locale' => ['sometimes', 'string', 'in:nl,en'],
-        ]);
+    }
 
+    public function analyze(AnalyzeListingRequest $request)
+    {
+        $validated = $request->validated();
         $useAi = $request->boolean('use_ai');
-
         $locale = $validated['locale'] ?? 'nl';
-        $previousLocale = app()->getLocale();
-        app()->setLocale($locale);
 
-        try {
+        return LocaleContext::run($locale, function () use ($request, $validated, $useAi) {
             try {
                 $data = $this->parser->parseInput($validated['text']);
             } catch (ListingFetchException $e) {
@@ -109,38 +105,42 @@ class ListingController extends Controller
             $payload = $this->analyzeResultAssembler->buildApiPayload($listing, $analysis, $priceData, $urls, $listingFit);
 
             return response()->json($payload);
-        } finally {
-            app()->setLocale($previousLocale);
-        }
+        });
     }
 
     public function showReport(string $idOrSlug): View|RedirectResponse
     {
-        $listing = $this->listingResolver->resolve($idOrSlug);
-
-        if ($redirect = $this->canonicalReportRedirect($listing, $idOrSlug, 'report.show')) {
-            return $redirect;
-        }
-
-        return view('report', [
-            'listing' => $listing,
-        ]);
+        return $this->whenReportListingIsCanonical(
+            $idOrSlug,
+            'report.show',
+            fn(Listing $listing) => view('report', [
+                'listing' => $listing,
+            ])
+        );
     }
 
-    public function reportPdf(Request $request, string $idOrSlug): Response|RedirectResponse
+    public function reportPdf(ReportPdfRequest $request, string $idOrSlug): Response|RedirectResponse
+    {
+        return $this->whenReportListingIsCanonical(
+            $idOrSlug,
+            'report.pdf',
+            function (Listing $listing) use ($request) {
+                $theme = (string)$request->validated('theme', 'light');
+                $locale = (string)$request->validated('locale', 'nl');
+
+                return $this->pdfRenderer->render($listing, $theme, $locale);
+            }
+        );
+    }
+
+    private function whenReportListingIsCanonical(string $idOrSlug, string $routeName, callable $next)
     {
         $listing = $this->listingResolver->resolve($idOrSlug);
-
-        if ($redirect = $this->canonicalReportRedirect($listing, $idOrSlug, 'report.pdf')) {
+        if ($redirect = $this->canonicalReportRedirect($listing, $idOrSlug, $routeName)) {
             return $redirect;
         }
 
-        $theme = $request->query('theme', 'light');
-        $locale = $request->query('locale', 'nl');
-        $theme = is_string($theme) ? $theme : 'light';
-        $locale = is_string($locale) ? $locale : 'nl';
-
-        return $this->pdfRenderer->render($listing, $theme, $locale);
+        return $next($listing);
     }
 
     private function canonicalReportRedirect(Listing $listing, string $idOrSlug, string $routeName): ?RedirectResponse

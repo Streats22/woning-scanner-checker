@@ -5,4 +5,5 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/health', fn () => response()->json(['ok' => true]));
 
-Route::post('/analyze', [ListingController::class, 'analyze']);
+Route::post('/analyze', [ListingController::class, 'analyze'])
+    ->middleware((string)config('listing.analyze_throttle'));

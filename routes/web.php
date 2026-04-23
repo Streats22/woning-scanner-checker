@@ -7,7 +7,8 @@ use Illuminate\Support\Facades\Route;
  * GET / wordt door Nginx naar de Nuxt-server gedeeld (zie deploy/dehuurradar.nl.conf).
  * Legacy POST /analyze blijft voor oude clients; de app gebruikt POST /api/analyze.
  */
-Route::post('/analyze', [ListingController::class, 'analyze']);
+Route::post('/analyze', [ListingController::class, 'analyze'])
+    ->middleware((string)config('listing.analyze_throttle'));
 
 Route::get('/report/{idOrSlug}/pdf', [ListingController::class, 'reportPdf'])
     ->where('idOrSlug', '[A-Za-z0-9\-\.]+')

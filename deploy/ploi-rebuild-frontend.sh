@@ -1,39 +1,39 @@
 #!/usr/bin/env bash
-# Herbouwt Nuxt op de Ploi-server en herstart PM2 — los dit uit op de VPS (SSH).
+# Rebuild Nuxt on the Ploi server and restart PM2 — run this on the VPS (SSH).
 #
-# 1) Echte site-paden:  ls /home/ploi/
-#     Niet elke test-URL heeft een map "humble-shore-…"; namen verschillen per server.
+# 1) Real site paths:  ls /home/ploi/
+#     Not every test URL has a folder "humble-shore-…"; names differ per server.
 #
-# 2) Vaak staat de frontend alleen onder de hoofdsite, bv.:
+# 2) Often the frontend lives only under the main site, e.g.:
 #      /home/ploi/dehuurradar.nl/frontend
-#    Test-URL (humble-shore-….ploi.website) kan naar dezelfde Nginx → zelfde poort →
-#    dezelfde PM2-app wijzen. Dan is één build + één restart genoeg.
+#    A test URL (humble-shore-….ploi.website) may hit the same Nginx → same port →
+#    the same PM2 app. Then one build + one restart is enough.
 #
-# 3) pm2: gebruik de exacte naam uit `pm2 list`, zonder < > haakjes.
-#    FOUT:  pm2 restart <dehuurradar-nuxt>
-#    GOED:  pm2 restart dehuurradar-nuxt
+# 3) pm2: use the exact name from `pm2 list`, without angle brackets.
+#    WRONG:  pm2 restart <dehuurradar-nuxt>
+#    RIGHT:  pm2 restart dehuurradar-nuxt
 #
-# Voorbeeld (jouw pad uit de build-log):
+# Example (your path from the build log):
 #   export SITE_ROOT=/home/ploi/dehuurradar.nl
 #   export PM2_NAME=dehuurradar-nuxt
 #   bash deploy/ploi-rebuild-frontend.sh
 #
 set -euo pipefail
 
-SITE_ROOT="${SITE_ROOT:?Zet SITE_ROOT, bv. export SITE_ROOT=/home/ploi/dehuurradar.nl}"
+SITE_ROOT="${SITE_ROOT:?Set SITE_ROOT, e.g. export SITE_ROOT=/home/ploi/dehuurradar.nl}"
 FRONTEND="${SITE_ROOT}/frontend"
 
 if [[ ! -d "$FRONTEND" ]]; then
-  echo "Geen map: $FRONTEND — controleer SITE_ROOT (Ploi → site → pad)." >&2
+  echo "No directory: $FRONTEND — check SITE_ROOT (Ploi → site → path)." >&2
   exit 1
 fi
 
 cd "$FRONTEND"
 
 if [[ ! -f .env ]] || ! grep -qE '^[[:space:]]*NUXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-' .env 2>/dev/null; then
-  echo "==> WAARSCHUWING: in frontend/.env ontbreekt NUXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-… (of .env bestaat niet)." >&2
-  echo "    Ploi/Laravel-site-env gaat naar PHP, niet naar Node — zet GA hier, niet alleen in Laravel." >&2
-  echo "    Zonder deze regel bevat npm run build geen measurement-ID." >&2
+  echo "==> WARNING: frontend/.env is missing NUXT_PUBLIC_GOOGLE_ANALYTICS_ID=G-… (or .env is missing)." >&2
+  echo "    Ploi/Laravel site env is for PHP, not Node — set GA here, not only in Laravel." >&2
+  echo "    Without this line, npm run build will not include a measurement ID." >&2
 fi
 
 echo "==> $(pwd)"
@@ -47,13 +47,12 @@ echo "==> npm run build…"
 npm run build
 
 if [[ -n "${PM2_NAME:-}" ]]; then
-  echo "==> pm2 restart $PM2_NAME --update-env (laadt .env / ecosystem env opnieuw)"
+  echo "==> pm2 restart $PM2_NAME --update-env (reloads .env / ecosystem env)"
   pm2 restart "$PM2_NAME" --update-env
 else
-  echo "==> Geen PM2_NAME gezet — herstart handmatig, bv.:"
+  echo "==> PM2_NAME not set — restart manually, e.g.:"
   echo "    pm2 restart dehuurradar-nuxt"
-  echo "    (naam uit: pm2 list — geen < > gebruiken in bash)"
+  echo "    (name from: pm2 list — do not use < > in bash)"
 fi
 
-echo "==> Klaar. Controleer footer 'Build · …' op de site en vergelijk met lokaal."
-echo "==> Cloudflare: eventueel Purge Cache voor die hostname."
+echo "==> Done. Check the site footer 'Build · …' and compare with local."

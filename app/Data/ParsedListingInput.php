@@ -13,5 +13,7 @@ final readonly class ParsedListingInput
         public ?string $contact,
         public string $description,
         public ?float $surfaceM2 = null,
-    ) {}
+    )
+    {
+    }
 }

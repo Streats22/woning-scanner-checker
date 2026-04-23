@@ -26,7 +26,9 @@ class ScamAnalysisService
 
     public function __construct(
         private ListingDwellingClassifier $dwellingClassifier,
-    ) {}
+    )
+    {
+    }
 
     /**
      * @param  array{average: int, difference_percent: ?int}  $market

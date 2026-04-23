@@ -10,7 +10,7 @@ class PriceAnalysisServiceTest extends TestCase
 {
     public function test_difference_percent_against_city_benchmark(): void
     {
-        $s = new PriceAnalysisService;
+        $s = new PriceAnalysisService();
 
         $out = $s->analyze('Amsterdam', 1000);
 
@@ -21,7 +21,7 @@ class PriceAnalysisServiceTest extends TestCase
 
     public function test_null_price_yields_null_difference(): void
     {
-        $s = new PriceAnalysisService;
+        $s = new PriceAnalysisService();
 
         $out = $s->analyze('Rotterdam', null);
 

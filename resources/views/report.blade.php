@@ -17,6 +17,8 @@
 </head>
 <body>
 @php
+    use App\Support\PublicHttpUrl;
+
     $s = (int) $listing->scam_score;
     if ($s <= 30) {
         $tier = 'c-green';
@@ -48,7 +50,13 @@
         <p class="meta">
             Aangemaakt: {{ $listing->created_at?->format('d-m-Y H:i') ?? '—' }}
             @if ($listing->source_url)
-                · <a href="{{ $listing->source_url }}" style="color:var(--accent);">{{ parse_url($listing->source_url, PHP_URL_HOST) ?? 'Bronlink' }}</a>
+                @if (PublicHttpUrl::isHttpOrHttpsForHref($listing->source_url))
+                    · <a href="{{ $listing->source_url }}" rel="noopener noreferrer"
+                         style="color:var(--accent);">{{ parse_url($listing->source_url, PHP_URL_HOST) ?? 'Bronlink' }}</a>
+                @else
+                    · <span class="meta-muted"
+                            title="Niet-klikbare bron (geen veilige http(s)-link)">{{ parse_url($listing->source_url, PHP_URL_HOST) ?? 'Bron' }}</span>
+                @endif
             @endif
         </p>
 
@@ -88,7 +96,12 @@
                             <td style="padding:0.35rem 0.75rem 0.35rem 0; color:var(--muted); vertical-align:top;">Bron</td>
                             <td style="padding:0.35rem 0; word-break:break-all;">
                                 @if (!empty($listingFacts['source_url']))
-                                    <a href="{{ $listingFacts['source_url'] }}" style="color:var(--accent);">{{ $listingFacts['source_url'] }}</a>
+                                    @if (PublicHttpUrl::isHttpOrHttpsForHref($listingFacts['source_url']))
+                                        <a href="{{ $listingFacts['source_url'] }}" rel="noopener noreferrer"
+                                           style="color:var(--accent);word-break:break-all;">{{ $listingFacts['source_url'] }}</a>
+                                    @else
+                                        <span style="word-break:break-all;">{{ $listingFacts['source_url'] }}</span>
+                                    @endif
                                 @else
                                     —
                                 @endif

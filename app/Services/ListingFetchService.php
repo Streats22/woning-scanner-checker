@@ -3,9 +3,10 @@
 namespace App\Services;
 
 use App\Exceptions\ListingFetchException;
-use Illuminate\Http\Client\HttpClientException;
+use App\Support\PublicHttpUrl;
 use Illuminate\Http\Client\PendingRequest;
 use Illuminate\Support\Facades\Http;
+use Throwable;
 
 class ListingFetchService
 {
@@ -19,7 +20,16 @@ class ListingFetchService
      */
     public function fetchPlainText(string $url): array
     {
+        if (!PublicHttpUrl::isSafeForServerFetch($url)) {
+            throw new ListingFetchException(
+                'Deze URL kan niet worden opgehaald: alleen openbare http(s)-adressen zijn toegestaan (geen interne, gereserveerde of onvolledige koppelingen).'
+            );
+        }
+
         foreach ($this->urlsToTry($url) as $candidate) {
+            if (!PublicHttpUrl::isSafeForServerFetch($candidate)) {
+                continue;
+            }
             $text = $this->attemptFetch($candidate);
             if ($text !== null) {
                 return ['text' => $text, 'effective_url' => $candidate];
@@ -84,14 +94,26 @@ class ListingFetchService
                 'User-Agent' => 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
                 'Accept' => 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
                 'Accept-Language' => 'nl-NL,nl;q=0.9,en;q=0.8',
+            ])
+            ->withOptions([
+                'allow_redirects' => [
+                    'max' => 5,
+                    'on_redirect' => function ($request, $response, $nextUri): void {
+                        $next = (string)$nextUri;
+                        if (!PublicHttpUrl::isSafeForServerFetch($next)) {
+                            throw new ListingFetchException(
+                                'De verbinding is gestopt: de site stuurde door naar een niet-toegestaan adres. Plak de advertentie handmatig.'
+                            );
+                        }
+                    },
+                ],
             ]);
     }
 
     private function attemptFetch(string $url): ?string
     {
-        try {
-            $response = $this->httpClient()->get($url);
-        } catch (HttpClientException) {
+        $response = $this->getHttpResponse($url, softNetworkFailure: true);
+        if ($response === null) {
             return null;
         }
 
@@ -109,16 +131,44 @@ class ListingFetchService
         return $text;
     }
 
-    private function throwDetailedFailure(string $url): never
+    /**
+     * @return \Illuminate\Http\Client\Response|null null when the request failed and the caller may try another URL (soft failure only)
+     */
+    private function getHttpResponse(string $url, bool $softNetworkFailure = true): ?\Illuminate\Http\Client\Response
     {
         try {
-            $response = $this->httpClient()->get($url);
-        } catch (HttpClientException) {
+            return $this->httpClient()->get($url);
+        } catch (ListingFetchException $e) {
+            throw $e;
+        } catch (Throwable $e) {
+            if ($found = $this->unwrapListingFetchException($e)) {
+                throw $found;
+            }
+            if ($softNetworkFailure) {
+                return null;
+            }
             throw new ListingFetchException(
                 'Kan de pagina niet laden (netwerk, time-out of beveiliging). Controleer de URL of plak de advertentietekst handmatig.'
             );
         }
+    }
 
+    private function unwrapListingFetchException(Throwable $e): ?ListingFetchException
+    {
+        $c = $e;
+        for ($i = 0; $c !== null && $i < 12; $i++) {
+            if ($c instanceof ListingFetchException) {
+                return $c;
+            }
+            $c = $c->getPrevious();
+        }
+
+        return null;
+    }
+
+    private function throwDetailedFailure(string $url): never
+    {
+        $response = $this->getHttpResponse($url, softNetworkFailure: false);
         if (! $response->successful()) {
             $status = $response->status();
 
@@ -148,7 +198,7 @@ class ListingFetchService
         $html = preg_replace('#<noscript\b[^>]*>.*?</noscript>#is', '', $html) ?? $html;
 
         $previous = libxml_use_internal_errors(true);
-        $dom = new \DOMDocument;
+        $dom = new \DOMDocument();
         // Avoid deprecated mb_convert_encoding(..., 'HTML-ENTITIES', 'UTF-8') (PHP 8.2+)
         @$dom->loadHTML('<?xml encoding="UTF-8">'.$html);
         libxml_clear_errors();

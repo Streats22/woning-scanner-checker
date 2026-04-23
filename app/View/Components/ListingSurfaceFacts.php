@@ -13,7 +13,9 @@ final class ListingSurfaceFacts extends Component
     public function __construct(
         public array $listingFacts,
         public string $variant = 'pdf',
-    ) {}
+    )
+    {
+    }
 
     public function shouldRender(): bool
     {

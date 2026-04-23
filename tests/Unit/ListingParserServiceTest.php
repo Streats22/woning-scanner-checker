@@ -13,7 +13,7 @@ class ListingParserServiceTest extends TestCase
     {
         $fetch = $this->createStub(ListingFetchService::class);
 
-        return new ListingParserService($fetch, new ListingSurfaceParser);
+        return new ListingParserService($fetch, new ListingSurfaceParser());
     }
 
     public function test_contact_hint_extracts_consecutive_06(): void

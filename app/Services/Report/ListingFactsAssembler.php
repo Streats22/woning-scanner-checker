@@ -16,7 +16,9 @@ final class ListingFactsAssembler
     public function __construct(
         private ListingAddressParser $addressParser,
         private ListingDwellingClassifier $dwellingClassifier,
-    ) {}
+    )
+    {
+    }
 
     /**
      * @param  array{average: int, difference_percent: ?int}  $priceData

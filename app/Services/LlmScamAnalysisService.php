@@ -12,7 +12,9 @@ class LlmScamAnalysisService
         private AiAnalysisService $ruleSummary,
         private ReportEnrichmentService $reportEnrichment,
         private ListingDwellingClassifier $dwellingClassifier,
-    ) {}
+    )
+    {
+    }
 
     /**
      * Combineert regel-gebaseerde score met een LLM-analyse (alleen als $useLlm true en API-key gezet).

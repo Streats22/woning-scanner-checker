@@ -156,19 +156,19 @@ class ListingAnalyzeTest extends TestCase
             .'</body></html>';
 
         Http::fake([
-            'https://public.example/*' => Http::response($body, 200),
-            'http://public.example/*' => Http::response('<html><body>wrong</body></html>', 200),
+            'https://www.example.com/ssrf-public/*' => Http::response($body, 200),
+            'http://www.example.com/ssrf-public/*' => Http::response('<html><body>wrong</body></html>', 200),
         ]);
 
-        $input = 'http://public.example/kamer/amsterdam';
+        $input = 'http://www.example.com/ssrf-public/kamer/amsterdam';
         $response = $this->postJson('/api/analyze', ['text' => $input]);
 
         $response->assertOk();
-        Http::assertSent(fn ($request) => str_starts_with($request->url(), 'https://public.example'));
-        Http::assertNotSent(fn ($request) => str_starts_with($request->url(), 'http://public.example'));
+        Http::assertSent(fn($request) => str_starts_with($request->url(), 'https://www.example.com/ssrf-public'));
+        Http::assertNotSent(fn($request) => str_starts_with($request->url(), 'http://www.example.com/ssrf-public'));
 
         $listing = Listing::first();
-        $this->assertSame('https://public.example/kamer/amsterdam', $listing->source_url);
+        $this->assertSame('https://www.example.com/ssrf-public/kamer/amsterdam', $listing->source_url);
     }
 
     public function test_analyze_falls_back_to_http_when_https_fails(): void
@@ -178,28 +178,28 @@ class ListingAnalyzeTest extends TestCase
             .'</body></html>';
 
         Http::fake([
-            'https://fallback.example/*' => Http::response('', 502),
-            'http://fallback.example/*' => Http::response($body, 200),
+            'https://www.example.com/ssrf-fallback/*' => Http::response('', 502),
+            'http://www.example.com/ssrf-fallback/*' => Http::response($body, 200),
         ]);
 
-        $input = 'http://fallback.example/ad';
+        $input = 'http://www.example.com/ssrf-fallback/ad';
         $response = $this->postJson('/api/analyze', ['text' => $input]);
 
         $response->assertOk();
 
         $listing = Listing::first();
-        $this->assertSame('http://fallback.example/ad', $listing->source_url);
+        $this->assertSame('http://www.example.com/ssrf-fallback/ad', $listing->source_url);
         $this->assertStringContainsString('Utrecht', $listing->description);
     }
 
     public function test_analyze_returns_validation_error_when_fetch_fails(): void
     {
         Http::fake([
-            'https://broken.example/*' => Http::response('', 500),
+            'https://www.example.com/ssrf-broken/*' => Http::response('', 500),
         ]);
 
         $response = $this->postJson('/api/analyze', [
-            'text' => 'https://broken.example/page',
+            'text' => 'https://www.example.com/ssrf-broken/page',
         ]);
 
         $response->assertUnprocessable()
@@ -209,11 +209,11 @@ class ListingAnalyzeTest extends TestCase
     public function test_analyze_returns_clear_message_when_source_returns_403(): void
     {
         Http::fake([
-            'https://forbidden.example/*' => Http::response('', 403),
+            'https://www.example.com/ssrf-forbidden/*' => Http::response('', 403),
         ]);
 
         $response = $this->postJson('/api/analyze', [
-            'text' => 'https://forbidden.example/page',
+            'text' => 'https://www.example.com/ssrf-forbidden/page',
         ]);
 
         $response->assertUnprocessable()

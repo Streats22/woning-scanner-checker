@@ -9,7 +9,9 @@ class ListingParserService
     public function __construct(
         private ListingFetchService $fetch,
         private ListingSurfaceParser $surfaceParser,
-    ) {}
+    )
+    {
+    }
 
     public function parseInput(string $input): ParsedListingInput
     {

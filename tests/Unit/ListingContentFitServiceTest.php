@@ -10,7 +10,7 @@ class ListingContentFitServiceTest extends TestCase
 {
     public function test_typical_rental_text_scores_strong(): void
     {
-        $service = new ListingContentFitService;
+        $service = new ListingContentFitService();
         $text = <<<'TXT'
         Te huur: lichte kamer in Amsterdam centrum, 12 m², € 650 per maand inclusief.
         Bezichtiging mogelijk. Postcode 1012AB. Neem contact op via WhatsApp.
@@ -27,7 +27,7 @@ class ListingContentFitServiceTest extends TestCase
 
     public function test_random_short_text_scores_weak(): void
     {
-        $service = new ListingContentFitService;
+        $service = new ListingContentFitService();
         $data = new ParsedListingInput(null, null, null, 'ok');
 
         $out = $service->assess($data);
@@ -38,7 +38,7 @@ class ListingContentFitServiceTest extends TestCase
 
     public function test_known_platform_url_boosts_score(): void
     {
-        $service = new ListingContentFitService;
+        $service = new ListingContentFitService();
         $text = str_repeat(
             'Informatie over deze woning. Te huur beschikbaar. ',
             8

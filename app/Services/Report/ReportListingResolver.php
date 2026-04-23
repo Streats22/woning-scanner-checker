@@ -28,6 +28,6 @@ final class ReportListingResolver
             }
         }
 
-        throw (new ModelNotFoundException)->setModel(Listing::class);
+        throw (new ModelNotFoundException())->setModel(Listing::class);
     }
 }
