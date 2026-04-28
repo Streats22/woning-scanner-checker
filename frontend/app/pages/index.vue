@@ -38,6 +38,11 @@
             <NuxtLink class="landing-card__link" :to="localePath('/check')">{{ t('home.cardCheckLink') }}</NuxtLink>
           </article>
           <article class="landing-card">
+            <h3 class="landing-card__title font-display">{{ t('home.cardSitesTitle') }}</h3>
+            <p class="landing-card__body">{{ t('home.cardSitesBody') }}</p>
+            <NuxtLink class="landing-card__link" :to="localePath('/huursites')">{{ t('home.cardSitesLink') }}</NuxtLink>
+          </article>
+          <article class="landing-card">
             <h3 class="landing-card__title font-display">{{ t('home.cardFaqTitle') }}</h3>
             <p class="landing-card__body">{{ t('home.cardFaqBody') }}</p>
             <NuxtLink class="landing-card__link" :to="localePath('/faq')">{{ t('home.cardFaqLink') }}</NuxtLink>
@@ -60,6 +65,12 @@ useWscSeo({
   description: () => t('meta.homeDescription'),
   path: '/',
 })
+
+useHead(() => ({
+  meta: [
+    { name: 'keywords', content: t('meta.keywords') },
+  ],
+}))
 </script>
 
 <style scoped>
@@ -344,7 +355,7 @@ useWscSeo({
 
 @media (min-width: 700px) {
   .landing-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
   }
 }
 
@@ -443,6 +454,10 @@ useWscSeo({
 
   .landing-card:nth-child(2) {
     animation-delay: 0.1s;
+  }
+
+  .landing-card:nth-child(3) {
+    animation-delay: 0.16s;
   }
 }
 

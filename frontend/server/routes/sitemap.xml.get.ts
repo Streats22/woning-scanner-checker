@@ -32,6 +32,7 @@ export default defineEventHandler((event) => {
   const entries: { loc: string; changefreq: string; priority: string }[] = [
     { loc: `${base}/`, changefreq: 'weekly', priority: '1.0' },
     { loc: `${base}/check`, changefreq: 'weekly', priority: '0.95' },
+    { loc: `${base}/huursites`, changefreq: 'monthly', priority: '0.9' },
     { loc: `${base}/faq`, changefreq: 'monthly', priority: '0.85' },
   ]
 

@@ -1,10 +1,11 @@
 {
   "meta": {
-    "homeTitle": "De Huur Radar | Free rental scam check & risk score 0–100",
-    "homeDescription": "Seen a flat or a room for rent? Review the listing before you pay: risk score 0–100 with explanations, city rent benchmark, and clear signals (WhatsApp, upfront payment, wire transfer). For every renter — from studios to family homes — and just as useful for students and rooms. Marktplaats, Funda, Facebook. No account.",
-    "title": "De Huur Radar — rental scam check & transparent risk score",
-    "description": "Review a rental home or room listing for fraud before you pay. Risk score 0–100 with explanations, city benchmark, clear signals. Optional AI. No account.",
-    "ogImageAlt": "De Huur Radar — review a rental home or room listing before you pay"
+    "homeTitle": "De Huur Radar | Rental scam check & free huur scam check before you pay",
+    "homeDescription": "Renting in the Netherlands? Run a free rental (huur) scam check before you pay: risk score 0–100 with reasons, city rent benchmark, and clear signals (WhatsApp, upfront payment, wire transfer). Works for any rental home, studio, or student room on Marktplaats, Funda, and Facebook. Plus a list of trusted Dutch rental websites. No account.",
+    "title": "De Huur Radar — rental scam (huur scam) check & transparent risk score",
+    "description": "Rent safely in the Netherlands: check a rental home or room for huur scam before you pay. Risk score 0–100, city benchmark, trusted rental websites and clear signals. No account.",
+    "keywords": "rental scam, huur scam, huurfraude, huren, rent in Netherlands, rental fraud, trusted rental websites, room scam check, safe renting",
+    "ogImageAlt": "De Huur Radar — rental (huur) scam check before you rent a home or room"
   },
   "brand": {
     "name": "De Huur Radar",
@@ -40,11 +41,14 @@
     "cardFaqTitle": "FAQ & sources",
     "cardFaqBody": "Common questions about fraud, rooms, WhatsApp, and trusted information — plus links to external advice.",
     "cardFaqLink": "Open the FAQ",
+    "cardSitesTitle": "Trusted Dutch rental websites",
+    "cardSitesBody": "Curated list of well-known NL rental websites — for homes, studios, and student rooms. Each one labelled free, freemium, or paid so you know where to rent quickly and safely.",
+    "cardSitesLink": "Browse the rental websites",
     "faqTeaser": "Questions about fraud, rooms, or sources? See the FAQ."
   },
   "check": {
-    "metaTitle": "De Huur Radar — Analyze | Rental home or room, risk score, benchmark & fraud signals",
-    "metaDescription": "Paste a listing URL or text (rental home or room). Risk score 0–100 with reasons: price vs. benchmark, WhatsApp, upfront payment, wire transfer. OCR on screenshots. Free, no account.",
+    "metaTitle": "Rental scam (huur scam) check & analysis | Verify a rental home or room — De Huur Radar",
+    "metaDescription": "Free rental scam check: paste a rental home or room listing (URL or text) and get an instant risk score 0–100 with reasons. City benchmark, WhatsApp/upfront payment/wire transfer signals, OCR on screenshots. Rent safely without an account.",
     "pageTitle": "Analyze a listing",
     "pageLead": "Paste text or a link — for a room, studio, or whole flat. You get a risk score with clear reasons, including when you’re hunting for a student room.",
     "backHome": "Back to home"
@@ -213,6 +217,7 @@
     "language": "Language",
     "home": "Home",
     "check": "Analyze",
+    "sites": "Rental sites",
     "faq": "FAQ & sources",
     "navHome": "De Huur Radar home",
     "langNl": "Switch to Dutch",
@@ -226,9 +231,42 @@
     "menuSectionLanguage": "Language",
     "menuSectionAppearance": "Appearance"
   },
+  "sites": {
+    "metaTitle": "Trusted Dutch rental websites — free & freemium | De Huur Radar",
+    "metaDescription": "Curated list of well-known, trusted NL rental websites for renting a home, studio, or student room. Each one clearly labelled free, freemium, or paid, with examples for social housing and expats — no ads, no account.",
+    "title": "Trusted rental websites by region in the Netherlands",
+    "intro": "A short, honest selection of well-known Dutch platforms for renting a home or room — grouped by region. Most sites cover the whole country; social housing typically goes through a regional housing portal. For each site we mark whether it is free for the searcher, freemium (browse for free, paid to message), or paid. Combine this with our rental scam check before you transfer money.",
+    "disclaimer": "Not advice or an endorsement. Pricing, listings and regional coverage change quickly — always verify the current terms on the website itself. Best practice: pick a free platform AND run the listing through our scam check first.",
+    "legendAria": "Explanation of the price labels",
+    "legendFree": "Free for the tenant/searcher.",
+    "legendFreemium": "Free to browse, paid subscription needed to reply.",
+    "legendPaid": "Registration fee or fixed price required to search/reply.",
+    "costFree": "Free",
+    "costFreemium": "Freemium",
+    "costPaid": "Paid",
+    "costAria": {
+      "free": "Free for the tenant",
+      "freemium": "Freemium — browsing free, messaging paid",
+      "paid": "Paid — registration or subscription required"
+    },
+    "citiesLabel": "Cities",
+    "region": {
+      "landelijk": "Nationwide (all of the Netherlands)",
+      "multi": "Multi-region (multiple cities)",
+      "noord-holland": "Noord-Holland",
+      "zuid-holland": "Zuid-Holland",
+      "utrecht": "Utrecht",
+      "noord-brabant": "Noord-Brabant",
+      "limburg": "Limburg",
+      "internationaal": "International / expat"
+    },
+    "ctaCheck": "Run the rental scam check",
+    "ctaFaq": "Or read the safe-renting FAQ",
+    "backToHome": "Back to home"
+  },
   "faq": {
-    "metaTitle": "Rental fraud FAQ & safe renting | De Huur Radar",
-    "metaDescription": "Frequently asked questions about rental fraud, student rooms, WhatsApp scams, and trusted sources. Links to consumer and government advice. Contact and further reading.",
+    "metaTitle": "Rental fraud (huur scam) FAQ & safe renting in the Netherlands | De Huur Radar",
+    "metaDescription": "Frequently asked questions about rental scams (huur scam), rental fraud, student rooms, WhatsApp scams, and safe renting in the Netherlands. Links to consumer and government advice plus trusted Dutch rental websites and contact.",
     "backToHome": "Back to home",
     "contactTitle": "Contact",
     "contactIntro": "Questions about this tool or the website? Email:",

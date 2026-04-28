@@ -1,10 +1,11 @@
 {
   "meta": {
-    "homeTitle": "De Huur Radar | Gratis huurfraude-check & risicoscore 0–100",
-    "homeDescription": "Huurwoning of kamer gezien? Controleer de advertentie vóór je betaalt: risicoscore 0–100 met uitleg, huur-benchmark per stad en herkenbare signalen (WhatsApp, vooruitbetaling, Western Union). Voor elke huurder — van studio tot gezinswoning — en net zo bruikbaar voor studenten en kamers. Marktplaats, Funda, Facebook. Geen account.",
-    "title": "De Huur Radar — huurfraude-check & transparante risicoscore",
-    "description": "Controleer een huurwoning- of kameradvertentie op oplichting vóór je betaalt. Risicoscore 0–100 met uitleg, benchmark per stad, herkenbare signalen. Optionele AI. Zonder account.",
-    "ogImageAlt": "De Huur Radar — controleer een huurwoning- of kameradvertentie vóór je betaalt"
+    "homeTitle": "De Huur Radar | Huur scam check & gratis huurfraude-check vóór je gaat huren",
+    "homeDescription": "Huur of kamer huren in Nederland? Doe vóór je betaalt een gratis huur scam check: risicoscore 0–100 met uitleg, huur-benchmark per stad en herkenbare signalen (WhatsApp, vooruitbetaling, Western Union). Werkt voor elke huurwoning, studio of studentenkamer op Marktplaats, Funda en Facebook. Plus: lijst met betrouwbare huurwebsites. Geen account.",
+    "title": "De Huur Radar — huur scam check, huurfraude-check & transparante risicoscore",
+    "description": "Veilig huren in Nederland: controleer een huurwoning of kamer op huur scam vóór je betaalt. Risicoscore 0–100, benchmark per stad, betrouwbare huurwebsites en herkenbare signalen. Zonder account.",
+    "keywords": "huren, huur, huur scam, huurfraude, huurwoning, kamer huren, veilig huren, huurfraude check, betrouwbare huurwebsites, huurwoning controleren",
+    "ogImageAlt": "De Huur Radar — huur scam check vóór je een huurwoning of kamer huurt"
   },
   "brand": {
     "name": "De Huur Radar",
@@ -40,11 +41,14 @@
     "cardFaqTitle": "FAQ & bronnen",
     "cardFaqBody": "Veelgestelde vragen over fraude, kamers, WhatsApp en betrouwbare informatie — plus links naar externe adviesbronnen.",
     "cardFaqLink": "Open de FAQ",
+    "cardSitesTitle": "Betrouwbare huurwebsites",
+    "cardSitesBody": "Overzicht van bekende NL huurwebsites — voor woning, studio of studentenkamer. Met label gratis, freemium of betaald, zodat je weet waar je snel én veilig kunt huren.",
+    "cardSitesLink": "Bekijk de huurwebsites",
     "faqTeaser": "Vragen over fraude, kamers of bronnen? Bekijk de FAQ."
   },
   "check": {
-    "metaTitle": "De Huur Radar — Analyse | Huurwoning- of kameradvertentie, risicoscore & fraude-signalen",
-    "metaDescription": "Plak een advertentie-URL of tekst (huurwoning of kamer). Risicoscore 0–100 met uitleg: prijs vs. benchmark, WhatsApp, vooruitbetaling, Western Union. OCR op screenshots. Gratis, zonder account.",
+    "metaTitle": "Huur scam check & analyse | Huurwoning of kamer controleren — De Huur Radar",
+    "metaDescription": "Gratis huur scam check: plak een huurwoning- of kameradvertentie (URL of tekst) en krijg meteen een risicoscore 0–100 met uitleg. Benchmark per stad, WhatsApp/vooruitbetaling/Western Union signalen, OCR op screenshots. Veilig huren zonder account.",
     "pageTitle": "Advertentie analyseren",
     "pageLead": "Plak tekst of een link — voor een kamer, studio of hele woning. Je krijgt een risicoscore met concrete redenen, ook als je snel een studentenkamer zoekt.",
     "backHome": "Terug naar de startpagina"
@@ -213,6 +217,7 @@
     "language": "Taal",
     "home": "Start",
     "check": "Analyse",
+    "sites": "Huurwebsites",
     "faq": "FAQ & bronnen",
     "navHome": "Naar startpagina De Huur Radar",
     "langNl": "Schakel over naar Nederlands",
@@ -226,9 +231,42 @@
     "menuSectionLanguage": "Taal",
     "menuSectionAppearance": "Weergave"
   },
+  "sites": {
+    "metaTitle": "Betrouwbare huurwebsites in Nederland — gratis & freemium | De Huur Radar",
+    "metaDescription": "Overzicht van bekende, betrouwbare NL huurwebsites om een huurwoning, studio of studentenkamer te huren. Met duidelijke labels gratis, freemium of betaald, plus voorbeelden voor sociale huur en expats — zonder reclame, zonder account.",
+    "title": "Betrouwbare huurwebsites per regio in Nederland",
+    "intro": "Een korte, eerlijke selectie van bekende NL platforms om een huurwoning of kamer te huren — gegroepeerd per regio. Veel sites zijn landelijk; sociale huur loopt meestal via een regionale woningnet. We geven per site aan of het voor de huurder gratis, freemium (basis gratis, premium nodig om te reageren) of betaald is, zodat je niet voor niets een abonnement afsluit. Combineer dit met onze huur scam check vóór je betaalt.",
+    "disclaimer": "Geen advies of endorsement. Pricing, aanbod en regiodekking veranderen snel — controleer altijd zelf de actuele voorwaarden op de website. Onze tip blijft: gebruik een gratis platform én controleer de advertentie via de huur scam check.",
+    "legendAria": "Uitleg van de prijs-labels",
+    "legendFree": "Gratis voor de huurder/zoeker.",
+    "legendFreemium": "Gratis bekijken, betaald reageren of premium-account vereist.",
+    "legendPaid": "Inschrijfgeld of vast tarief om te kunnen zoeken/reageren.",
+    "costFree": "Gratis",
+    "costFreemium": "Freemium",
+    "costPaid": "Betaald",
+    "costAria": {
+      "free": "Gratis voor de huurder",
+      "freemium": "Freemium — basis gratis, reageren betaald",
+      "paid": "Betaald — inschrijving of abonnement vereist"
+    },
+    "citiesLabel": "Steden",
+    "region": {
+      "landelijk": "Landelijk (heel Nederland)",
+      "multi": "Multi-regio (meerdere steden)",
+      "noord-holland": "Noord-Holland",
+      "zuid-holland": "Zuid-Holland",
+      "utrecht": "Utrecht",
+      "noord-brabant": "Noord-Brabant",
+      "limburg": "Limburg",
+      "internationaal": "Internationaal / expat"
+    },
+    "ctaCheck": "Doe de huur scam check",
+    "ctaFaq": "Of bekijk de FAQ over veilig huren",
+    "backToHome": "Terug naar de startpagina"
+  },
   "faq": {
-    "metaTitle": "FAQ huurfraude & veilig huren | De Huur Radar",
-    "metaDescription": "Veelgestelde vragen over huurfraude, studentenkamers, WhatsApp-scams en betrouwbare bronnen. Links naar consumentenadvies en overheid. Contact en verder lezen.",
+    "metaTitle": "FAQ huur scam, huurfraude & veilig huren in Nederland | De Huur Radar",
+    "metaDescription": "Veelgestelde vragen over huur scam, huurfraude, kamer huren, WhatsApp-scams en veilig huren in Nederland. Links naar consumentenadvies en overheid, plus betrouwbare huurwebsites en contact.",
     "backToHome": "Terug naar de startpagina",
     "contactTitle": "Contact",
     "contactIntro": "Vragen over deze tool of de website? Stuur een e-mail naar:",

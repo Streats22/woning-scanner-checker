@@ -31,6 +31,13 @@
             </NuxtLink>
             <NuxtLink
               class="topbar__nav-link"
+              :to="localePath('/huursites')"
+              active-class="topbar__nav-link--active"
+            >
+              {{ t('header.sites') }}
+            </NuxtLink>
+            <NuxtLink
+              class="topbar__nav-link"
               :to="localePath('/faq')"
               active-class="topbar__nav-link--active"
             >
@@ -186,6 +193,14 @@
                 </NuxtLink>
                 <NuxtLink
                   class="mobile-nav__link"
+                  :to="localePath('/huursites')"
+                  active-class="mobile-nav__link--active"
+                  @click="closeMobileMenu"
+                >
+                  {{ t('header.sites') }}
+                </NuxtLink>
+                <NuxtLink
+                  class="mobile-nav__link"
                   :to="localePath('/faq')"
                   active-class="mobile-nav__link--active"
                   @click="closeMobileMenu"
@@ -301,6 +316,8 @@
             <NuxtLink class="footer__nav-link" :to="localePath('/')">{{ t('header.home') }}</NuxtLink>
             <span class="footer__nav-sep" aria-hidden="true" />
             <NuxtLink class="footer__nav-link" :to="localePath('/check')">{{ t('header.check') }}</NuxtLink>
+            <span class="footer__nav-sep" aria-hidden="true" />
+            <NuxtLink class="footer__nav-link" :to="localePath('/huursites')">{{ t('header.sites') }}</NuxtLink>
             <span class="footer__nav-sep" aria-hidden="true" />
             <NuxtLink class="footer__nav-link" :to="localePath('/faq')">{{ t('header.faq') }}</NuxtLink>
           </nav>
@@ -474,13 +491,31 @@ const jsonLdGraph = computed(() => {
         '@id': `${base}/#website`,
         url: base,
         name: 'De Huur Radar',
+        alternateName: ['Huur Radar', 'Huur scam check', 'Huurfraude-check'],
         inLanguage: ['nl-NL', 'en'],
         description: t('meta.homeDescription'),
+        keywords: 'huren, huur, huur scam, huurfraude, huurwoning, kamer huren, veilig huren, betrouwbare huurwebsites',
         publisher: { '@id': `${base}/#organization` },
-        potentialAction: {
-          '@type': 'ReadAction',
-          target: `${base}/check`,
+        about: [
+          { '@type': 'Thing', name: 'Huurfraude' },
+          { '@type': 'Thing', name: 'Huur scam' },
+          { '@type': 'Thing', name: 'Veilig huren in Nederland' },
+        ],
+        audience: {
+          '@type': 'Audience',
+          audienceType: 'Huurders, studenten en kamerzoekers in Nederland',
         },
+        potentialAction: [
+          {
+            '@type': 'ReadAction',
+            target: `${base}/check`,
+          },
+          {
+            '@type': 'SearchAction',
+            target: `${base}/check?text={query}`,
+            'query-input': 'required name=query',
+          },
+        ],
       },
       {
         '@type': 'Organization',
@@ -492,13 +527,15 @@ const jsonLdGraph = computed(() => {
       {
         '@type': 'SoftwareApplication',
         '@id': `${base}/#software`,
-        name: 'De Huur Radar',
+        name: 'De Huur Radar — Huur scam check',
+        alternateName: 'Huurfraude-check',
         applicationCategory: 'UtilitiesApplication',
         operatingSystem: 'Any',
         browserRequirements: 'Requires JavaScript. Requires a modern browser.',
         offers: { '@type': 'Offer', price: '0', priceCurrency: 'EUR' },
         url: `${base}/check`,
         description: t('meta.homeDescription'),
+        keywords: 'huur scam, huurfraude, huren, huurwoning controleren, veilig huren',
         image: `${base}/og.png`,
       },
     ],
