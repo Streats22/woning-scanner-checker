@@ -22,6 +22,7 @@
 #   FLUSH_FASTCGI_CMD  — optional, e.g. "sudo ploi fpm-cache" or empty
 #   RELOAD_FPM_CMD     — optional, e.g. "sudo systemctl reload php8.3-fpm"
 #   NUXT_PREBUILD_CLEAN — 1: rm -rf (same user) .output and node_modules/.cache before Nuxt; default: 0
+#                        (script wist .output altijd vóór build; zie comment bij die stap)
 #
 #   node_modules must be owned by the Ploi / deploy user. If you ever ran npm as root, npm ci will
 #   fail with EACCES — the script will stop early with a one-time fix to run over SSH (no sudo here).
@@ -169,6 +170,14 @@ fi
 
 echo -e "${YELLOW}→ Nuxt: npm ci + build…${NC}"
 npm ci --prefer-offline --no-audit --no-fund
+
+# Altijd: oude .output weg vóór build. Anders kan server.mjs een nieuwe import-hash hebben terwijl
+# een eerdere check-*.mjs ontbreekt (of omgekeerd) → "Cannot find module check-…mjs" op /check e.d.
+if [[ -d .output ]]; then
+  echo -e "${YELLOW}→ Nuxt: rm -rf .output (schone build, geen gemixte chunk-hashes)…${NC}"
+  rm -rf .output
+fi
+
 NODE_ENV=production npm run build
 
 if [[ ! -d ".output" ]]; then

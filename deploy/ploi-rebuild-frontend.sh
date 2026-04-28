@@ -43,6 +43,11 @@ git pull --ff-only || true
 echo "==> npm ci…"
 npm ci
 
+# Moet: PM2 draaide al gestopt, of Node houdt oude .output open. Nieuwe build = nieuwe chunk-hashes
+# (bijv. check-xxxxx.mjs). Mix van oude server.mjs + nieuwe/ontbrekende chunks → ERR_MODULE_NOT_FOUND.
+echo "==> Remove previous .output (voorkomt missing check-*.mjs / server.mjs import errors)…"
+rm -rf .output
+
 echo "==> npm run build…"
 npm run build
 
