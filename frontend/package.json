@@ -4,7 +4,8 @@
   "private": true,
   "overrides": {
     "serialize-javascript": "^7.0.5",
-    "unimport": "6.1.1"
+    "unimport": "6.1.1",
+    "shell-quote": "^1.10.0"
   },
   "scripts": {
     "build": "nuxt build",
