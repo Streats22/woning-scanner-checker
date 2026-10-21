@@ -19,6 +19,7 @@
 #   SKIP_GIT_PULL      — set to 1 to skip git pull
 #   SKIP_COMPOSER      — set to 1 to skip composer
 #   SKIP_MIGRATIONS    — set to 1 to skip migrations
+#   COMPOSER_AUDIT_STRICT — set to 1 to abort the deploy when composer audit finds vulnerabilities
 #   FLUSH_FASTCGI_CMD  — optional, e.g. "sudo ploi fpm-cache" or empty
 #   RELOAD_FPM_CMD     — optional, e.g. "sudo systemctl reload php8.3-fpm"
 #   NUXT_PREBUILD_CLEAN — 1: rm -rf (same user) .output and node_modules/.cache before Nuxt; default: 0
@@ -86,6 +87,16 @@ if [[ "${SKIP_COMPOSER:-0}" != "1" ]]; then
   echo -e "${YELLOW}→ composer install…${NC}"
   if command -v composer >/dev/null 2>&1; then
     composer install --no-interaction --prefer-dist --optimize-autoloader --no-dev
+    # Security check on the installed (production) packages. Warns but doesn't block the deploy
+    # unless COMPOSER_AUDIT_STRICT=1.
+    echo -e "${YELLOW}→ composer audit…${NC}"
+    if ! composer audit --no-interaction --no-dev --locked; then
+      if [[ "${COMPOSER_AUDIT_STRICT:-0}" == "1" ]]; then
+        echo -e "${RED}composer audit found vulnerabilities (COMPOSER_AUDIT_STRICT=1) — aborting deploy${NC}" >&2
+        exit 1
+      fi
+      echo -e "${YELLOW}⚠ composer audit found vulnerabilities — run composer update and redeploy${NC}"
+    fi
   else
     echo -e "${RED}composer not in PATH${NC}" >&2
     exit 1
