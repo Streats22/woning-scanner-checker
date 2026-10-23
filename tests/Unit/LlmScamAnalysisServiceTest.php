@@ -13,6 +13,7 @@ class LlmScamAnalysisServiceTest extends TestCase
     public function test_fallback_without_api_key(): void
     {
         Config::set('services.openai.key', '');
+        Config::set('services.openrouter.key', '');
 
         $service = $this->app->make(LlmScamAnalysisService::class);
         $data = new ParsedListingInput(null, 500, null, 'Test Amsterdam');
@@ -132,5 +133,37 @@ class LlmScamAnalysisServiceTest extends TestCase
         $this->assertTrue($out['llm_used']);
         $this->assertStringContainsString('twijfelachtig', (string) $out['link_assessment']);
         $this->assertStringContainsString('Weinig woningdetails', (string) $out['link_assessment']);
+    }
+
+    public function test_uses_openrouter_when_openrouter_key_is_set(): void
+    {
+        Config::set('services.openai.key', 'sk-openai');
+        Config::set('services.openrouter.key', 'sk-or-test');
+        Config::set('services.openrouter.model', 'openai/gpt-4o-mini');
+        Config::set('services.openrouter.base_url', 'https://openrouter.ai/api/v1');
+        Config::set('services.openrouter.site_url', 'https://dehuurradar.nl');
+        Config::set('services.openrouter.app_name', 'De Huurradar');
+
+        Http::fake([
+            'https://openrouter.ai/api/v1/chat/completions' => Http::response([
+                'choices' => [
+                    ['message' => ['content' => json_encode(['score' => 40, 'flags' => [], 'summary' => 'ok'])]],
+                ],
+            ]),
+        ]);
+
+        $service = $this->app->make(LlmScamAnalysisService::class);
+        $data = new ParsedListingInput(null, 500, null, 'Test Amsterdam');
+        $market = ['average' => 1800, 'difference_percent' => -72];
+        $rule = ['score' => 30, 'flags' => ['Prijs'], 'breakdown' => []];
+
+        $out = $service->enhance($data, $market, $rule);
+
+        $this->assertTrue($out['llm_used']);
+        Http::assertSent(fn ($request) => $request->url() === 'https://openrouter.ai/api/v1/chat/completions'
+            && $request->hasHeader('Authorization', 'Bearer sk-or-test')
+            && $request->hasHeader('HTTP-Referer', 'https://dehuurradar.nl')
+            && $request->hasHeader('X-Title', 'De Huurradar')
+            && $request['model'] === 'openai/gpt-4o-mini');
     }
 }

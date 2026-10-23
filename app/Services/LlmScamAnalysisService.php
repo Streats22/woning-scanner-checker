@@ -30,8 +30,8 @@ class LlmScamAnalysisService
             return $this->fallbackFromRules($data, $market, $ruleScam);
         }
 
-        $key = config('services.openai.key');
-        if (! is_string($key) || $key === '') {
+        $provider = $this->resolveProvider();
+        if ($provider === null) {
             return $this->fallbackFromRules($data, $market, $ruleScam);
         }
 
@@ -69,7 +69,7 @@ class LlmScamAnalysisService
             ];
 
         $payload = [
-            'model' => config('services.openai.model'),
+            'model' => $provider['model'],
             'temperature' => 0.25,
             'max_tokens' => $maxTokens,
             'response_format' => ['type' => 'json_object'],
@@ -86,12 +86,12 @@ class LlmScamAnalysisService
         ];
 
         try {
-            $base = config('services.openai.base_url');
-            $response = Http::withToken($key)
+            $response = Http::withToken($provider['key'])
+                ->withHeaders($provider['headers'])
                 ->timeout(55)
                 ->connectTimeout(15)
                 ->acceptJson()
-                ->post($base.'/chat/completions', $payload);
+                ->post($provider['base_url'].'/chat/completions', $payload);
 
             if (! $response->successful()) {
                 Log::warning('LLM scam analyse HTTP mislukt', [
@@ -173,6 +173,41 @@ class LlmScamAnalysisService
 
             return $this->fallbackFromRules($data, $market, $ruleScam);
         }
+    }
+
+    /**
+     * OpenRouter heeft voorrang als OPENROUTER_API_KEY gezet is; anders OpenAI-compatible config.
+     *
+     * @return array{key: string, model: string, base_url: string, headers: array<string, string>}|null
+     */
+    private function resolveProvider(): ?array
+    {
+        $routerKey = config('services.openrouter.key');
+        if (is_string($routerKey) && $routerKey !== '') {
+            $headers = array_filter([
+                'HTTP-Referer' => config('services.openrouter.site_url'),
+                'X-Title' => config('services.openrouter.app_name'),
+            ], fn ($v) => is_string($v) && $v !== '');
+
+            return [
+                'key' => $routerKey,
+                'model' => (string) config('services.openrouter.model'),
+                'base_url' => (string) config('services.openrouter.base_url'),
+                'headers' => $headers,
+            ];
+        }
+
+        $key = config('services.openai.key');
+        if (! is_string($key) || $key === '') {
+            return null;
+        }
+
+        return [
+            'key' => $key,
+            'model' => (string) config('services.openai.model'),
+            'base_url' => (string) config('services.openai.base_url'),
+            'headers' => [],
+        ];
     }
 
     private function systemPrompt(): string

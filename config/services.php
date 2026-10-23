@@ -47,4 +47,18 @@ return [
         'max_tokens' => (int) env('OPENAI_MAX_TOKENS', 4096),
     ],
 
+    /*
+    | OpenRouter (https://openrouter.ai). Als OPENROUTER_API_KEY gezet is, gaat de
+    | LLM-analyse via OpenRouter in plaats van de OpenAI-instellingen hierboven.
+    | max_tokens wordt gedeeld met de openai-config.
+    */
+    'openrouter' => [
+        'key' => env('OPENROUTER_API_KEY'),
+        'model' => env('OPENROUTER_MODEL', 'openai/gpt-4o-mini'),
+        'base_url' => rtrim(env('OPENROUTER_BASE_URL', 'https://openrouter.ai/api/v1'), '/'),
+        /** Optionele attributie-headers (HTTP-Referer / X-Title) voor het OpenRouter-dashboard. */
+        'site_url' => env('OPENROUTER_SITE_URL', env('APP_URL')),
+        'app_name' => env('OPENROUTER_APP_NAME', env('APP_NAME')),
+    ],
+
 ];
