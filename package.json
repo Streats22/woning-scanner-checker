@@ -8,15 +8,15 @@
         "build:laravel": "npx vite build"
     },
     "devDependencies": {
-        "autoprefixer": "^10.4.20",
-        "axios": "^1.19.0",
+        "@tailwindcss/postcss": "^4.3.3",
+        "axios": "^1.20.0",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^3.2.0",
         "postcss": "^8.4.47",
-        "tailwindcss": "^3.4.13",
-        "vite": "^8.2.2"
+        "tailwindcss": "^4.3.3",
+        "vite": "^8.3.5"
     },
     "overrides": {
-        "shell-quote": "1.10.0"
+        "shell-quote": "^1.12.0"
     }
 }
