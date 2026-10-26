@@ -87,9 +87,14 @@ fi
 
 # --- git ---
 if [[ "${SKIP_GIT_PULL:-0}" != "1" ]]; then
-  echo -e "${YELLOW}→ git fetch & pull ($GIT_BRANCH)…${NC}"
-  git fetch origin
-  git pull --ff-only "origin" "$GIT_BRANCH"
+  # Hard-sync to origin instead of pulling: Ploi zero-downtime commits/stashes the copied
+  # checkout ("old" commit), and any server-side edit (e.g. frontend/package-lock.json from a
+  # manual npm install) makes `git pull` fail or ask for a merge message. Untracked files such
+  # as .env are kept; tracked files always match the remote branch.
+  echo -e "${YELLOW}→ git fetch & reset to origin/$GIT_BRANCH…${NC}"
+  git fetch origin "$GIT_BRANCH"
+  git checkout -B "$GIT_BRANCH" "origin/$GIT_BRANCH" --force
+  git reset --hard "origin/$GIT_BRANCH"
 else
   echo -e "${YELLOW}→ SKIP_GIT_PULL=1 — git skipped${NC}"
 fi
