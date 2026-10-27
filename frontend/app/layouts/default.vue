@@ -313,6 +313,7 @@
       <slot />
     </main>
 
+    <Transition name="wsc-fab">
     <button
       v-show="showBackToTop && !cookieDialogOpen"
       type="button"
@@ -323,6 +324,7 @@
       <span class="back-to-top__icon" aria-hidden="true">↑</span>
       <span class="back-to-top__text">{{ t('a11y.backToTopShort') }}</span>
     </button>
+    </Transition>
 
     <footer class="footer">
       <div class="footer__inner wsc-container">
@@ -459,7 +461,7 @@ function scrollToTop() {
 }
 
 /**
- * Pills: vóór cookiekeuze alleen licht/donker; daarna + systeem.
+ * Pills: voor cookiekeuze alleen licht/donker; daarna + systeem.
  * Bij voorkeur `system` in 2-koloms weergave volgt de pill de actuele `themeDisplay`.
  */
 const themeSegIndex = computed(() => {
@@ -757,11 +759,50 @@ useHead(() => ({
   color: var(--on-brand);
   cursor: pointer;
   touch-action: manipulation;
-  transition: background var(--duration-fast) var(--ease-out);
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 .topbar__menu-btn:hover {
   background: rgba(200, 242, 220, 0.24);
+}
+
+.topbar__menu-btn:active {
+  transform: scale(0.94);
+}
+
+/* Radar-logo: de wijzer maakt een rondje bij hover */
+.brand--link :deep(.brand-mark__lines) {
+  transform-origin: 20px 20px;
+  transition: transform 0.7s var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .brand--link:hover :deep(.brand-mark__lines) {
+    transform: rotate(360deg);
+  }
+}
+
+/* Knop "Terug naar boven" verschijnt en verdwijnt zacht */
+.wsc-fab-enter-active,
+.wsc-fab-leave-active {
+  transition:
+    opacity var(--duration-normal) var(--ease-out),
+    transform var(--duration-normal) var(--ease-out);
+}
+
+.wsc-fab-enter-from,
+.wsc-fab-leave-to {
+  opacity: 0;
+  transform: translateY(12px) scale(0.92);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wsc-fab-enter-from,
+  .wsc-fab-leave-to {
+    transform: none;
+  }
 }
 
 .topbar__menu-btn:focus-visible {
@@ -1204,7 +1245,19 @@ useHead(() => ({
   box-shadow: var(--shadow-lg);
   cursor: pointer;
   touch-action: manipulation;
-  transition: background var(--duration-fast) var(--ease-out);
+  /* Ook opacity/transform: de wsc-fab-overgang gebruikt deze bij verschijnen/verdwijnen */
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    opacity var(--duration-normal) var(--ease-out),
+    transform var(--duration-normal) var(--ease-out);
+}
+
+.back-to-top:hover {
+  transform: translateY(-2px);
+}
+
+.back-to-top:active {
+  transform: scale(0.95);
 }
 
 html.dark .back-to-top {
@@ -1327,6 +1380,15 @@ html.dark .back-to-top {
   color: #eaf4ef;
   text-decoration: none;
   cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-normal) var(--ease-out);
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .footer__nav-link:hover {
+    transform: translateX(3px);
+  }
 }
 
 .footer__cookie {

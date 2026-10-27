@@ -109,7 +109,7 @@
           {{ t('howItWorks.title') }}
         </h2>
         <p class="body-text how-lead">{{ t('howItWorks.lead') }}</p>
-        <details class="how-details">
+        <details v-smooth-details class="how-details">
           <summary class="how-details__summary">{{ t('howItWorks.summaryToggle') }}</summary>
           <div class="how-details__body">
             <ol class="how-list">
@@ -940,12 +940,52 @@ async function onSubmit(e?: Event) {
 
 .how-details__summary::after {
   content: '+';
-  font-size: 1.3rem;
+  flex: 0 0 auto;
+  width: 1.9rem;
+  height: 1.9rem;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 1.2rem;
   line-height: 1;
+  display: grid;
+  place-items: center;
+  transition:
+    transform var(--duration-normal) var(--ease-out),
+    background-color var(--duration-normal) var(--ease-out),
+    color var(--duration-normal) var(--ease-out);
 }
 
-.how-details[open] .how-details__summary::after {
-  content: '−';
+.how-details[open]:not(.is-closing) .how-details__summary::after {
+  transform: rotate(45deg);
+  background: var(--action);
+  color: var(--on-action);
+}
+
+.how-details__summary {
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+.how-details__summary:hover {
+  background: var(--surface-muted);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .how-details[open] .how-details__body {
+    animation: how-open 0.35s var(--ease-out);
+  }
+
+  .how-details.is-closing .how-details__body {
+    opacity: 0;
+    transition: opacity 0.2s var(--ease-out);
+  }
+}
+
+@keyframes how-open {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
 }
 
 .how-details__summary:focus-visible {
@@ -1046,7 +1086,9 @@ async function onSubmit(e?: Event) {
   font-size: 1rem;
   line-height: 1.55;
   resize: vertical;
-  transition: border-color var(--duration-fast) var(--ease-out);
+  transition:
+    border-color var(--duration-normal) var(--ease-out),
+    box-shadow var(--duration-normal) var(--ease-out);
 }
 
 .textarea::placeholder {
@@ -1444,6 +1486,19 @@ html.dark .ai-toggle__input:checked + .ai-toggle__label .ai-toggle__thumb {
   height: 100%;
   border-radius: inherit;
   background: var(--risk-low-meter);
+  transform-origin: left center;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .listing-fit__meter-fill {
+    animation: fit-fill 0.9s var(--ease-out) 0.2s backwards;
+  }
+}
+
+@keyframes fit-fill {
+  from {
+    transform: scaleX(0);
+  }
 }
 
 .listing-fit--mixed .listing-fit__meter-fill {
@@ -1822,6 +1877,14 @@ html.dark .share {
   color: var(--on-brand);
   font-weight: 700;
   text-decoration: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.share__btn:active {
+  transform: scale(0.97);
 }
 
 html.dark .share__btn {

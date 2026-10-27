@@ -18,7 +18,7 @@ class LlmScamAnalysisService
 
     /**
      * Combineert regel-gebaseerde score met een LLM-analyse (alleen als $useLlm true en API-key gezet).
-     * Gebruikt {@see app()} locale voor NL/EN prompts en output (zet locale vóór aanroep in de controller).
+     * Gebruikt {@see app()} locale voor NL/EN prompts en output (zet locale voor aanroep in de controller).
      *
      * @param  array{average: int, difference_percent: ?int}  $market
      * @param  array{score: int, flags: array<int, string>, breakdown: array<int, array{category: string, points: int, detail: string}>}  $ruleScam
@@ -247,14 +247,18 @@ class LlmScamAnalysisService
     }
 
     /**
-     * Zet losse combinatietekens (e + ¨) om naar één teken (ë), zodat trema's overal goed renderen (o.a. PDF).
+     * Zet losse combinatietekens (e + ¨) om naar één teken (ë), zodat trema's overal goed renderen (o.a. PDF),
+     * en schrijft "vóór" als "voor".
      */
     private function normalizeUnicode(mixed $value): mixed
     {
         if (is_string($value)) {
-            return class_exists(\Normalizer::class)
+            $value = class_exists(\Normalizer::class)
                 ? (\Normalizer::normalize($value, \Normalizer::FORM_C) ?: $value)
                 : $value;
+
+            // Huisstijl: "voor" zonder klemtoonaccenten.
+            return str_replace(['vóór', 'Vóór', 'VÓÓR'], ['voor', 'Voor', 'VOOR'], $value);
         }
         if (is_array($value)) {
             return array_map(fn (mixed $v) => $this->normalizeUnicode($v), $value);
