@@ -57,4 +57,7 @@ return [
     'score_label' => 'Risk score',
     'made_by' => 'Made by streatsdesign.nl',
     'contact' => 'info@streatsdesign.nl',
+    'ai_findings_title' => 'Extra findings from the AI check',
+    'ai_findings_lead' => 'The AI check found these points on top of the fixed rules.',
+    'ai_findings_raised' => 'The AI check rated the risk at :ai out of 100, higher than the fixed rules (:rule). That is why the final score is :ai.',
 ];

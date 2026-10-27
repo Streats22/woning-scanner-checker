@@ -42,6 +42,7 @@ final class ReportPdfService
         $dompdf->setPaper('A4', 'portrait');
         try {
             $dompdf->render();
+            $this->addPageNumbers($dompdf);
         } catch (Throwable $e) {
             Log::error('report_pdf_render_failed', [
                 'listing_id' => $listing->id,
@@ -109,5 +110,23 @@ final class ReportPdfService
         }
 
         return $out;
+    }
+
+    /** "1 / 2" midden in de vaste footer (40pt hoog, zie report-pdf.blade.php). */
+    private function addPageNumbers(Dompdf $dompdf): void
+    {
+        $canvas = $dompdf->getCanvas();
+        $font = $dompdf->getFontMetrics()->getFont('DejaVu Sans');
+        $size = 7;
+        $text = '{PAGE_NUM} / {PAGE_COUNT}';
+        $width = $dompdf->getFontMetrics()->getTextWidth('9 / 9', $font, $size);
+        $canvas->page_text(
+            ($canvas->get_width() - $width) / 2,
+            $canvas->get_height() - 37,
+            $text,
+            $font,
+            $size,
+            [0.616, 0.722, 0.675],
+        );
     }
 }

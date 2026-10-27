@@ -24,9 +24,11 @@
     ];
 @endphp
     <style>
-        @page { margin: 26pt 0 0 0; background-color: {{ $c['page'] }}; }
+        /* Onderrand = hoogte van de vaste footer (.foot), die op elke pagina onderaan staat. */
+        @page { margin: 26pt 0 40pt 0; background-color: {{ $c['page'] }}; }
         @page :first { margin-top: 0; }
-        html { margin: 0; padding: 0; background: {{ $c['page'] }}; }
+        /* Geen html-marge zetten: in Dompdf overschrijft die de @page-marges. */
+        html { padding: 0; background: {{ $c['page'] }}; }
         body {
             margin: 0;
             padding: 0;
@@ -112,6 +114,27 @@
             margin-bottom: 4pt;
         }
         .dot { color: {{ $c['action'] }}; font-weight: bold; }
+        .aitag {
+            display: inline-block;
+            padding: 0 5pt;
+            border-radius: 6pt;
+            font-size: 7pt;
+            font-weight: bold;
+            background: {{ $c['brand'] }};
+            color: #c8f2dc;
+        }
+        .aitag--soft { background: #c8f2dc; color: #0e3b2e; }
+        .ai {
+            margin-top: 10pt;
+            padding: 10pt 12pt;
+            border-radius: 10pt;
+            background: {{ $c['brand'] }};
+            color: #ffffff;
+        }
+        .ai__title { font-size: 11pt; font-weight: bold; margin-bottom: 5pt; color: #ffffff; }
+        .ai__score { color: #ffffff; margin: 0 0 5pt; }
+        .ai__lead { color: #cfe3da; margin: 0 0 4pt; }
+        .ai__item { margin: 2pt 0; color: #ffffff; }
 
         .check td { padding: 5pt 0; border-bottom: 1px solid {{ $c['line'] }}; }
         .box {
@@ -127,11 +150,26 @@
         .summary { white-space: pre-wrap; word-wrap: break-word; color: {{ $c['text2'] }}; }
 
         .foot {
-            margin-top: 20pt;
-            padding: 14pt 34pt 18pt;
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: -40pt;
+            height: 40pt;
+            padding: 0 34pt;
             background: {{ $c['deep'] }};
             color: #9db8ac;
             font-size: 7.5pt;
+        }
+        .foot table { height: 40pt; }
+        /* Paginagrote achtergrond (ook de marges); @page background-color doet Dompdf niet overal. */
+        .pagebg {
+            position: fixed;
+            top: -26pt;
+            bottom: -40pt;
+            left: 0;
+            right: 0;
+            z-index: -1;
+            background: {{ $c['page'] }};
         }
         .foot td { vertical-align: middle; }
         .foot strong { color: #ffffff; }
@@ -143,6 +181,21 @@
 @php
     $logoDataUri = \App\Support\PdfBrandLogo::dataUri($theme);
 @endphp
+    <div class="pagebg"></div>
+    {{-- Vaste footer: staat vóór de inhoud zodat Dompdf hem op elke pagina onderaan herhaalt. --}}
+    <div class="foot">
+        <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td>
+                    <strong>{{ __('pdf.brand_name') }}</strong> · {{ __('pdf.foot_tagline') }} · dehuurradar.nl
+                </td>
+                {{-- Paginanummer wordt na het renderen in het midden gezet (ReportPdfService). --}}
+                <td style="text-align: right;">
+                    <a href="https://streatsdesign.nl">{{ __('pdf.made_by') }}</a> · <a href="mailto:info@streatsdesign.nl">{{ __('pdf.contact') }}</a>
+                </td>
+            </tr>
+        </table>
+    </div>
 @php
     $s = (int) $listing->scam_score;
     $tier = $s <= 30 ? 'p-low' : ($s <= 60 ? 'p-mid' : 'p-high');
@@ -154,6 +207,8 @@
     $verify = $snap['what_to_verify'] ?? [];
     $breakdown = $snap['risk_breakdown'] ?? [];
     $listingFacts = is_array($snap['listing_facts'] ?? null) ? $snap['listing_facts'] : null;
+    $aiFindings = is_array($snap['ai_findings'] ?? null) ? $snap['ai_findings'] : null;
+    $aiFlags = $aiFindings['flags'] ?? [];
 @endphp
 @php
     $rc = $risk[$tier];
@@ -296,10 +351,25 @@
         <h2>{{ __('pdf.signals_heading') }}</h2>
         @if (count($flags))
             @foreach ($flags as $f)
-                <div class="flag"><span class="dot">&#9679;</span>&nbsp; {{ $f }}</div>
+                <div class="flag"><span class="dot">&#9679;</span>&nbsp; {{ $f }}@if (in_array($f, $aiFlags, true))&nbsp; <span class="aitag">AI</span>@endif</div>
             @endforeach
         @else
             <p class="muted">{{ __('pdf.signals_empty') }}</p>
+        @endif
+
+        @if ($aiFindings)
+            <div class="ai">
+                <div class="ai__title"><span class="aitag aitag--soft">AI</span>&nbsp; {{ __('pdf.ai_findings_title') }}</div>
+                @if (! empty($aiFindings['raised_score']))
+                    <p class="ai__score">{{ __('pdf.ai_findings_raised', ['ai' => $aiFindings['score'], 'rule' => $aiFindings['rule_score']]) }}</p>
+                @endif
+                @if (count($aiFlags))
+                    <p class="ai__lead">{{ __('pdf.ai_findings_lead') }}</p>
+                    @foreach ($aiFlags as $f)
+                        <div class="ai__item"><span class="dot">&#9679;</span>&nbsp; {{ $f }}</div>
+                    @endforeach
+                @endif
+            </div>
         @endif
 
         @if (count($rec))
@@ -329,17 +399,5 @@
         <p class="small" style="margin-top: 12pt;">{{ __('pdf.footer_disclaimer') }}</p>
     </div>
 
-    <div class="foot">
-        <table width="100%" cellpadding="0" cellspacing="0">
-            <tr>
-                <td>
-                    <strong>{{ __('pdf.brand_name') }}</strong> · {{ __('pdf.foot_tagline') }} · dehuurradar.nl
-                </td>
-                <td style="text-align: right;">
-                    <a href="https://streatsdesign.nl">{{ __('pdf.made_by') }}</a> · <a href="mailto:info@streatsdesign.nl">{{ __('pdf.contact') }}</a>
-                </td>
-            </tr>
-        </table>
-    </div>
 </body>
 </html>

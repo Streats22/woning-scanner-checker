@@ -126,6 +126,7 @@ class LlmScamAnalysisService
             }
 
             $mergedFlags = array_values(array_unique([...$ruleScam['flags'], ...$aiFlags]));
+            $aiOnlyFlags = array_values(array_diff(array_unique($aiFlags), $ruleScam['flags']));
 
             $finalScore = min(100, max($ruleScam['score'], $aiScore));
 
@@ -168,6 +169,7 @@ class LlmScamAnalysisService
                 'what_to_verify' => $whatToVerify,
                 'risk_breakdown' => $riskBreakdown,
                 'rule_score' => $ruleScam['score'],
+                'ai_findings' => $this->aiFindings($aiScore, $ruleScam['score'], $aiOnlyFlags),
                 'methodology' => $baseExtras['methodology'],
                 'market_context' => $baseExtras['market_context'],
             ];
@@ -220,6 +222,27 @@ class LlmScamAnalysisService
             'model' => (string) config('services.openai.model'),
             'base_url' => (string) config('services.openai.base_url'),
             'headers' => [],
+        ];
+    }
+
+    /**
+     * Wat de AI-check toevoegt bovenop de vaste regels; null als dat niets is (dan tonen we geen AI-blok).
+     *
+     * @param  array<int, string>  $aiOnlyFlags
+     * @return array{score: int, rule_score: int, raised_score: bool, flags: array<int, string>}|null
+     */
+    private function aiFindings(int $aiScore, int $ruleScore, array $aiOnlyFlags): ?array
+    {
+        $raised = $aiScore > $ruleScore;
+        if (! $raised && $aiOnlyFlags === []) {
+            return null;
+        }
+
+        return [
+            'score' => $aiScore,
+            'rule_score' => $ruleScore,
+            'raised_score' => $raised,
+            'flags' => $aiOnlyFlags,
         ];
     }
 
@@ -352,6 +375,7 @@ PROMPT;
             'what_to_verify' => $extras['what_to_verify'],
             'risk_breakdown' => $ruleScam['breakdown'],
             'rule_score' => $ruleScam['score'],
+            'ai_findings' => null,
             'methodology' => $extras['methodology'],
             'market_context' => $extras['market_context'],
         ];
