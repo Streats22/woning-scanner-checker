@@ -21,8 +21,10 @@
           <div class="faq-main">
             <div class="faq-list" role="list">
               <details
-                v-for="n in faqQuestionIds"
+                v-for="(n, i) in faqQuestionIds"
                 :key="n"
+                v-reveal="i % 4"
+                v-smooth-details
                 class="faq-item"
                 role="listitem"
               >
@@ -31,7 +33,7 @@
               </details>
             </div>
 
-            <details id="faq-sources" class="faq-sources-details">
+            <details id="faq-sources" v-smooth-details class="faq-sources-details">
               <summary class="faq-sources-details__summary">
                 <span class="faq-sources-details__title">{{ t('faq.sourcesTitle') }}</span>
                 <span class="faq-sources-details__count" aria-hidden="true">{{ faqSources.length }}</span>
@@ -52,7 +54,7 @@
             </details>
           </div>
 
-          <aside class="contact-card" aria-labelledby="contact-title">
+          <aside v-reveal="1" class="contact-card" aria-labelledby="contact-title">
             <h2 id="contact-title" class="contact-card__title">{{ t('faq.contactTitle') }}</h2>
             <p class="contact-card__intro">{{ t('faq.contactIntro') }}</p>
             <a class="wsc-btn wsc-btn--action contact-card__mail" href="mailto:info@streatsdesign.nl">info@streatsdesign.nl</a>
@@ -183,20 +185,58 @@ useHead(() => ({
   font-weight: 700;
   display: grid;
   place-items: center;
-  transition: transform var(--duration-fast) var(--ease-out);
+  transition:
+    transform var(--duration-normal) var(--ease-out),
+    background-color var(--duration-normal) var(--ease-out),
+    color var(--duration-normal) var(--ease-out);
 }
 
-.faq-item[open] .faq-item__summary::after,
-.faq-sources-details[open] .faq-sources-details__summary::after {
-  content: '−';
+/* Open: plus draait naar een kruisje en wordt koraal (ook tijdens het dichtklappen terug) */
+.faq-item[open]:not(.is-closing) .faq-item__summary::after,
+.faq-sources-details[open]:not(.is-closing) .faq-sources-details__summary::after {
+  transform: rotate(45deg);
   background: var(--action);
   color: var(--on-action);
+}
+
+.faq-item {
+  transition: background-color var(--duration-normal) var(--ease-out);
+}
+
+.faq-item:hover {
+  background: var(--surface-muted);
 }
 
 .faq-item__summary:focus-visible,
 .faq-sources-details__summary:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .faq-item[open] .faq-item__body,
+  .faq-sources-details[open] .faq-sources-details__panel {
+    animation: faq-open 0.35s var(--ease-out);
+  }
+
+  .faq-item.is-closing .faq-item__body,
+  .faq-sources-details.is-closing .faq-sources-details__panel {
+    opacity: 0;
+    transition: opacity 0.2s var(--ease-out);
+  }
+
+  .faq-item:not([open]) .faq-item__summary:hover::after,
+  .faq-item.is-closing .faq-item__summary:hover::after,
+  .faq-sources-details:not([open]) .faq-sources-details__summary:hover::after {
+    transform: rotate(90deg);
+  }
+}
+
+@keyframes faq-open {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
 }
 
 .faq-item__body {

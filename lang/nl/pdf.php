@@ -52,7 +52,7 @@ return [
     'signals_heading' => 'Signalen',
     'signals_empty' => 'Geen automatisch gedetecteerde signalen.',
     'recommendations_heading' => 'Aanbevelingen',
-    'verify_heading' => 'Controleer vóór je betaalt',
+    'verify_heading' => 'Controleer voor je betaalt',
     'summary_heading' => 'Toelichting',
     'footer_disclaimer' => 'Geen juridisch of financieel advies. Geautomatiseerde inschatting op basis van tekstpatronen en eenvoudige benchmark.',
     'foot_tagline' => 'transparante huurfraude-check',
@@ -60,4 +60,7 @@ return [
     'score_label' => 'Risicoscore',
     'made_by' => 'Gemaakt door streatsdesign.nl',
     'contact' => 'info@streatsdesign.nl',
+    'ai_findings_title' => 'Extra gevonden door de AI-check',
+    'ai_findings_lead' => 'Deze punten vond de AI-check bovenop de vaste regels.',
+    'ai_findings_raised' => 'De AI-check schatte het risico op :ai van 100, hoger dan de vaste regels (:rule). Daarom is de eindscore :ai.',
 ];

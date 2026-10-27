@@ -105,7 +105,7 @@ class ScamAnalysisServiceTest extends TestCase
         $data = new ParsedListingInput(null, null, null, 'Eenmalige bemiddelingskosten voor deze studentenkamer graag vooraf overmaken.');
         $out = $s->analyze($data, $this->market());
 
-        $this->assertContains('Geld vragen vóór bezichtiging of reservering', $out['flags']);
+        $this->assertContains('Geld vragen voor bezichtiging of reservering', $out['flags']);
     }
 
     public function test_id_ruil_student_scam_flag(): void
@@ -215,7 +215,7 @@ class ScamAnalysisServiceTest extends TestCase
     {
         $out = $this->analyze('Eerst betalen en dan krijg je de info over de bezichtiging.');
 
-        $this->assertContains('Geld vragen vóór bezichtiging of reservering', $out['flags']);
+        $this->assertContains('Geld vragen voor bezichtiging of reservering', $out['flags']);
     }
 
     public function test_verification_phishing_flag(): void

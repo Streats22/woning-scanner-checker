@@ -54,10 +54,12 @@
 
         <p class="sites-count" aria-live="polite">{{ t('sites.resultCount', { n: visibleCount }) }}</p>
 
+        <Transition name="sites-swap" mode="out-in">
+        <div :key="activeRegion" class="sites-results">
         <div v-for="region in visibleRegions" :key="region.id" class="sites-cat">
-          <h2 class="sites-cat__title">{{ t('sites.region.' + region.id) }}</h2>
+          <h2 v-reveal class="sites-cat__title">{{ t('sites.region.' + region.id) }}</h2>
           <ul class="sites-list">
-            <li v-for="site in region.items" :key="site.url" class="sites-item">
+            <li v-for="(site, i) in region.items" :key="site.url" v-reveal="i % 3" class="sites-item wsc-lift">
               <div class="sites-item__head">
                 <span class="sites-item__mono" aria-hidden="true">{{ site.name.charAt(0) }}</span>
                 <a
@@ -82,10 +84,12 @@
             </li>
           </ul>
         </div>
+        </div>
+        </Transition>
 
         <p class="sites-disclaimer">{{ t('sites.disclaimer') }}</p>
 
-        <div class="sites-cta">
+        <div v-reveal class="sites-cta">
           <NuxtLink class="wsc-btn wsc-btn--action" :to="localePath('/check')">{{ t('sites.ctaCheck') }}</NuxtLink>
           <NuxtLink class="sites-cta__faq" :to="localePath('/faq')">{{ t('sites.ctaFaq') }}</NuxtLink>
         </div>
@@ -212,12 +216,30 @@ useHead(() => ({
   font-size: 0.95rem;
   cursor: pointer;
   transition:
-    background var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out);
+    background-color var(--duration-normal) var(--ease-out),
+    border-color var(--duration-normal) var(--ease-out),
+    color var(--duration-normal) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
 }
 
 .sites-chip:hover {
   border-color: var(--border-strong);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .sites-chip:active {
+    transform: scale(0.95);
+  }
+
+  .sites-chip--on {
+    animation: sites-chip-on 0.35s var(--ease-spring);
+  }
+}
+
+@keyframes sites-chip-on {
+  from {
+    transform: scale(0.9);
+  }
 }
 
 .sites-chip--on,
@@ -254,6 +276,36 @@ html.dark .sites-chip--on:hover {
   gap: 0.5rem;
   font-size: 0.9rem;
   color: var(--text-secondary);
+}
+
+/* Wisselen van regio: lijst vervaagt en schuift zacht in */
+.sites-swap-enter-active,
+.sites-swap-leave-active {
+  transition:
+    opacity 0.22s var(--ease-out),
+    transform 0.28s var(--ease-out);
+}
+
+.sites-swap-enter-from {
+  opacity: 0;
+  transform: translateY(12px);
+}
+
+.sites-swap-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sites-swap-enter-active,
+  .sites-swap-leave-active {
+    transition: opacity 0.15s linear;
+  }
+
+  .sites-swap-enter-from,
+  .sites-swap-leave-to {
+    transform: none;
+  }
 }
 
 .sites-count {
@@ -325,8 +377,14 @@ html.dark .sites-chip--on:hover {
 
 .sites-item__link::after {
   content: ' ↗';
+  display: inline-block;
   color: var(--accent);
   font-weight: 700;
+  transition: transform var(--duration-normal) var(--ease-spring);
+}
+
+.sites-item:hover .sites-item__link::after {
+  transform: translate(2px, -2px);
 }
 
 .sites-item__link:hover {

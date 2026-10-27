@@ -26,6 +26,7 @@ class LlmScamAnalysisServiceTest extends TestCase
         $this->assertFalse($out['llm_used']);
         $this->assertSame(30, $out['score']);
         $this->assertSame(['Prijs'], $out['flags']);
+        $this->assertNull($out['ai_findings']);
         $this->assertNull($out['link_assessment']);
         $this->assertSame([], $out['observations']);
         $this->assertNotEmpty($out['recommendations']);
@@ -94,6 +95,12 @@ class LlmScamAnalysisServiceTest extends TestCase
         $this->assertStringContainsString('Samenvatting van AI.', $out['summary']);
         $this->assertStringContainsString('Langere toelichting.', $out['summary']);
         $this->assertContains('Obs 1', $out['observations']);
+        $this->assertSame([
+            'score' => 55,
+            'rule_score' => 30,
+            'raised_score' => true,
+            'flags' => ['Extra AI vlag'],
+        ], $out['ai_findings']);
     }
 
     public function test_link_assessment_when_url_present(): void
@@ -166,6 +173,32 @@ class LlmScamAnalysisServiceTest extends TestCase
             && $request->hasHeader('HTTP-Referer', 'https://dehuurradar.nl')
             && $request->hasHeader('X-Title', 'De Huurradar')
             && $request['model'] === 'openai/gpt-4o-mini');
+        // AI-score 40 > regels 30, maar geen eigen signalen.
+        $this->assertTrue($out['ai_findings']['raised_score']);
+        $this->assertSame([], $out['ai_findings']['flags']);
+    }
+
+    public function test_ai_findings_null_when_ai_adds_nothing(): void
+    {
+        Config::set('services.gemini.key', '');
+        Config::set('services.openrouter.key', 'sk-or-test');
+        Config::set('services.openrouter.base_url', 'https://openrouter.ai/api/v1');
+
+        Http::fake([
+            'https://openrouter.ai/api/v1/chat/completions' => Http::response([
+                'choices' => [
+                    ['message' => ['content' => json_encode(['score' => 20, 'flags' => ['Prijs'], 'summary' => 'ok'])]],
+                ],
+            ]),
+        ]);
+
+        $service = app(LlmScamAnalysisService::class);
+        $data = new ParsedListingInput(null, 900, null, 'Kamer Utrecht');
+        $out = $service->enhance($data, ['average' => 900, 'difference_percent' => 0], ['score' => 30, 'flags' => ['Prijs'], 'breakdown' => []]);
+
+        $this->assertTrue($out['llm_used']);
+        $this->assertSame(30, $out['score']);
+        $this->assertNull($out['ai_findings']);
     }
 
     public function test_gemini_key_takes_precedence_and_uses_openai_compatible_endpoint(): void

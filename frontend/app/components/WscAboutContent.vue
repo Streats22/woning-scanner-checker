@@ -4,7 +4,7 @@
     <h2 id="home-story-title" class="about-content__title font-display">{{ t('about.title') }}</h2>
     <p class="body-text about-content__mission">{{ t('about.missionBody') }}</p>
     <div class="story-grid">
-      <div class="story-card">
+      <div v-reveal="0" class="story-card">
         <h3 class="story-card__title font-display">{{ t('about.whyTitle') }}</h3>
         <p class="body-text story-card__lead">{{ t('about.whyLead') }}</p>
         <ul class="story-list">
@@ -13,7 +13,7 @@
           <li class="story-list__item">{{ t('about.whyPoint3') }}</li>
         </ul>
       </div>
-      <div class="story-card">
+      <div v-reveal="1" class="story-card">
         <h3 class="story-card__title font-display">{{ t('about.whatTitle') }}</h3>
         <ul class="story-list story-list--what">
           <li class="story-list__item">{{ t('about.whatPoint1') }}</li>
@@ -23,7 +23,7 @@
         </ul>
       </div>
     </div>
-    <div class="story-how">
+    <div v-reveal class="story-how">
       <h3 class="story-how__title font-display">{{ t('about.howShortTitle') }}</h3>
       <ol class="story-steps">
         <li class="story-steps__item">{{ t('about.howShortStep1') }}</li>

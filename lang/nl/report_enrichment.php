@@ -16,7 +16,7 @@ return [
     'check_legal_costs' => 'De borg mag maximaal :max maanden kale huur zijn en bemiddelings- of contractkosten mogen niet bij jou als huurder in rekening worden gebracht (Wet goed verhuurderschap). Vraag een schriftelijk huurcontract met puntenoverzicht.',
     'check_energy_label_missing' => 'Er staat geen energielabel in de advertentie, terwijl een geldig label verplicht is bij verhuur en in de advertentie hoort. Vraag ernaar en controleer het op ep-online.nl.',
     'check_energy_label_poor' => 'Energielabel :label levert in het woningwaarderingsstelsel :points punten op. Daardoor kan de woning onder de middenhuur vallen en een lagere maximale huur hebben; check dit met de huurprijscheck van de Huurcommissie. Voor huurwoningen met E, F of G geldt naar verwachting vanaf :year een minimumnorm van label D.',
-    'check_regulated_rent' => 'De huur valt rond of onder de wettelijke grenzen (2026: sociale huur t/m €:social, middenhuur t/m €:mid bij 186 punten). Dan bepaalt de puntentelling de maximale huur; doe de huurprijscheck van de Huurcommissie vóór je tekent.',
+    'check_regulated_rent' => 'De huur valt rond of onder de wettelijke grenzen (2026: sociale huur t/m €:social, middenhuur t/m €:mid bij 186 punten). Dan bepaalt de puntentelling de maximale huur; doe de huurprijscheck van de Huurcommissie voor je tekent.',
     'check_temporary_contract' => 'Er wordt een tijdelijk contract genoemd. Sinds 1 juli 2024 zijn tijdelijke huurcontracten alleen in uitzonderingen toegestaan (o.a. studenten, wisselwoning); vraag welke uitzondering geldt.',
     'hint_room' => 'Bij een kamer: check huisgenoten en huisregels, en vraag schriftelijk wat er in de huur is inbegrepen (servicekosten, internet).',
     'hint_social' => 'Bij sociale huur: controleer of de aanbieder echt een woningcorporatie of erkend toewijzingskanaal is; let op phishing met vervalste “Woonnet”-links.',
@@ -55,8 +55,8 @@ Betaling, bezichtiging & vertrouwen
 – betalen “via Airbnb/Booking” of een platform-betaallink +35
 – buitenlandse rekening of IBAN +20
 – geen bezichtiging / buitenland / sleutel per post of sleutelservice +12
-– identiteit/privacy: o.a. ID vóór afspraak +10; “ID uitwisselen”-patroon +10 (elk kan afzonderlijk meetellen)
-– geld vóór bezichtiging, bezichtigings- of reserveringskosten, “eerst betalen” +14
+– identiteit/privacy: o.a. ID voor afspraak +10; “ID uitwisselen”-patroon +10 (elk kan afzonderlijk meetellen)
+– geld voor bezichtiging, bezichtigings- of reserveringskosten, “eerst betalen” +14
 – borg hoger dan 2 maanden huur +20; bemiddelings- of contractkosten voor de huurder +10
 – verzoek om betaal- of accountgegevens te “verifiëren” +15
 

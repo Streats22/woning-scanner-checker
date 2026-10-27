@@ -19,7 +19,7 @@ class LlmScamAnalysisService
 
     /**
      * Combineert regel-gebaseerde score met een LLM-analyse (alleen als $useLlm true en API-key gezet).
-     * Gebruikt {@see app()} locale voor NL/EN prompts en output (zet locale vóór aanroep in de controller).
+     * Gebruikt {@see app()} locale voor NL/EN prompts en output (zet locale voor aanroep in de controller).
      *
      * @param  array{average: int, difference_percent: ?int, room_average?: int}  $market
      * @param  array{score: int, flags: array<int, string>, breakdown: array<int, array{category: string, points: int, detail: string}>}  $ruleScam
@@ -135,6 +135,7 @@ class LlmScamAnalysisService
             }
 
             $mergedFlags = array_values(array_unique([...$ruleScam['flags'], ...$aiFlags]));
+            $aiOnlyFlags = array_values(array_diff(array_unique($aiFlags), $ruleScam['flags']));
 
             $finalScore = min(100, max($ruleScam['score'], $aiScore));
 
@@ -177,6 +178,7 @@ class LlmScamAnalysisService
                 'what_to_verify' => $whatToVerify,
                 'risk_breakdown' => $riskBreakdown,
                 'rule_score' => $ruleScam['score'],
+                'ai_findings' => $this->aiFindings($aiScore, $ruleScam['score'], $aiOnlyFlags),
                 'methodology' => $baseExtras['methodology'],
                 'market_context' => $baseExtras['market_context'],
             ];
@@ -233,14 +235,39 @@ class LlmScamAnalysisService
     }
 
     /**
-     * Zet losse combinatietekens (e + ¨) om naar één teken (ë), zodat trema's overal goed renderen (o.a. PDF).
+     * Wat de AI-check toevoegt bovenop de vaste regels; null als dat niets is (dan tonen we geen AI-blok).
+     *
+     * @param  array<int, string>  $aiOnlyFlags
+     * @return array{score: int, rule_score: int, raised_score: bool, flags: array<int, string>}|null
+     */
+    private function aiFindings(int $aiScore, int $ruleScore, array $aiOnlyFlags): ?array
+    {
+        $raised = $aiScore > $ruleScore;
+        if (! $raised && $aiOnlyFlags === []) {
+            return null;
+        }
+
+        return [
+            'score' => $aiScore,
+            'rule_score' => $ruleScore,
+            'raised_score' => $raised,
+            'flags' => $aiOnlyFlags,
+        ];
+    }
+
+    /**
+     * Zet losse combinatietekens (e + ¨) om naar één teken (ë), zodat trema's overal goed renderen (o.a. PDF),
+     * en schrijft "vóór" als "voor".
      */
     private function normalizeUnicode(mixed $value): mixed
     {
         if (is_string($value)) {
-            return class_exists(\Normalizer::class)
+            $value = class_exists(\Normalizer::class)
                 ? (\Normalizer::normalize($value, \Normalizer::FORM_C) ?: $value)
                 : $value;
+
+            // Huisstijl: "voor" zonder klemtoonaccenten.
+            return str_replace(['vóór', 'Vóór', 'VÓÓR'], ['voor', 'Voor', 'VOOR'], $value);
         }
         if (is_array($value)) {
             return array_map(fn (mixed $v) => $this->normalizeUnicode($v), $value);
@@ -267,13 +294,13 @@ Gebruik de meegegeven dwelling_classificatie als hulp — het is geen juridische
 Marktcontext (najaar 2026): vrije-sectorhuur gemiddeld ca. € 20,90/m² landelijk (Amsterdam ca. € 28,50, Den Haag/Rotterdam/Utrecht ca. € 23); mediane kamerhuur ca. € 640 (Amsterdam ca. € 950). De richtprijs is model-€/m² × 65 m².
 Regels 2026: sociale huur t/m 143 punten (max. € 932,93), gereguleerde middenhuur 144–186 punten (max. € 1.228,07); daarboven vrije sector. Een huur onder de vrije-sectorbenchmark kan dus legitiem zijn. Borg max. 2 maanden kale huur; bemiddelingskosten voor de huurder zijn verboden; tijdelijke contracten alleen in uitzonderingen (o.a. studenten).
 Energielabel: E/F/G geven aftrekpunten (−4/−9/−15) en kunnen een woning in de middenhuur brengen; label A–D telt positief. In de vrije sector heeft het label geen aantoonbaar effect op de vraaghuur, dus gebruik het niet als fraudesignaal maar wel als controlepunt (huurprijscheck Huurcommissie). Een geldig label is verplicht bij verhuur.
-Fraude 2025–2026: geld vóór bezichtiging blijft het sterkste signaal; nepadvertenties via TikTok met gekopieerde Pararius-foto's; nagespeelde bezichtigingen in kortverhuurde woningen (een bezichtiging sluit fraude dus niet uit); AI-teksten zonder taalfouten (spelfouten zijn een zwak signaal).
+Fraude 2025–2026: geld voor bezichtiging blijft het sterkste signaal; nepadvertenties via TikTok met gekopieerde Pararius-foto's; nagespeelde bezichtigingen in kortverhuurde woningen (een bezichtiging sluit fraude dus niet uit); AI-teksten zonder taalfouten (spelfouten zijn een zwak signaal).
 
 Taken:
 1) Beoordeel of de inhoud consistent lijkt met een echte huuradvertentie of op scam/phishing wijst.
 2) Als er een URL is: beoordeel inhoudelijk of de tekst past bij een woningadvertentie (geen technische URL-check).
 3) Geef een risicoscore 0-100 en concrete rode vlaggen (korte zinnen).
-4) Lever uitgebreide, praktische aanbevelingen en wat de lezer moet controleren vóór betaling.
+4) Lever uitgebreide, praktische aanbevelingen en wat de lezer moet controleren voor betaling.
 5) Geef per risicocategorie punten (0-100 totaal niet overschrijven in de som — het zijn deelnemers aan het risico).
 6) Combineer met de meegegeven regel-score: wees conservatief bij twijfel.
 
@@ -298,7 +325,7 @@ Antwoord ALLEEN met geldige JSON, dit schema:
 - what_to_verify: minimaal 4, maximaal 10 controle-stappen.
 - link_data_quality: null als er geen URL was.
 
-Schrijf correct Nederlands met de juiste trema's en accenten, bijvoorbeeld: geëxtraheerd, financiële, ideeën, coöperatie, beëindigen, reëel, België, vóór (nadruk), één (telwoord). Schrijf "ë", "ï" en "ö" als gewone tekens, niet als escape-codes of zonder puntjes.
+Schrijf correct Nederlands met de juiste trema's en accenten, bijvoorbeeld: geëxtraheerd, financiële, ideeën, coöperatie, beëindigen, reëel, België, één (telwoord). Schrijf "ë", "ï" en "ö" als gewone tekens, niet als escape-codes of zonder puntjes. Schrijf "voor" altijd zonder accenten (dus niet "vóór").
 PROMPT;
     }
 
@@ -371,6 +398,7 @@ PROMPT;
             'what_to_verify' => $extras['what_to_verify'],
             'risk_breakdown' => $ruleScam['breakdown'],
             'rule_score' => $ruleScam['score'],
+            'ai_findings' => null,
             'methodology' => $extras['methodology'],
             'market_context' => $extras['market_context'],
         ];

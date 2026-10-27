@@ -61,7 +61,7 @@
 
         <section class="landing-grid" aria-labelledby="landing-more-title">
           <h2 id="landing-more-title" class="sr-only">{{ t('home.landingMoreTitle') }}</h2>
-          <NuxtLink class="landing-card" :to="localePath('/check')">
+          <NuxtLink v-reveal="0" class="landing-card" :to="localePath('/check')">
             <span class="landing-card__icon landing-card__icon--check" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
             </span>
@@ -69,7 +69,7 @@
             <p class="landing-card__body">{{ t('home.cardCheckBody') }}</p>
             <span class="landing-card__link">{{ t('home.cardCheckLink') }} →</span>
           </NuxtLink>
-          <NuxtLink class="landing-card" :to="localePath('/huursites')">
+          <NuxtLink v-reveal="1" class="landing-card" :to="localePath('/huursites')">
             <span class="landing-card__icon landing-card__icon--sites" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7" /><path d="M5 10v10h14V10" /></svg>
             </span>
@@ -77,7 +77,7 @@
             <p class="landing-card__body">{{ t('home.cardSitesBody') }}</p>
             <span class="landing-card__link">{{ t('home.cardSitesLink') }} →</span>
           </NuxtLink>
-          <NuxtLink class="landing-card" :to="localePath('/faq')">
+          <NuxtLink v-reveal="2" class="landing-card" :to="localePath('/faq')">
             <span class="landing-card__icon landing-card__icon--faq" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.6v.6M12 17v.5" /></svg>
             </span>
@@ -87,7 +87,7 @@
           </NuxtLink>
         </section>
 
-        <section class="home-cta">
+        <section v-reveal class="home-cta">
           <p class="home-cta__text font-display">{{ t('hero.title') }}</p>
           <NuxtLink class="wsc-btn wsc-btn--action" :to="localePath('/check')">{{ t('home.ctaAfterStory') }}</NuxtLink>
         </section>
@@ -183,6 +183,15 @@ useHead(() => ({
   color: #0e2a21;
   font: inherit;
   font-size: 1.05rem;
+  outline: 3px solid transparent;
+  outline-offset: 2px;
+  transition:
+    outline-color var(--duration-normal) var(--ease-out),
+    box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.home-hero__input:focus {
+  box-shadow: 0 0 0 6px rgba(255, 122, 89, 0.18);
 }
 
 .home-hero__input::placeholder {
@@ -250,6 +259,46 @@ useHead(() => ({
 }
 
 /* Voorbeeld-telefoon */
+@media (prefers-reduced-motion: no-preference) {
+  .home-sample__screen {
+    animation: home-sample-float 6s ease-in-out 1.2s infinite;
+  }
+
+  .home-sample__row {
+    animation: home-sample-row 0.5s var(--ease-out) both;
+  }
+
+  .home-sample__row:nth-child(1) { animation-delay: 0.9s; }
+  .home-sample__row:nth-child(2) { animation-delay: 1.05s; }
+  .home-sample__row:nth-child(3) { animation-delay: 1.2s; }
+
+  .home-sample__pts {
+    display: inline-block;
+    animation: home-sample-pop 0.45s var(--ease-spring) both;
+    animation-delay: inherit;
+  }
+}
+
+@keyframes home-sample-float {
+  50% {
+    translate: 0 -8px;
+  }
+}
+
+@keyframes home-sample-row {
+  from {
+    opacity: 0;
+    translate: 18px 0;
+  }
+}
+
+@keyframes home-sample-pop {
+  from {
+    scale: 0.4;
+    opacity: 0;
+  }
+}
+
 .home-sample {
   flex: 0 0 auto;
   width: min(20.5rem, 100%);
@@ -373,7 +422,8 @@ useHead(() => ({
   text-decoration: none;
   transition:
     box-shadow var(--duration-fast) var(--ease-out),
-    background var(--duration-fast) var(--ease-out);
+    background var(--duration-fast) var(--ease-out),
+    transform var(--duration-normal) var(--ease-out);
 }
 
 .landing-card:hover {
@@ -381,7 +431,16 @@ useHead(() => ({
   text-decoration: none;
   background: var(--surface-elevated);
   box-shadow: inset 0 0 0 1.5px var(--border-strong);
-  transform: none;
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .landing-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .landing-card:hover .landing-card__icon {
+    transform: rotate(-6deg) scale(1.06);
+  }
 }
 
 .landing-card:focus-visible {
@@ -393,6 +452,7 @@ useHead(() => ({
 .landing-card__icon {
   width: 48px;
   height: 48px;
+  transition: transform var(--duration-normal) var(--ease-spring);
   border-radius: var(--radius-md);
   display: flex;
   align-items: center;

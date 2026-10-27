@@ -216,7 +216,11 @@
     "dwellingConfMedium": "limited signals — read with extra care",
     "dwellingConfLow": "little to go on in the text",
     "scoreGaugeAria": "Risk score {n} out of 100",
-    "scoreOutOf": "{n} / 100"
+    "scoreOutOf": "{n} / 100",
+    "aiFindingsTitle": "Extra findings from the AI check",
+    "aiFindingsLead": "The AI check found these points on top of the fixed rules.",
+    "aiFindingsRaised": "The AI check rated the risk at {ai} out of 100, higher than the fixed rules ({rule}). That is why the final score is {ai}.",
+    "aiFlagTag": "AI"
   },
   "risk": {
     "low": "Limited risk",
