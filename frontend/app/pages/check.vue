@@ -289,7 +289,7 @@
 
           <template v-if="result.methodology">
             <h2 class="section-title font-display">{{ t('result.methodology') }}</h2>
-            <p class="body-text muted result-block methodology-text">{{ result.methodology }}</p>
+            <MethodologySteps :text="result.methodology" />
           </template>
 
           <template v-if="result.market_context">
@@ -1668,6 +1668,10 @@ html.dark .benchmark-focus {
 .narrative,
 .summary {
   max-width: 70ch;
+}
+
+.summary {
+  white-space: pre-line;
 }
 
 /* Delen / PDF */
