@@ -42,8 +42,8 @@ Prijs & urgentie
 Betaling, bezichtiging & vertrouwen
 – hoog-risico betalen (Western Union, crypto, cadeaukaarten, vooruitbetaling, enz.) +40
 – geen bezichtiging / buitenland / sleutel per post of sleutelservice +12
-– identiteit/privacy: o.a. ID vóór afspraak +10; “ID uitwisselen”-patroon +10 (elk kan afzonderlijk meetellen)
-– geld vóór bezichtiging +14
+– identiteit/privacy: o.a. ID voor afspraak +10; “ID uitwisselen”-patroon +10 (elk kan afzonderlijk meetellen)
+– geld voor bezichtiging +14
 
 Formulieren & taal
 – extern aanmeldformulier (Google Forms, Typeform, …) +10

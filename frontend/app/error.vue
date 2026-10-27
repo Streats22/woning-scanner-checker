@@ -72,6 +72,31 @@ function goHome() {
   margin: 0 auto 0.75rem;
 }
 
+/* Kaart komt in beeld; de radar blijft rustig zoeken */
+@media (prefers-reduced-motion: no-preference) {
+  .wsc-error__card {
+    animation: wsc-error-in 0.6s var(--ease-out) both;
+  }
+
+  .wsc-error__mark :deep(.brand-mark__lines) {
+    transform-origin: 20px 20px;
+    animation: wsc-error-sweep 3.2s linear infinite;
+  }
+}
+
+@keyframes wsc-error-in {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+}
+
+@keyframes wsc-error-sweep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .wsc-error__code {
   margin: 0;
   font-size: clamp(4rem, 14vw, 6.5rem);

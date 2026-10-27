@@ -55,7 +55,7 @@ export default defineNuxtConfig({
     manifest: {
       name: 'De Huur Radar',
       short_name: 'Huur Radar',
-      description: 'Huurfraude-check en risicoscore vóór je betaalt.',
+      description: 'Huurfraude-check en risicoscore voor je betaalt.',
       theme_color: '#0e3b2e',
       background_color: '#ffffff',
       display: 'standalone',

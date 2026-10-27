@@ -183,6 +183,15 @@ useHead(() => ({
   color: #0e2a21;
   font: inherit;
   font-size: 1.05rem;
+  outline: 3px solid transparent;
+  outline-offset: 2px;
+  transition:
+    outline-color var(--duration-normal) var(--ease-out),
+    box-shadow var(--duration-normal) var(--ease-out);
+}
+
+.home-hero__input:focus {
+  box-shadow: 0 0 0 6px rgba(255, 122, 89, 0.18);
 }
 
 .home-hero__input::placeholder {

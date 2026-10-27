@@ -133,7 +133,12 @@ async function onFile(ev: Event) {
   cursor: pointer;
   transition:
     background var(--duration-fast) var(--ease-out),
-    opacity var(--duration-fast) var(--ease-out);
+    opacity var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.ocr__btn:active:not(:disabled) {
+  transform: scale(0.96);
 }
 
 .ocr__btn:hover:not(:disabled) {

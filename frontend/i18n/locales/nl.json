@@ -1,16 +1,16 @@
 {
   "meta": {
-    "homeTitle": "De Huur Radar | Huur scam check & gratis huurfraude-check vóór je gaat huren",
-    "homeDescription": "Huur of kamer huren in Nederland? Doe vóór je betaalt een gratis huur scam check: risicoscore 0–100 met uitleg, huur-benchmark per stad en herkenbare signalen (WhatsApp, vooruitbetaling, Western Union). Werkt voor elke huurwoning, studio of studentenkamer op Marktplaats, Funda en Facebook. Plus: lijst met betrouwbare huurwebsites. Geen account.",
+    "homeTitle": "De Huur Radar | Huur scam check & gratis huurfraude-check voor je gaat huren",
+    "homeDescription": "Huur of kamer huren in Nederland? Doe voor je betaalt een gratis huur scam check: risicoscore 0–100 met uitleg, huur-benchmark per stad en herkenbare signalen (WhatsApp, vooruitbetaling, Western Union). Werkt voor elke huurwoning, studio of studentenkamer op Marktplaats, Funda en Facebook. Plus: lijst met betrouwbare huurwebsites. Geen account.",
     "title": "De Huur Radar — huur scam check, huurfraude-check & transparante risicoscore",
-    "description": "Veilig huren in Nederland: controleer een huurwoning of kamer op huur scam vóór je betaalt. Risicoscore 0–100, benchmark per stad, betrouwbare huurwebsites en herkenbare signalen. Zonder account.",
+    "description": "Veilig huren in Nederland: controleer een huurwoning of kamer op huur scam voor je betaalt. Risicoscore 0–100, benchmark per stad, betrouwbare huurwebsites en herkenbare signalen. Zonder account.",
     "keywords": "huren, huur, huur scam, huurfraude, huurwoning, kamer huren, veilig huren, huurfraude check, betrouwbare huurwebsites, huurwoning controleren",
-    "ogImageAlt": "De Huur Radar — huur scam check vóór je een huurwoning of kamer huurt"
+    "ogImageAlt": "De Huur Radar — huur scam check voor je een huurwoning of kamer huurt"
   },
   "brand": {
     "name": "De Huur Radar",
     "badge": "Transparante analyse",
-    "tagline": "Huurwoning of kamer gezien? Controleer de advertentie vóór je betaalt — met duidelijke regels, geen geheime score."
+    "tagline": "Huurwoning of kamer gezien? Controleer de advertentie voor je betaalt — met duidelijke regels, geen geheime score."
   },
   "a11y": {
     "skipToContent": "Ga naar hoofdinhoud",
@@ -27,7 +27,7 @@
     "line": "De score gebruikt vaste, controleerbare criteria in de tekst: o.a. prijs t.o.v. benchmark, risicovolle betaalroutes, WhatsApp/Telegram, urgentie, geen bezichtiging, ID-verzoeken, externe formulieren — elk met vaste punten. De volledige lijst staat op de analysepagina. Optioneel AI; geen geheime weging."
   },
   "hero": {
-    "title": "Huurwoning of kamer gezien? Controleer de advertentie vóór je betaalt",
+    "title": "Huurwoning of kamer gezien? Controleer de advertentie voor je betaalt",
     "subtitle": "Risicoscore 0–100 met uitleg — geen black box. Voor woningen, studio’s en kamers; studenten en kamerzoekers zijn hier net zo welkom. Start hieronder of open de analyse."
   },
   "home": {
@@ -66,13 +66,13 @@
   },
   "about": {
     "metaTitle": "Over De Huur Radar — waarom, wat en hoe",
-    "metaDescription": "Waarom een advertentie controleren vóór betalen, wat je krijgt (score, benchmark, signalen, rapport) en hoe De Huur Radar werkt — transparante regels, optionele AI, geen account.",
+    "metaDescription": "Waarom een advertentie controleren voor betalen, wat je krijgt (score, benchmark, signalen, rapport) en hoe De Huur Radar werkt — transparante regels, optionele AI, geen account.",
     "title": "Waarom, wat en hoe",
-    "missionBody": "De Huur Radar helpt je een huurwoning- of kameradvertentie te beoordelen vóór je geld of gevoelige gegevens deelt. We gebruiken vaste, controleerbare regels — geen geheime score — en optioneel een taalmodel voor extra toelichting. Geen account; je plakt tekst of een link en krijgt een risicoscore met concrete redenen.",
+    "missionBody": "De Huur Radar helpt je een huurwoning- of kameradvertentie te beoordelen voor je geld of gevoelige gegevens deelt. We gebruiken vaste, controleerbare regels — geen geheime score — en optioneel een taalmodel voor extra toelichting. Geen account; je plakt tekst of een link en krijgt een risicoscore met concrete redenen.",
     "whyTitle": "Waarom eerst analyseren?",
     "whyLead": "Huurfraude komt veel voor op Marktplaats, Facebook, kamersites en via spam. Oplichters spelen in op schaarste, vertrouwen en haast.",
     "whyPoint1": "Te mooie prijzen en een aantrekkelijk verhaal lokken snel reacties; daarna volgt vaak druk om borg of vooruitbetaling.",
-    "whyPoint2": "Een tweede mening vóór je betaalt bespaart stress, tijd en geld — ook als je al ervaren bent met huren.",
+    "whyPoint2": "Een tweede mening voor je betaalt bespaart stress, tijd en geld — ook als je al ervaren bent met huren.",
     "whyPoint3": "Dit is een hulpmiddel, geen garantie: je blijft zelf verantwoordelijk, maar je krijgt wel een gestructureerde lijst met rode vlaggen en een benchmark-check.",
     "whatTitle": "Wat krijg je?",
     "whatPoint1": "Een risicoscore van 0–100 met uitleg welke signalen meetellen (volledige regellijst op de analyse-pagina, uitklapbaar onder “Wat doen wij”).",
@@ -103,8 +103,8 @@
     "ruleUrgency": "Tijdsdruk (+20): o.a. “alleen vandaag”, “snel reageren”, “beperkte tijd”, “binnen 24 uur”.",
     "rulePayment": "Hoog-risico betalen (+40): o.a. Western Union, MoneyGram, vooruitbetaling, crypto (BTC/USDT), cadeaukaarten, Paysafecard.",
     "ruleTrust": "Bezichtiging & afstand (+12): geen normale bezichtiging, sleutel per post/koerier, of “ik woon in het buitenland”.",
-    "ruleIdentity": "ID / privacy (+10 per treffer): verzoek om ID vóór een bezichtiging, of een “ID uitwisselen”-patroon met een onbekende — elk patroon telt apart mee.",
-    "ruleFees": "Geld vóór bezichtiging (+14): inschrijfgeld, reserveringskosten of “administratiekosten” vóór een afspraak.",
+    "ruleIdentity": "ID / privacy (+10 per treffer): verzoek om ID voor een bezichtiging, of een “ID uitwisselen”-patroon met een onbekende — elk patroon telt apart mee.",
+    "ruleFees": "Geld voor bezichtiging (+14): inschrijfgeld, reserveringskosten of “administratiekosten” voor een afspraak.",
     "ruleForms": "Extern formulier (+10): links naar Google Forms, Typeform of vergelijkbare aanmeldflows (massale kopie-scams).",
     "ruleNarrative": "Klassiek scam-verhaal (+10): verhuizing naar buitenland, erfenis, “goed doel” — vaker copy-paste dan echte NL-advertenties.",
     "ruleTemplateEn": "Engelse sjabloon (+8): zinnen als “Kind regards”, “Dear Sir” — typisch voor internationale oplichting.",
@@ -152,7 +152,7 @@
     "riskBreakdown": "Risico per onderdeel",
     "riskPoints": "{n} pt",
     "recommendations": "Aanbevelingen",
-    "whatToVerify": "Controleer dit vóór je betaalt",
+    "whatToVerify": "Controleer dit voor je betaalt",
     "observationsTitle": "Extra observaties (AI)",
     "summary": "Toelichting & bevindingen",
     "llmBadge": "AI-toetsing",
@@ -252,7 +252,7 @@
     "metaTitle": "Betrouwbare huurwebsites in Nederland — gratis & freemium | De Huur Radar",
     "metaDescription": "Overzicht van bekende, betrouwbare NL huurwebsites om een huurwoning, studio of studentenkamer te huren. Met duidelijke labels gratis, freemium of betaald, plus voorbeelden voor sociale huur en expats — zonder reclame, zonder account.",
     "title": "Betrouwbare huurwebsites per regio in Nederland",
-    "intro": "Een korte, eerlijke selectie van bekende NL platforms om een huurwoning of kamer te huren — gegroepeerd per regio. Veel sites zijn landelijk; sociale huur loopt meestal via een regionale woningnet. We geven per site aan of het voor de huurder gratis, freemium (basis gratis, premium nodig om te reageren) of betaald is, zodat je niet voor niets een abonnement afsluit. Combineer dit met onze huur scam check vóór je betaalt.",
+    "intro": "Een korte, eerlijke selectie van bekende NL platforms om een huurwoning of kamer te huren — gegroepeerd per regio. Veel sites zijn landelijk; sociale huur loopt meestal via een regionale woningnet. We geven per site aan of het voor de huurder gratis, freemium (basis gratis, premium nodig om te reageren) of betaald is, zodat je niet voor niets een abonnement afsluit. Combineer dit met onze huur scam check voor je betaalt.",
     "disclaimer": "Geen advies of endorsement. Pricing, aanbod en regiodekking veranderen snel — controleer altijd zelf de actuele voorwaarden op de website. Onze tip blijft: gebruik een gratis platform én controleer de advertentie via de huur scam check.",
     "legendAria": "Uitleg van de prijs-labels",
     "legendFree": "Gratis voor de huurder/zoeker.",
@@ -312,7 +312,7 @@
     "q8": "Waarom staan er Engelse scam-zinnen in de regels?",
     "a8": "Internationale oplichters gebruiken vaak standaard Engelstalige templates. Als die woorden in een ogenschijnlijk Nederlandse advertentie staan, verhogen we het risico licht — los van andere signalen.",
     "q9": "Zijn studentenkamers anders dan gewone huur?",
-    "a9": "De trucs zijn vaak dezelfde: te mooie prijs, inschrijfgeld of ‘bemiddelingskosten’ vóór een bezichtiging, druk om snel te betalen, of een ID-kopie uitwisselen met iemand die je niet kent. Juist bij kamers is de vraag hoog en zijn studenten een doelgroep — zie o.a. Scholieren.com (CCV / ministerie) voor praktische tips (Google Image Search op foto’s, geen bemiddelingskosten als huurder zonder makelaarsopdracht, Kopie-ID-app van de overheid). De Huur Radar herkent dezelfde tekstpatronen in kameradvertenties als bij andere huur.",
+    "a9": "De trucs zijn vaak dezelfde: te mooie prijs, inschrijfgeld of ‘bemiddelingskosten’ voor een bezichtiging, druk om snel te betalen, of een ID-kopie uitwisselen met iemand die je niet kent. Juist bij kamers is de vraag hoog en zijn studenten een doelgroep — zie o.a. Scholieren.com (CCV / ministerie) voor praktische tips (Google Image Search op foto’s, geen bemiddelingskosten als huurder zonder makelaarsopdracht, Kopie-ID-app van de overheid). De Huur Radar herkent dezelfde tekstpatronen in kameradvertenties als bij andere huur.",
     "q10": "De site laadt niet of ik zie een fout (vooral op mobiel) — wat nu?",
     "a10": "Dat kan komen door een oude browsercache of een eerdere ‘app-achtige’ opslag van de site. Probeer eerst de pagina te vernieuwen of de site in een privévenster te openen. Blijft het mis? Wis de gegevens alleen voor deze site. Firefox (Android): menu → Instellingen → Gegevens wissen → ‘Cookies en sitegegevens’ of ‘Beheerde websites’ → zoek dehuurradar.nl → verwijderen. Chrome (Android): ⋮ → Instellingen → Privacy en beveiliging → Browsegegevens wissen → kies ‘Sitegegevens’ en selecteer deze site, of gebruik een privétab. Daarna opnieuw naar de site gaan. Geen zorgen: je hoeft geen account te hebben; het gaat alleen om tijdelijke bestanden op je telefoon."
   },
