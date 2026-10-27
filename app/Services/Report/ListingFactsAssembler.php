@@ -5,6 +5,7 @@ namespace App\Services\Report;
 use App\Data\ParsedListingInput;
 use App\Services\ListingAddressParser;
 use App\Services\ListingDwellingClassifier;
+use App\Support\EnergyLabel;
 use App\Support\RentBenchmarkMap;
 use App\Support\RentPerSquareMeterModel;
 
@@ -21,7 +22,7 @@ final class ListingFactsAssembler
     }
 
     /**
-     * @param  array{average: int, difference_percent: ?int}  $priceData
+     * @param  array{average: int, difference_percent: ?int, room_average?: int}  $priceData
      * @return array<string, mixed>
      */
     public function build(ParsedListingInput $input, ?string $city, array $priceData): array
@@ -42,6 +43,9 @@ final class ListingFactsAssembler
             ? RentBenchmarkMap::displayPlaceLabel($canonical, $input->description, $input->sourceUrl)
             : null;
 
+        $dwelling = $this->dwellingClassifier->classify($input);
+        $energyLabel = EnergyLabel::parse($input->description);
+
         $perM2 = RentPerSquareMeterModel::build(
             $input->price,
             $input->surfaceM2,
@@ -60,7 +64,13 @@ final class ListingFactsAssembler
             'benchmark_diff_percent' => $priceData['difference_percent'],
             'benchmark_city' => $nationalFallback ? null : $displayCity,
             'benchmark_scope' => $nationalFallback ? 'national' : 'municipality',
-            'dwelling' => $this->dwellingClassifier->classify($input),
+            'benchmark_room_monthly_eur' => $priceData['room_average'] ?? null,
+            'benchmark_reference_m2' => (int) RentPerSquareMeterModel::REFERENCE_SURFACE_M2,
+            'dwelling' => $dwelling,
+            'energy_label' => $energyLabel,
+            'energy_label_wws_points' => $energyLabel !== null
+                ? EnergyLabel::wwsPoints($energyLabel, $input->surfaceM2, $dwelling['kind'] === 'room')
+                : null,
             'surface_m2' => $perM2['surface_m2'],
             'price_per_m2_month_eur' => $perM2['price_per_m2_month_eur'],
             'benchmark_per_m2_month_eur' => $perM2['benchmark_per_m2_month_eur'],

@@ -7,7 +7,7 @@ use App\Support\RentBenchmarkMap;
 class PriceAnalysisService
 {
     /**
-     * @return array{average: int, difference_percent: ?int}
+     * @return array{average: int, difference_percent: ?int, room_average: int}
      */
     public function analyze(?string $city, ?int $price): array
     {
@@ -18,6 +18,7 @@ class PriceAnalysisService
             'difference_percent' => $price
                 ? (int) round((($price - $avg) / $avg) * 100)
                 : null,
+            'room_average' => RentBenchmarkMap::roomAverageFor($city),
         ];
     }
 }

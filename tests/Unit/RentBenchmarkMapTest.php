@@ -86,4 +86,37 @@ class RentBenchmarkMapTest extends TestCase
         $this->assertSame('Gooise Meren', RentBenchmarkMap::resolveCanonicalCity('Bussum'));
         $this->assertSame('Gooise Meren', RentBenchmarkMap::resolveCanonicalCity('Gooise Meren'));
     }
+
+    public function test_per_m2_uses_pararius_figure_for_measured_city(): void
+    {
+        $this->assertSame(28.56, RentBenchmarkMap::perM2For('Amsterdam'));
+        $this->assertSame(RentBenchmarkMap::DEFAULT_PER_M2, RentBenchmarkMap::perM2For(null));
+    }
+
+    public function test_monthly_benchmark_matches_per_m2_times_reference_surface(): void
+    {
+        foreach (['Amsterdam', 'Rotterdam', 'Zwolle', 'Aa en Hunze'] as $city) {
+            $this->assertEqualsWithDelta(
+                RentBenchmarkMap::perM2For($city) * \App\Support\RentPerSquareMeterModel::REFERENCE_SURFACE_M2,
+                RentBenchmarkMap::averageFor($city),
+                10,
+                $city
+            );
+        }
+    }
+
+    public function test_room_average_uses_kamernet_or_derived_value(): void
+    {
+        $this->assertSame(950, RentBenchmarkMap::roomAverageFor('Amsterdam'));
+        $this->assertSame(RentBenchmarkMap::DEFAULT_ROOM_AVERAGE, RentBenchmarkMap::roomAverageFor(null));
+        $this->assertLessThan(RentBenchmarkMap::averageFor('Emmen'), RentBenchmarkMap::roomAverageFor('Emmen'));
+    }
+
+    public function test_every_municipality_has_per_m2_and_room_values(): void
+    {
+        foreach (array_keys(RentBenchmarkMap::benchmarks()) as $city) {
+            $this->assertGreaterThan(10, RentBenchmarkMap::perM2For($city), $city);
+            $this->assertGreaterThan(200, RentBenchmarkMap::roomAverageFor($city), $city);
+        }
+    }
 }

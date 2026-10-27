@@ -5,13 +5,25 @@ namespace Tests\Unit;
 use App\Data\ParsedListingInput;
 use App\Services\ListingDwellingClassifier;
 use App\Services\ScamAnalysisService;
-use PHPUnit\Framework\TestCase;
+use Tests\TestCase;
 
 class ScamAnalysisServiceTest extends TestCase
 {
-    private function market(int $avg = 1500): array
+    private function market(int $avg = 1500, ?int $roomAverage = null): array
     {
-        return ['average' => $avg, 'difference_percent' => null];
+        $market = ['average' => $avg, 'difference_percent' => null];
+        if ($roomAverage !== null) {
+            $market['room_average'] = $roomAverage;
+        }
+
+        return $market;
+    }
+
+    private function analyze(string $text, ?int $price = null, ?float $surface = null, ?array $market = null, ?string $url = null): array
+    {
+        $s = new ScamAnalysisService(new ListingDwellingClassifier());
+
+        return $s->analyze(new ParsedListingInput($url, $price, null, $text, $surface), $market ?? $this->market());
     }
 
     public function test_price_under_benchmark_adds_thirty_points(): void
@@ -125,5 +137,98 @@ class ScamAnalysisServiceTest extends TestCase
         $out = $s->analyze($data, $this->market(1850));
 
         $this->assertSame(100, $out['score']);
+    }
+
+    public function test_room_price_uses_median_room_rent_when_available(): void
+    {
+        $out = $this->analyze('Studentenkamer te huur in Amsterdam, €450 p.m.', 450, null, $this->market(1860, 950));
+        $this->assertContains('Prijs significant onder marktwaarde', $out['flags']);
+
+        $out = $this->analyze('Studentenkamer te huur in Amsterdam, €600 p.m.', 600, null, $this->market(1860, 950));
+        $this->assertNotContains('Prijs significant onder marktwaarde', $out['flags']);
+    }
+
+    public function test_regulated_mid_rent_without_surface_is_not_flagged_as_too_cheap(): void
+    {
+        $out = $this->analyze('Appartement te huur in Amsterdam, € 1.150 per maand', 1150, null, $this->market(1860));
+
+        $this->assertNotContains('Prijs significant onder marktwaarde', $out['flags']);
+    }
+
+    public function test_per_m2_comparison_used_when_surface_known(): void
+    {
+        /* Studio van 30 m² voor € 1.000: per maand ver onder het model, per m² marktconform. */
+        $out = $this->analyze('Studio Amsterdam, woonoppervlakte 30 m², € 1.000', 1000, 30.0, $this->market(1860));
+        $this->assertNotContains('Prijs significant onder marktwaarde', $out['flags']);
+
+        /* 90 m² voor € 800 ligt ruim 45% onder de €/m²-benchmark. */
+        $out = $this->analyze('Appartement Amsterdam, 90 m², € 800', 800, 90.0, $this->market(1860));
+        $this->assertContains('Prijs significant onder marktwaarde', $out['flags']);
+    }
+
+    public function test_social_housing_is_not_flagged_as_too_cheap(): void
+    {
+        $out = $this->analyze('Sociale huurwoning van woningcorporatie via WoningNet, inschrijfduur vereist, € 650 kale huur, huurtoeslag mogelijk.', 650, null, $this->market(1860));
+
+        $this->assertNotContains('Prijs significant onder marktwaarde', $out['flags']);
+    }
+
+    public function test_airbnb_payment_proxy_flag(): void
+    {
+        $out = $this->analyze('Na akkoord betaal je de eerste maand veilig via Airbnb, ik stuur je de link.');
+
+        $this->assertContains('Betalen “via Airbnb/Booking” of een platform-betaallink', $out['flags']);
+        $this->assertGreaterThanOrEqual(35, $out['score']);
+    }
+
+    public function test_foreign_iban_flag(): void
+    {
+        $out = $this->analyze('Maak de borg over naar DE89 3704 0044 0532 0130 00 t.n.v. J. Smit.');
+        $this->assertContains('Betaling naar een buitenlandse rekening', $out['flags']);
+
+        $out = $this->analyze('Maak de borg over naar NL91 ABNA 0417 1643 00 t.n.v. J. Smit.');
+        $this->assertNotContains('Betaling naar een buitenlandse rekening', $out['flags']);
+    }
+
+    public function test_deposit_above_two_months_flag(): void
+    {
+        $out = $this->analyze('Huur € 1.500 per maand. Borg: 3 maanden huur.', 1500);
+        $this->assertContains('Borg hoger dan wettelijk toegestaan (max. 2 maanden)', $out['flags']);
+
+        $out = $this->analyze('Huur € 1.500 per maand, waarborgsom € 4.500.', 1500);
+        $this->assertContains('Borg hoger dan wettelijk toegestaan (max. 2 maanden)', $out['flags']);
+
+        $out = $this->analyze('Huur € 1.500 per maand, borg 2 maanden huur.', 1500);
+        $this->assertNotContains('Borg hoger dan wettelijk toegestaan (max. 2 maanden)', $out['flags']);
+    }
+
+    public function test_tenant_fees_flag_ignores_negations(): void
+    {
+        $out = $this->analyze('Bij ondertekening betaal je € 350 contractkosten.');
+        $this->assertContains('Bemiddelings- of contractkosten voor de huurder (verboden)', $out['flags']);
+
+        $out = $this->analyze('Geen bemiddelingskosten, direct van de eigenaar.');
+        $this->assertNotContains('Bemiddelings- of contractkosten voor de huurder (verboden)', $out['flags']);
+    }
+
+    public function test_pay_first_counts_as_money_before_viewing(): void
+    {
+        $out = $this->analyze('Eerst betalen en dan krijg je de info over de bezichtiging.');
+
+        $this->assertContains('Geld vragen voor bezichtiging of reservering', $out['flags']);
+    }
+
+    public function test_verification_phishing_flag(): void
+    {
+        $out = $this->analyze('Verifieer binnen 24 uur je betaalgegevens via deze link, anders vervalt je reservering.');
+
+        $this->assertContains('Verzoek om gegevens te “verifiëren” (phishing-patroon)', $out['flags']);
+    }
+
+    public function test_keys_sent_by_post_counts_as_no_viewing(): void
+    {
+        $out = $this->analyze('Na betaling worden de sleutels opgestuurd.');
+
+        $this->assertContains('Geen echte bezichtiging of afstands-verhaal', $out['flags']);
     }
 }

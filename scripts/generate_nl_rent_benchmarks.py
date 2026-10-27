@@ -1,7 +1,17 @@
 #!/usr/bin/env python3
-"""
+r"""
 Regenerate data/nl_rent_benchmarks.php from data/wiki_nl_gemeenten_lijst.json
 (Wikipedia API parse of 'Lijst van Nederlandse gemeenten', stand 2024).
+
+Marktijking (stand oktober 2026):
+- €/m² per stad uit de Pararius Huurmonitor Q3 2026 (vrije sector, nieuwe huurders).
+- Model-maandhuur = €/m² × REFERENCE_SURFACE_M2 (gemiddeld appartement; zelfde constante als
+  App\Support\RentPerSquareMeterModel).
+- Gemeenten zonder eigen Pararius-cijfer: de oude provincie-defaults/handmatige waarden, geschaald met
+  de mediane verhouding (Pararius-model / oude waarde) van de gemeten steden.
+- Kamerhuur (mediaan) uit de Kamernet-huurrapportage Q2 2026 (Q1 waar Q2 ontbrak); elders afgeleid
+  met de mediane verhouding kamer / hele woning.
+Bronnen en onderbouwing: /mnt/project-files/onderzoek (rapport "Huurmarkt en huurfraude 2026").
 """
 
 from __future__ import annotations
@@ -12,10 +22,59 @@ import sys
 from collections import Counter
 from pathlib import Path
 import html as html_module
+from statistics import median
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_JSON = ROOT / "data" / "wiki_nl_gemeenten_lijst.json"
 OUT_PHP = ROOT / "data" / "nl_rent_benchmarks.php"
+
+# m² — referentie-oppervlakte voor de model-maandhuur (moet gelijk zijn aan RentPerSquareMeterModel).
+REFERENCE_SURFACE_M2 = 65
+
+# Pararius Huurmonitor Q3 2026 (gepubliceerd 7 okt 2026), €/m²/maand vrije sector.
+# 's-Hertogenbosch: Q1 2026 (geen Q3-cijfer gepubliceerd).
+PARARIUS_PER_M2: dict[str, float] = {
+    "Amsterdam": 28.56,
+    "Amstelveen": 24.72,
+    "Haarlem": 24.34,
+    "Leiden": 23.45,
+    "Den Haag": 22.95,
+    "Rotterdam": 22.92,
+    "Utrecht": 22.87,
+    "Delft": 22.49,
+    "'s-Hertogenbosch": 20.24,
+    "Eindhoven": 19.61,
+    "Nijmegen": 19.36,
+    "Groningen": 19.05,
+    "Maastricht": 18.87,
+    "Breda": 18.75,
+    "Almere": 18.69,
+    "Amersfoort": 17.81,
+    "Tilburg": 17.64,
+    "Arnhem": 17.24,
+    "Enschede": 15.98,
+    "Apeldoorn": 15.70,
+    "Helmond": 15.31,
+    "Leeuwarden": 14.33,
+    "Zwolle": 14.32,
+}
+
+# Kamernet-huurrapportage Q2 2026 (mediaan €/maand); Rotterdam en Groningen: Q1 2026.
+# Utrecht: gemiddelde van de twee gepubliceerde waarden (€ 755 / € 775).
+KAMERNET_ROOM_RENT: dict[str, int] = {
+    "Amsterdam": 950,
+    "Utrecht": 765,
+    "Haarlem": 750,
+    "Den Haag": 745,
+    "Rotterdam": 710,
+    "Tilburg": 595,
+    "Groningen": 580,
+    "Maastricht": 550,
+    "Eindhoven": 540,
+    "Leeuwarden": 465,
+    "Ede": 455,
+    "Enschede": 388,
+}
 
 # Indicatieve provincie-defaults (€/maand model vrije sector, zelfde orde als eerdere handmatige map).
 PROVINCE_DEFAULTS: dict[str, int] = {
@@ -153,6 +212,9 @@ EXTRA_ALIASES: dict[str, str] = {
     "Uden": "Maashorst",
     "Veghel": "Maashorst",
     "Sittard": "Sittard-Geleen",
+    # Voormalige kernen / zoektermen → huidige gemeente (Gooise Meren sinds 2016)
+    "Bussum": "Gooise Meren",
+    "Naarden": "Gooise Meren",
 }
 
 
@@ -223,6 +285,36 @@ def build_benchmarks(rows: list[tuple[str, str, str]]) -> dict[str, int]:
     return benchmarks
 
 
+def round_to(value: float, step: int) -> int:
+    return int(round(value / step) * step)
+
+
+def calibrate(legacy: dict[str, int]) -> tuple[dict[str, int], dict[str, float], dict[str, int], float, float]:
+    """Zet oude modelwaarden om naar marktstand Q3 2026 (zie module-docstring)."""
+    for city in list(PARARIUS_PER_M2) + list(KAMERNET_ROOM_RENT):
+        if city not in legacy:
+            raise ValueError(f"Unknown gemeente in market data: {city!r}")
+
+    market_factor = median(
+        per_m2 * REFERENCE_SURFACE_M2 / legacy[city] for city, per_m2 in PARARIUS_PER_M2.items()
+    )
+
+    per_m2: dict[str, float] = {}
+    monthly: dict[str, int] = {}
+    for city, old in legacy.items():
+        value = PARARIUS_PER_M2.get(city, old * market_factor / REFERENCE_SURFACE_M2)
+        per_m2[city] = round(value, 2)
+        monthly[city] = round_to(value * REFERENCE_SURFACE_M2, 10)
+
+    room_factor = median(rent / monthly[city] for city, rent in KAMERNET_ROOM_RENT.items())
+    rooms = {
+        city: KAMERNET_ROOM_RENT.get(city, round_to(monthly[city] * room_factor, 5))
+        for city in legacy
+    }
+
+    return monthly, per_m2, rooms, market_factor, room_factor
+
+
 def main() -> int:
     src = DATA_JSON if len(sys.argv) < 2 else Path(sys.argv[1])
     j = json.loads(src.read_text(encoding="utf-8"))
@@ -231,7 +323,7 @@ def main() -> int:
     if len(rows) < 340:
         print(f"Warning: expected ~345 rows, got {len(rows)}", file=sys.stderr)
 
-    benchmarks = build_benchmarks(rows)
+    benchmarks, per_m2, rooms, market_factor, room_factor = calibrate(build_benchmarks(rows))
     aliases = dict(EXTRA_ALIASES)
 
     lines = [
@@ -240,6 +332,10 @@ def main() -> int:
         "/**",
         " * Nederlandse gemeenten (Wikipedia-lijst) + indicatieve €/maand benchmarks.",
         " * Gegenereerd door scripts/generate_nl_rent_benchmarks.py — niet handmatig bewerken.",
+        " *",
+        " * benchmarks: model-€/maand (€/m² × " + str(REFERENCE_SURFACE_M2) + " m²), per_m2: €/m²/maand vrije sector,",
+        " * rooms: mediane kamerhuur €/maand. Marktstand: Pararius Q3 2026, Kamernet Q2 2026.",
+        f" * Marktfactor overige gemeenten: {market_factor:.3f}; kamer/hele woning: {room_factor:.3f}.",
         " */",
         "",
         "declare(strict_types=1);",
@@ -252,6 +348,18 @@ def main() -> int:
         lines.append(f"        {php_squote(k)} => {benchmarks[k]},")
 
     lines.append("    ],")
+    lines.append("    'per_m2' => [")
+
+    for k in sorted(per_m2.keys()):
+        lines.append(f"        {php_squote(k)} => {per_m2[k]:.2f},")
+
+    lines.append("    ],")
+    lines.append("    'rooms' => [")
+
+    for k in sorted(rooms.keys()):
+        lines.append(f"        {php_squote(k)} => {rooms[k]},")
+
+    lines.append("    ],")
     lines.append("    'aliases' => [")
 
     for k in sorted(aliases.keys()):
@@ -262,7 +370,10 @@ def main() -> int:
     lines.append("")
 
     OUT_PHP.write_text("\n".join(lines), encoding="utf-8")
-    print(f"Wrote {OUT_PHP} ({len(benchmarks)} benchmarks, {len(aliases)} aliases)")
+    print(
+        f"Wrote {OUT_PHP} ({len(benchmarks)} benchmarks, {len(aliases)} aliases, "
+        f"market factor {market_factor:.3f}, room factor {room_factor:.3f})"
+    )
     return 0
 
 

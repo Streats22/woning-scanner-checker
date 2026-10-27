@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Data\ParsedListingInput;
+use App\Support\EnergyLabel;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
@@ -20,7 +21,7 @@ class LlmScamAnalysisService
      * Combineert regel-gebaseerde score met een LLM-analyse (alleen als $useLlm true en API-key gezet).
      * Gebruikt {@see app()} locale voor NL/EN prompts en output (zet locale voor aanroep in de controller).
      *
-     * @param  array{average: int, difference_percent: ?int}  $market
+     * @param  array{average: int, difference_percent: ?int, room_average?: int}  $market
      * @param  array{score: int, flags: array<int, string>, breakdown: array<int, array{category: string, points: int, detail: string}>}  $ruleScam
      * @return array<string, mixed>
      */
@@ -42,6 +43,8 @@ class LlmScamAnalysisService
         $maxTokens = is_numeric($rawMax) ? (int) $rawMax : 4096;
         $maxTokens = max(512, min(16384, $maxTokens));
 
+        $energyLabel = EnergyLabel::parse($data->description);
+
         $userPayload = app()->getLocale() === 'en'
             ? [
                 'source_url' => $url,
@@ -50,6 +53,9 @@ class LlmScamAnalysisService
                 'dwelling_classification' => $this->dwellingClassifier->classify($data),
                 'market_average_benchmark' => $market['average'],
                 'market_difference_percent' => $market['difference_percent'],
+                'median_room_rent_benchmark' => $market['room_average'] ?? null,
+                'surface_m2' => $data->surfaceM2,
+                'energy_label' => $energyLabel,
                 'rule_score' => $ruleScam['score'],
                 'rule_flags' => $ruleScam['flags'],
                 'rule_breakdown' => $ruleScam['breakdown'],
@@ -62,6 +68,9 @@ class LlmScamAnalysisService
                 'dwelling_classificatie' => $this->dwellingClassifier->classify($data),
                 'markt_gemiddelde_richtprijs' => $market['average'],
                 'markt_verschil_pct' => $market['difference_percent'],
+                'mediane_kamerhuur_richtprijs' => $market['room_average'] ?? null,
+                'oppervlakte_m2' => $data->surfaceM2,
+                'energielabel' => $energyLabel,
                 'regel_score' => $ruleScam['score'],
                 'regel_vlaggen' => $ruleScam['flags'],
                 'regel_breakdown' => $ruleScam['breakdown'],
@@ -279,8 +288,13 @@ class LlmScamAnalysisService
         return <<<'PROMPT'
 Je bent een Nederlandse expert in huur-/kamerverhuur-fraude en misleidende advertenties.
 Je krijgt tekst (en soms een bron-URL) plus een eenvoudige regel-analyse (score, vlaggen, onderdelen) en een automatische schatting van type woning (kamer vs hele woning) en sector (particulier vs sociale huur vs onbekend).
-De server herkent o.a.: onderprijs vs. benchmark, WhatsApp/Telegram/Signal/Skype, tijdsdruk (o.a. “veel interesse”), Western Union/crypto/cadeaukaarten, geen bezichtiging of buitenland-verhaal, sleutelservice, vroeg om ID/paspoort, voorafkosten, Google Forms/Typeform, copy-paste verhalen, Engelstalige sjablonen.
+De server herkent o.a.: onderprijs vs. benchmark, WhatsApp/Telegram/Signal/Skype, DM/“link in bio”, tijdsdruk (o.a. “veel interesse”, “andere kandidaten”), Western Union/crypto/cadeaukaarten, betalen “via Airbnb/Booking”, buitenlandse IBAN, geen bezichtiging of buitenland-verhaal, sleutel per post, vroeg om ID/paspoort, voorafkosten of bezichtigingskosten, borg boven 2 maanden, bemiddelingskosten voor de huurder, “verifieer je gegevens”-phishing, Google Forms/Typeform, copy-paste verhalen, Engelstalige sjablonen.
 Gebruik de meegegeven dwelling_classificatie als hulp — het is geen juridische kwalificatie.
+
+Marktcontext (najaar 2026): vrije-sectorhuur gemiddeld ca. € 20,90/m² landelijk (Amsterdam ca. € 28,50, Den Haag/Rotterdam/Utrecht ca. € 23); mediane kamerhuur ca. € 640 (Amsterdam ca. € 950). De richtprijs is model-€/m² × 65 m².
+Regels 2026: sociale huur t/m 143 punten (max. € 932,93), gereguleerde middenhuur 144–186 punten (max. € 1.228,07); daarboven vrije sector. Een huur onder de vrije-sectorbenchmark kan dus legitiem zijn. Borg max. 2 maanden kale huur; bemiddelingskosten voor de huurder zijn verboden; tijdelijke contracten alleen in uitzonderingen (o.a. studenten).
+Energielabel: E/F/G geven aftrekpunten (−4/−9/−15) en kunnen een woning in de middenhuur brengen; label A–D telt positief. In de vrije sector heeft het label geen aantoonbaar effect op de vraaghuur, dus gebruik het niet als fraudesignaal maar wel als controlepunt (huurprijscheck Huurcommissie). Een geldig label is verplicht bij verhuur.
+Fraude 2025–2026: geld voor bezichtiging blijft het sterkste signaal; nepadvertenties via TikTok met gekopieerde Pararius-foto's; nagespeelde bezichtigingen in kortverhuurde woningen (een bezichtiging sluit fraude dus niet uit); AI-teksten zonder taalfouten (spelfouten zijn een zwak signaal).
 
 Taken:
 1) Beoordeel of de inhoud consistent lijkt met een echte huuradvertentie of op scam/phishing wijst.
@@ -320,8 +334,13 @@ PROMPT;
         return <<<'PROMPT'
 You are an expert in rental and room-rental fraud and misleading listings (Netherlands/EU context).
 You receive text (and sometimes a source URL), a simple rule-based analysis (score, flags, breakdown), and an automatic estimate of dwelling type (room vs whole home) and sector (private vs social vs unknown).
-The server detects e.g.: under-pricing vs benchmark, WhatsApp/Telegram/Signal/Skype, time pressure, Western Union/crypto/gift cards, no viewing or abroad story, key services, early ID requests, upfront fees, Google Forms/Typeform, copy-paste stories, English template phrases.
+The server detects e.g.: under-pricing vs benchmark, WhatsApp/Telegram/Signal/Skype, DM/“link in bio”, time pressure (incl. “other candidates”), Western Union/crypto/gift cards, payment “via Airbnb/Booking”, foreign IBAN, no viewing or abroad story, keys by post, early ID requests, upfront or viewing fees, deposit above 2 months, agency fees charged to the tenant, “verify your details” phishing, Google Forms/Typeform, copy-paste stories, English template phrases.
 Use the supplied dwelling classification as a hint — it is not a legal classification.
+
+Market context (autumn 2026): free-sector rent averages about €20.90/m² nationally (Amsterdam about €28.50, The Hague/Rotterdam/Utrecht about €23); median room rent about €640 (Amsterdam about €950). The benchmark is model €/m² × 65 m².
+2026 rules: social rent up to 143 points (max €932.93), regulated mid-rent 144–186 points (max €1,228.07); above that is the free sector. Rent below the free-sector benchmark can therefore be legitimate. Deposit at most 2 months of base rent; agency fees charged to tenants are prohibited; temporary contracts only in exceptions (e.g. students).
+Energy label: E/F/G deduct points (−4/−9/−15) and can push a home into mid-rent; labels A–D add points. In the free sector the label has no demonstrable effect on asking rent, so do not treat it as a fraud signal, but do use it as a verification point (Huurcommissie rent check). A valid label is mandatory when letting.
+Fraud 2025–2026: money before a viewing remains the strongest signal; fake TikTok listings with copied Pararius photos; staged viewings in short-stay homes (a viewing does not rule out fraud); AI-written text without language errors (spelling mistakes are a weak signal).
 
 Tasks:
 1) Assess whether the content looks like a genuine rental listing or scam/phishing.
