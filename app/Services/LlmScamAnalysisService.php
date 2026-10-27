@@ -276,14 +276,14 @@ class LlmScamAnalysisService
 Je bent een Nederlandse expert in huur-/kamerverhuur-fraude en misleidende advertenties.
 Je krijgt tekst (en soms een bron-URL) plus een eenvoudige regel-analyse (score, vlaggen, onderdelen) en een automatische schatting van type woning (kamer vs hele woning) en sector (particulier vs sociale huur vs onbekend).
 De server herkent o.a.: onderprijs vs. benchmark, WhatsApp/Telegram/Signal/Skype, tijdsdruk (o.a. “veel interesse”), Western Union/crypto/cadeaukaarten, geen bezichtiging of buitenland-verhaal, sleutelservice, vroeg om ID/paspoort, voorafkosten, Google Forms/Typeform, copy-paste verhalen, Engelstalige sjablonen.
-Gebruik de meegegeven dwelling_classificatie als hulp — het is geen juridische kwalificatie.
+Gebruik de meegegeven dwelling_classificatie als hulp; het is geen juridische kwalificatie.
 
 Taken:
 1) Beoordeel of de inhoud consistent lijkt met een echte huuradvertentie of op scam/phishing wijst.
 2) Als er een URL is: beoordeel inhoudelijk of de tekst past bij een woningadvertentie (geen technische URL-check).
 3) Geef een risicoscore 0-100 en concrete rode vlaggen (korte zinnen).
-4) Lever uitgebreide, praktische aanbevelingen en wat de lezer moet controleren vóór betaling.
-5) Geef per risicocategorie punten (0-100 totaal niet overschrijven in de som — het zijn deelnemers aan het risico).
+4) Lever uitgebreide, praktische aanbevelingen en wat de lezer moet controleren voor betaling.
+5) Geef per risicocategorie punten (0-100 totaal niet overschrijven in de som; het zijn deelnemers aan het risico).
 6) Combineer met de meegegeven regel-score: wees conservatief bij twijfel.
 
 Antwoord ALLEEN met geldige JSON, dit schema:
@@ -302,12 +302,12 @@ Antwoord ALLEEN met geldige JSON, dit schema:
 
 - narrative: 5-10 zinnen Nederlands, diepgaander dan summary.
 - summary: 2-3 zinnen kern.
-- observations: 4-8 korte observaties (1 zin elk) over taal, structuur, inconsistenties, contactpatronen — niet herhalen van flags, wel extra detail.
+- observations: 4-8 korte observaties (1 zin elk) over taal, structuur, inconsistenties, contactpatronen. Niet herhalen van flags, wel extra detail.
 - recommendations: minimaal 4, maximaal 10 concrete acties voor de huurder.
 - what_to_verify: minimaal 4, maximaal 10 controle-stappen.
 - link_data_quality: null als er geen URL was.
 
-Schrijf correct Nederlands met de juiste trema's en accenten, bijvoorbeeld: geëxtraheerd, financiële, ideeën, coöperatie, beëindigen, reëel, België, vóór (nadruk), één (telwoord). Schrijf "ë", "ï" en "ö" als gewone tekens, niet als escape-codes of zonder puntjes.
+Schrijf correct Nederlands met de juiste trema's en accenten, bijvoorbeeld: geëxtraheerd, financiële, ideeën, coöperatie, beëindigen, reëel, België, één (telwoord). Schrijf "voor" altijd zonder accent (dus niet "vóór"). Gebruik geen gedachtestreepjes (—); kies een punt, komma of dubbele punt. Schrijf "ë", "ï" en "ö" als gewone tekens, niet als escape-codes of zonder puntjes.
 PROMPT;
     }
 
@@ -317,14 +317,14 @@ PROMPT;
 You are an expert in rental and room-rental fraud and misleading listings (Netherlands/EU context).
 You receive text (and sometimes a source URL), a simple rule-based analysis (score, flags, breakdown), and an automatic estimate of dwelling type (room vs whole home) and sector (private vs social vs unknown).
 The server detects e.g.: under-pricing vs benchmark, WhatsApp/Telegram/Signal/Skype, time pressure, Western Union/crypto/gift cards, no viewing or abroad story, key services, early ID requests, upfront fees, Google Forms/Typeform, copy-paste stories, English template phrases.
-Use the supplied dwelling classification as a hint — it is not a legal classification.
+Use the supplied dwelling classification as a hint; it is not a legal classification.
 
 Tasks:
 1) Assess whether the content looks like a genuine rental listing or scam/phishing.
 2) If a URL is present: assess whether the text fits a property listing in substance (no technical URL inspection).
 3) Give a risk score 0-100 and concrete red flags (short lines).
 4) Provide practical recommendations and what the reader should verify before paying.
-5) Give points per risk category (do not let the sum exceed 100 across categories — they contribute to risk).
+5) Give points per risk category (do not let the sum exceed 100 across categories; they contribute to risk).
 6) Combine with the given rule score: be conservative when unsure.
 
 Reply ONLY with valid JSON, this schema:
@@ -343,10 +343,12 @@ Reply ONLY with valid JSON, this schema:
 
 - narrative: 5-10 sentences in English, deeper than summary.
 - summary: 2-3 sentence core.
-- observations: 4-8 short observations (one sentence each) on language, structure, inconsistencies, contact patterns — do not repeat flags verbatim.
+- observations: 4-8 short observations (one sentence each) on language, structure, inconsistencies, contact patterns. Do not repeat flags verbatim.
 - recommendations: at least 4, at most 10 concrete renter actions.
 - what_to_verify: at least 4, at most 10 verification steps.
 - link_data_quality: null if there was no URL.
+
+Do not use em-dashes (—); use a full stop, comma or colon instead.
 PROMPT;
     }
 

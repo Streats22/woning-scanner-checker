@@ -5,9 +5,9 @@
     <meta name="theme-color" content="#0e3b2e">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="index, follow">
-    <title>Scam-rapport {{ $listing->report_slug ?? '#'.$listing->id }} — De Huur Radar</title>
+    <title>Scam-rapport {{ $listing->report_slug ?? '#'.$listing->id }} | De Huur Radar</title>
     <meta name="description" content="Uitgebreid risicorapport (score {{ $listing->scam_score }}/100): signalen, benchmark, advies en controlelijst.">
-    <meta property="og:title" content="Scam-rapport — De Huur Radar">
+    <meta property="og:title" content="Scam-rapport | De Huur Radar">
     <meta property="og:description" content="Risicoscore {{ $listing->scam_score }}/100 met concrete signalen en aanbevelingen.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="{{ url()->current() }}">
@@ -122,7 +122,7 @@
                 </table>
                 <p class="prose muted" style="margin:0.75rem 0 0; font-size:0.85rem;">
                     @if (($listingFacts['benchmark_scope'] ?? '') === 'national')
-                        Benchmark: landelijk gemiddelde — geen specifieke stad herkend in de tekst.
+                        Benchmark: landelijk gemiddelde, geen specifieke stad herkend in de tekst.
                     @elseif (!empty($listingFacts['benchmark_city']))
                         Benchmark: model voor <strong>{{ $listingFacts['benchmark_city'] }}</strong> (indicatief, geen taxatie).
                     @endif
@@ -141,7 +141,7 @@
                 </div>
             </div>
             @if ((int) $ruleScore !== $s)
-                <p class="rule-note">Regel-engine: <strong>{{ $ruleScore }}</strong> — eindscore na combinatie (regels + optionele AI): <strong>{{ $s }}</strong>.</p>
+                <p class="rule-note">Regel-engine: <strong>{{ $ruleScore }}</strong> · eindscore na combinatie (regels + optionele AI): <strong>{{ $s }}</strong>.</p>
             @endif
         </div>
 
@@ -153,7 +153,7 @@
                     @if ($listingFit['tier'] === 'strong')
                         Dit lijkt redelijk typerend voor een huuradvertentie (prijs, termen en/of bekend platform).
                     @elseif ($listingFit['tier'] === 'mixed')
-                        Twijfelachtig: enkele signalen, maar de inhoud kan ook iets anders zijn — plak bij voorkeur de volledige advertentie.
+                        Twijfelachtig: enkele signalen, maar de inhoud kan ook iets anders zijn. Plak bij voorkeur de volledige advertentie.
                     @else
                         Weinig typerend voor een advertentie; de analyse kan minder betrouwbaar zijn.
                     @endif
@@ -256,7 +256,7 @@
 
         @if (count($verify))
             <div class="card">
-                <h2>Controleer dit vóór je betaalt</h2>
+                <h2>Controleer dit voor je betaalt</h2>
                 <ol class="prose">
                     @foreach ($verify as $item)
                         <li>{{ $item }}</li>

@@ -38,6 +38,13 @@
             </NuxtLink>
             <NuxtLink
               class="topbar__nav-link"
+              :to="localePath('/oplichting-woning-herkennen')"
+              active-class="topbar__nav-link--active"
+            >
+              {{ t('header.guide') }}
+            </NuxtLink>
+            <NuxtLink
+              class="topbar__nav-link"
               :to="localePath('/faq')"
               active-class="topbar__nav-link--active"
             >
@@ -201,6 +208,14 @@
                 </NuxtLink>
                 <NuxtLink
                   class="mobile-nav__link"
+                  :to="localePath('/oplichting-woning-herkennen')"
+                  active-class="mobile-nav__link--active"
+                  @click="closeMobileMenu"
+                >
+                  {{ t('header.guide') }}
+                </NuxtLink>
+                <NuxtLink
+                  class="mobile-nav__link"
                   :to="localePath('/faq')"
                   active-class="mobile-nav__link--active"
                   @click="closeMobileMenu"
@@ -324,6 +339,7 @@
             <NuxtLink class="footer__nav-link" :to="localePath('/')">{{ t('header.home') }}</NuxtLink>
             <NuxtLink class="footer__nav-link" :to="localePath('/check')">{{ t('header.check') }}</NuxtLink>
             <NuxtLink class="footer__nav-link" :to="localePath('/huursites')">{{ t('header.sites') }}</NuxtLink>
+            <NuxtLink class="footer__nav-link" :to="localePath('/oplichting-woning-herkennen')">{{ t('header.guide') }}</NuxtLink>
             <NuxtLink class="footer__nav-link" :to="localePath('/faq')">{{ t('header.faq') }}</NuxtLink>
             <button type="button" class="footer__nav-link footer__cookie" @click="openCookieSettings">
               {{ t('cookies.openSettings') }}
@@ -546,7 +562,7 @@ const jsonLdGraph = computed(() => {
       {
         '@type': 'SoftwareApplication',
         '@id': `${base}/#software`,
-        name: 'De Huur Radar — Huur scam check',
+        name: 'De Huur Radar: huur scam check',
         alternateName: 'Huurfraude-check',
         applicationCategory: 'UtilitiesApplication',
         operatingSystem: 'Any',

@@ -13,6 +13,9 @@
           </Transition>
           <h1 id="faq-title" class="wsc-hero__title">{{ t('faq.title') }}</h1>
           <p class="wsc-hero__lead">{{ t('faq.intro') }}</p>
+          <p class="faq-guide">
+            <NuxtLink class="faq-guide__link" :to="localePath(SCAM_GUIDE_PATH)">{{ t('guide.faqLink') }} →</NuxtLink>
+          </p>
         </div>
       </section>
 
@@ -67,12 +70,14 @@
 
 <script setup lang="ts">
 import { faqSources } from '~/data/faqSources'
+import { SCAM_GUIDE_PATH } from '~/data/scamGuide'
 
 const { t, locale } = useI18n()
 const localePath = useLocalePath()
 const baseUrl = useWscSiteBase()
 
-const faqQuestionIds = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const
+/** 11–13 eerst: sluiten aan op veelgezochte vragen (“woningadvertentie betrouwbaar”, “scam woning”). */
+const faqQuestionIds = [11, 12, 13, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10] as const
 
 const faqJsonLd = computed(() => {
   const base = baseUrl.value
@@ -118,6 +123,17 @@ useHead(() => ({
 
 .faq-nav {
   margin: 0 0 0.5rem;
+}
+
+.faq-guide {
+  margin: 1rem 0 0;
+}
+
+.faq-guide__link {
+  font-weight: 700;
+  color: var(--on-brand);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .faq-body {

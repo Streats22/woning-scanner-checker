@@ -33,6 +33,7 @@ export default defineEventHandler((event) => {
     { loc: `${base}/`, changefreq: 'weekly', priority: '1.0' },
     { loc: `${base}/check`, changefreq: 'weekly', priority: '0.95' },
     { loc: `${base}/huursites`, changefreq: 'monthly', priority: '0.9' },
+    { loc: `${base}/oplichting-woning-herkennen`, changefreq: 'monthly', priority: '0.9' },
     { loc: `${base}/faq`, changefreq: 'monthly', priority: '0.85' },
   ]
 
