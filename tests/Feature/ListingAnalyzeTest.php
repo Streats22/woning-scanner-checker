@@ -238,6 +238,7 @@ class ListingAnalyzeTest extends TestCase
 
     public function test_report_page_is_public_and_indexable(): void
     {
+        $this->withoutVite();
         $listing = Listing::create([
             'raw_input' => 'Test',
             'price' => 1000,

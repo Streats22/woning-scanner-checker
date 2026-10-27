@@ -4,7 +4,9 @@ namespace App\Support;
 
 /**
  * Model-maandhuur (€) voor vergelijking in de regel-engine — orde-grootte vrije sector,
- * geen taxatie. Waarden zijn afgeronde indicaties (o.a. Pararius/CBS-achtige orde 2024–2026).
+ * geen taxatie. Marktstand oktober 2026: €/m² uit de Pararius Huurmonitor Q3 2026 voor de grote steden,
+ * overige gemeenten via provincie-defaults gekalibreerd op diezelfde cijfers; kamerhuur uit Kamernet Q2 2026.
+ * Model-maandhuur = €/m² × RentPerSquareMeterModel::REFERENCE_SURFACE_M2.
  *
  * Dekking: alle Nederlandse gemeenten uit de Wikipedia-lijst (zie data/nl_rent_benchmarks.php),
  * met provincie-defaults en handmatige scherpstellingen via scripts/generate_nl_rent_benchmarks.py.
@@ -13,8 +15,14 @@ namespace App\Support;
  */
 final class RentBenchmarkMap
 {
-    /** Landelijk gemiddelde / fallback als plaats niet herkend wordt. */
-    public const DEFAULT_AVERAGE = 1250;
+    /** Landelijk gemiddelde €/m² vrije sector (Pararius Q3 2026) — fallback als plaats niet herkend wordt. */
+    public const DEFAULT_PER_M2 = 20.92;
+
+    /** Landelijk model-€/maand: DEFAULT_PER_M2 × referentie-oppervlakte (65 m²), afgerond. */
+    public const DEFAULT_AVERAGE = 1360;
+
+    /** Landelijke mediane kamerhuur (Kamernet Q2 2026). */
+    public const DEFAULT_ROOM_AVERAGE = 643;
 
     /**
      * @return array<string, int> canonieke plaatsnaam => €/maand model
@@ -43,6 +51,30 @@ final class RentBenchmarkMap
         $map = self::benchmarks();
 
         return $map[$canonicalCity] ?? self::DEFAULT_AVERAGE;
+    }
+
+    /**
+     * Gemiddelde vraaghuur €/m²/maand (vrije sector) voor de gemeente, of het landelijke gemiddelde.
+     */
+    public static function perM2For(?string $canonicalCity): float
+    {
+        if ($canonicalCity === null || $canonicalCity === '') {
+            return self::DEFAULT_PER_M2;
+        }
+
+        return (float) (self::loaded()['per_m2'][$canonicalCity] ?? self::DEFAULT_PER_M2);
+    }
+
+    /**
+     * Mediane kamerhuur €/maand voor de gemeente (Kamernet waar gemeten, elders afgeleid), of landelijk.
+     */
+    public static function roomAverageFor(?string $canonicalCity): int
+    {
+        if ($canonicalCity === null || $canonicalCity === '') {
+            return self::DEFAULT_ROOM_AVERAGE;
+        }
+
+        return self::loaded()['rooms'][$canonicalCity] ?? self::DEFAULT_ROOM_AVERAGE;
     }
 
     /**
@@ -196,7 +228,7 @@ final class RentBenchmarkMap
     }
 
     /**
-     * @return array{benchmarks: array<string, int>, aliases: array<string, string>}
+     * @return array{benchmarks: array<string, int>, per_m2: array<string, float>, rooms: array<string, int>, aliases: array<string, string>}
      */
     private static function loaded(): array
     {

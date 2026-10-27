@@ -14,7 +14,7 @@ class RentPerSquareMeterModelTest extends TestCase
 
         $this->assertSame(12.0, $out['surface_m2']);
         $this->assertSame(100, $out['price_per_m2_month_eur']);
-        $this->assertSame(34, $out['benchmark_per_m2_month_eur']);
+        $this->assertSame(28, $out['benchmark_per_m2_month_eur']);
         $this->assertNotNull($out['adjusted_benchmark_per_m2_month_eur']);
         $this->assertIsInt($out['per_m2_vs_adjusted_percent']);
         $this->assertTrue($out['small_surface']);
