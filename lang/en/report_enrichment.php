@@ -7,10 +7,10 @@ return [
     'rec_low_1' => 'Stay cautious: always verify key handover and contract before you pay.',
     'check_url_1' => 'Compare the listing with the same property on Funda, Pararius or a recognised estate agent’s site.',
     'check_url_2' => 'Check that the link domain matches a known rental platform (watch for typos in the URL).',
-    'check_no_url_1' => 'Search for part of the listing text online — scams often copy text.',
+    'check_no_url_1' => 'Search for part of the listing text online. Scams often copy text.',
     'check_chat_apps' => 'Ask for a landline or a company-domain email; be wary of chat-only contact with no traceable channel.',
     'check_price_compare' => 'Compare the price with similar homes in the same area (at least three references).',
-    'check_room_price_extreme' => 'Compare this room price with similar rooms nearby (at least three references) — a large gap vs a whole-dwelling benchmark is often normal for rooms.',
+    'check_room_price_extreme' => 'Compare this room price with similar rooms nearby (at least three references). A large gap vs a whole-dwelling benchmark is often normal for rooms.',
     'check_no_wu' => 'Never pay for a “reservation” via Western Union, gift cards or crypto.',
     'check_id_landlord' => 'Ask in writing for ID and proof of rental rights before you pay a deposit.',
     'check_legal_costs' => 'The deposit may be at most :max months of base rent, and agency or contract fees may not be charged to you as a tenant (Good Landlordship Act). Ask for a written lease with a points overview.',
@@ -29,19 +29,19 @@ return [
     'market_diff_suffix' => '; difference vs your listed price: :pct%.',
     'market_city_line' => 'Model benchmark rent: €:avg/month:suffix ',
     'methodology' => <<<'MD'
-Step 1 — input: from your pasted text or URL we extract price, contact and description (no “secret” sources). Where possible we also read floor area (m²) from the text.
+Step 1 (input): from your pasted text or URL we extract price, contact and description (no “secret” sources). Where possible we also read floor area (m²) from the text.
 
-Step 1b — dwelling type: we read the text and link and estimate whether it is a room or a whole home/studio, and whether private rental, social rental or unknown. This is an automatic guess from common words and URL patterns — not a legal classification.
+Step 1b (dwelling type): we read the text and link and estimate whether it is a room or a whole home/studio, and whether private rental, social rental or unknown. This is an automatic guess from common words and URL patterns. Not a legal classification.
 
-Step 1c (informational): we separately show how much the text looks like a rental listing — that does not change the risk score.
+Step 1c (informational): we separately show how much the text looks like a rental listing. That does not change the risk score.
 
-Step 2 — city & benchmark: we try to detect a municipality (text and URL path; e.g. “street, city”) and compare with a model benchmark per municipality: the average free-sector asking rent per m² (Pararius Rent Monitor Q3 2026) × 65 m². For rooms we use the median room rent (Kamernet 2026). Without a detected municipality the national average applies. This is a rough estimate, not a valuation.
+Step 2 (city & benchmark): we try to detect a municipality (text and URL path; e.g. “street, city”) and compare with a model benchmark per municipality: the average free-sector asking rent per m² (Pararius Rent Monitor Q3 2026) × 65 m². For rooms we use the median room rent (Kamernet 2026). Without a detected municipality the national average applies. This is a rough estimate, not a valuation.
 
-Step 2b — price per m² (only if both price and m² come from the text): we compare €/m² with the benchmark, with a higher band for small units — still not a valuation.
+Step 2b (price per m²): only if both price and m² come from the text, we compare €/m² with the benchmark, with a higher band for small units. Still not a valuation.
 
-Step 2c — 2026 rules (informational, not part of the score): we read the energy label from the text and point out the points system (Affordable Rent Act), the maximum deposit, prohibited agency fees and the rules for temporary contracts.
+Step 2c (2026 rules): informational and not part of the score. We read the energy label from the text and point out the points system (Affordable Rent Act), the maximum deposit, prohibited agency fees and the rules for temporary contracts.
 
-Step 3 — rules: the rule score adds measurable signals (max. 100):
+Step 3 (rules): the rule score adds measurable signals (max. 100):
 
 Price & urgency
 – price well below benchmark +30 (with m²: €/m² at least 45% below the benchmark; without m²: below 70% of the model and below the social rent limit; room: below 55% of the median room rent; social housing does not count)
@@ -65,7 +65,7 @@ Forms & language
 – classic emotional abroad story +10
 – English scam template phrases +8
 
-Step 4 — optional AI: second risk score; final score = maximum of rule score and AI score. Without AI the final score equals the rule score.
+Step 4 (optional AI): second risk score; final score = maximum of rule score and AI score. Without AI the final score equals the rule score.
 
 This is not legal or financial advice and no guarantee against fraud.
 MD,

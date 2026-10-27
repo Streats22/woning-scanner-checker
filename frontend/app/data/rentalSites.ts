@@ -122,12 +122,12 @@ export const rentalSites: RentalSite[] = [
     noteEn: 'Commercial/live-work spaces; free for searchers.',
   },
   {
-    name: 'Marktplaats — Huizen & Kamers',
+    name: 'Marktplaats: Huizen & Kamers',
     url: 'https://www.marktplaats.nl/l/huizen-en-kamers/',
     cost: 'free',
     region: 'landelijk',
-    noteNl: 'Particulier aanbod; gratis te bekijken en reageren — extra alert zijn op scams.',
-    noteEn: 'Private classifieds; free to browse and reply — be extra alert for scams.',
+    noteNl: 'Particulier aanbod; gratis te bekijken en reageren. Wees extra alert op scams.',
+    noteEn: 'Private classifieds; free to browse and reply. Be extra alert for scams.',
   },
   {
     name: 'Hospi Housing',

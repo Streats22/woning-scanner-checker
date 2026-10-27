@@ -290,7 +290,7 @@
           <p v-if="result.link_assessment" class="link-assessment body-text">{{ result.link_assessment }}</p>
 
           <p v-if="result.rule_score != null && result.rule_score !== result.score" class="rule-note body-text">
-            {{ t('result.ruleEngine') }}: <strong>{{ result.rule_score }}</strong> — {{ t('result.finalScore') }}:
+            {{ t('result.ruleEngine') }}: <strong>{{ result.rule_score }}</strong> · {{ t('result.finalScore') }}:
             <strong>{{ result.score }}</strong>.
           </p>
 

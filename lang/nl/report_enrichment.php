@@ -7,10 +7,10 @@ return [
     'rec_low_1' => 'Blijf voorzichtig: controleer altijd sleuteloverdracht en contract voordat je betaalt.',
     'check_url_1' => 'Vergelijk de advertentie met dezelfde woning op Funda, Pararius of de site van een erkende makelaar.',
     'check_url_2' => 'Controleer of het domein van de link bij een bekende verhuurplatform past (let op typfouten in de URL).',
-    'check_no_url_1' => 'Zoek een deel van de advertentietekst online — scams kopiëren vaak teksten.',
+    'check_no_url_1' => 'Zoek een deel van de advertentietekst online. Scams kopiëren vaak teksten.',
     'check_chat_apps' => 'Vraag een vast telefoonnummer of e-mail van een bedrijfsdomein; wees wantrouwig bij alleen chat-apps zonder traceerbaar kanaal.',
     'check_price_compare' => 'Vergelijk de prijs met vergelijkbare woningen in dezelfde buurt (minimaal 3 referenties).',
-    'check_room_price_extreme' => 'Vergelijk deze kamerprijs met vergelijkbare kamers in dezelfde buurt (minimaal 3 referenties) — een grote afwijking t.o.v. een hele-woning-benchmark is voor kamers vaak normaal.',
+    'check_room_price_extreme' => 'Vergelijk deze kamerprijs met vergelijkbare kamers in dezelfde buurt (minimaal 3 referenties). Een grote afwijking t.o.v. een hele-woning-benchmark is voor kamers vaak normaal.',
     'check_no_wu' => 'Betaal nooit voor een “reservering” via Western Union, giftcards of crypto.',
     'check_id_landlord' => 'Vraag schriftelijk om legitimatie (ID) en bewijs van verhuurrecht voordat je een storting doet.',
     'check_legal_costs' => 'De borg mag maximaal :max maanden kale huur zijn en bemiddelings- of contractkosten mogen niet bij jou als huurder in rekening worden gebracht (Wet goed verhuurderschap). Vraag een schriftelijk huurcontract met puntenoverzicht.',
@@ -29,19 +29,19 @@ return [
     'market_diff_suffix' => '; afwijking t.o.v. jouw prijs: :pct%.',
     'market_city_line' => 'Benchmark huur (model): €:avg/maand:suffix ',
     'methodology' => <<<'MD'
-Stap 1 — invoer: uit je plaktekst of URL halen we prijs, contact en beschrijving (geen “geheime” bronnen). Zo mogelijk lezen we ook oppervlakte (m²) uit de tekst.
+Stap 1 (invoer): uit je plaktekst of URL halen we prijs, contact en beschrijving (geen “geheime” bronnen). Zo mogelijk lezen we ook oppervlakte (m²) uit de tekst.
 
-Stap 1b — type woning: we lezen de tekst en link en schatten of het om een kamer of een hele woning/studio gaat, en of het waarschijnlijk particuliere huur, sociale huur of onbekend is. Dat is een automatische inschatting op veelvoorkomende woorden en URL-patronen — geen juridische kwalificatie.
+Stap 1b (type woning): we lezen de tekst en link en schatten of het om een kamer of een hele woning/studio gaat, en of het waarschijnlijk particuliere huur, sociale huur of onbekend is. Dat is een automatische inschatting op veelvoorkomende woorden en URL-patronen. Geen juridische kwalificatie.
 
-Stap 1c (informatief): we geven apart aan hoe sterk de tekst op een huuradvertentie lijkt — dat wijzigt de risicoscore niet.
+Stap 1c (informatief): we geven apart aan hoe sterk de tekst op een huuradvertentie lijkt. Dat wijzigt de risicoscore niet.
 
-Stap 2 — stad & benchmark: we proberen een gemeente te herkennen (tekst en URL-pad; o.a. komma-regels zoals “straat, plaats”) en vergelijken met een model-benchmark per gemeente: de gemiddelde vraaghuur per m² in de vrije sector (Pararius Huurmonitor Q3 2026) × 65 m². Voor kamers gebruiken we de mediane kamerhuur (Kamernet 2026). Zonder herkende gemeente geldt het landelijke gemiddelde. Dat is een grove schatting, geen taxatie.
+Stap 2 (stad & benchmark): we proberen een gemeente te herkennen (tekst en URL-pad; o.a. komma-regels zoals “straat, plaats”) en vergelijken met een model-benchmark per gemeente: de gemiddelde vraaghuur per m² in de vrije sector (Pararius Huurmonitor Q3 2026) × 65 m². Voor kamers gebruiken we de mediane kamerhuur (Kamernet 2026). Zonder herkende gemeente geldt het landelijke gemiddelde. Dat is een grove schatting, geen taxatie.
 
-Stap 2b — prijs per m² (alleen als prijs én m² uit de tekst komen): we vergelijken de €/m² met de benchmark, met een hogere band voor kleine oppervlaktes — nog steeds geen taxatie.
+Stap 2b (prijs per m²): alleen als prijs én m² uit de tekst komen, vergelijken we de €/m² met de benchmark, met een hogere band voor kleine oppervlaktes. Nog steeds geen taxatie.
 
-Stap 2c — regels 2026 (informatief, telt niet mee in de score): we lezen het energielabel uit de tekst en wijzen op de puntentelling (Wet betaalbare huur), de maximale borg, verboden bemiddelingskosten en de regels voor tijdelijke contracten.
+Stap 2c (regels 2026): informatief en telt niet mee in de score. We lezen het energielabel uit de tekst en wijzen op de puntentelling (Wet betaalbare huur), de maximale borg, verboden bemiddelingskosten en de regels voor tijdelijke contracten.
 
-Stap 3 — regels: de regel-score telt meetbare signalen op (max. 100):
+Stap 3 (regels): de regel-score telt meetbare signalen op (max. 100):
 
 Prijs & urgentie
 – prijs ruim onder benchmark +30 (met m²: €/m² minstens 45% onder de benchmark; zonder m²: onder 70% van het model en onder de sociale huurgrens; kamer: onder 55% van de mediane kamerhuur; sociale huur telt niet mee)
@@ -65,7 +65,7 @@ Formulieren & taal
 – klassiek emotioneel buitenland-verhaal +10
 – Engelstalige scam-sjabloonzinnen +8
 
-Stap 4 — optioneel AI: tweede risicoscore; eindscore = maximum van regel-score en AI-score. Zonder AI blijft de eindscore gelijk aan de regel-score.
+Stap 4 (optioneel AI): tweede risicoscore; eindscore = maximum van regel-score en AI-score. Zonder AI blijft de eindscore gelijk aan de regel-score.
 
 Dit is geen juridisch of financieel advies en geen garantie tegen fraude.
 MD,

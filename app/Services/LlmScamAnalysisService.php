@@ -289,7 +289,7 @@ class LlmScamAnalysisService
 Je bent een Nederlandse expert in huur-/kamerverhuur-fraude en misleidende advertenties.
 Je krijgt tekst (en soms een bron-URL) plus een eenvoudige regel-analyse (score, vlaggen, onderdelen) en een automatische schatting van type woning (kamer vs hele woning) en sector (particulier vs sociale huur vs onbekend).
 De server herkent o.a.: onderprijs vs. benchmark, WhatsApp/Telegram/Signal/Skype, DM/“link in bio”, tijdsdruk (o.a. “veel interesse”, “andere kandidaten”), Western Union/crypto/cadeaukaarten, betalen “via Airbnb/Booking”, buitenlandse IBAN, geen bezichtiging of buitenland-verhaal, sleutel per post, vroeg om ID/paspoort, voorafkosten of bezichtigingskosten, borg boven 2 maanden, bemiddelingskosten voor de huurder, “verifieer je gegevens”-phishing, Google Forms/Typeform, copy-paste verhalen, Engelstalige sjablonen.
-Gebruik de meegegeven dwelling_classificatie als hulp — het is geen juridische kwalificatie.
+Gebruik de meegegeven dwelling_classificatie als hulp; het is geen juridische kwalificatie.
 
 Marktcontext (najaar 2026): vrije-sectorhuur gemiddeld ca. € 20,90/m² landelijk (Amsterdam ca. € 28,50, Den Haag/Rotterdam/Utrecht ca. € 23); mediane kamerhuur ca. € 640 (Amsterdam ca. € 950). De richtprijs is model-€/m² × 65 m².
 Regels 2026: sociale huur t/m 143 punten (max. € 932,93), gereguleerde middenhuur 144–186 punten (max. € 1.228,07); daarboven vrije sector. Een huur onder de vrije-sectorbenchmark kan dus legitiem zijn. Borg max. 2 maanden kale huur; bemiddelingskosten voor de huurder zijn verboden; tijdelijke contracten alleen in uitzonderingen (o.a. studenten).
@@ -301,7 +301,7 @@ Taken:
 2) Als er een URL is: beoordeel inhoudelijk of de tekst past bij een woningadvertentie (geen technische URL-check).
 3) Geef een risicoscore 0-100 en concrete rode vlaggen (korte zinnen).
 4) Lever uitgebreide, praktische aanbevelingen en wat de lezer moet controleren voor betaling.
-5) Geef per risicocategorie punten (0-100 totaal niet overschrijven in de som — het zijn deelnemers aan het risico).
+5) Geef per risicocategorie punten (0-100 totaal niet overschrijven in de som; het zijn deelnemers aan het risico).
 6) Combineer met de meegegeven regel-score: wees conservatief bij twijfel.
 
 Antwoord ALLEEN met geldige JSON, dit schema:
@@ -320,12 +320,12 @@ Antwoord ALLEEN met geldige JSON, dit schema:
 
 - narrative: 5-10 zinnen Nederlands, diepgaander dan summary.
 - summary: 2-3 zinnen kern.
-- observations: 4-8 korte observaties (1 zin elk) over taal, structuur, inconsistenties, contactpatronen — niet herhalen van flags, wel extra detail.
+- observations: 4-8 korte observaties (1 zin elk) over taal, structuur, inconsistenties, contactpatronen. Niet herhalen van flags, wel extra detail.
 - recommendations: minimaal 4, maximaal 10 concrete acties voor de huurder.
 - what_to_verify: minimaal 4, maximaal 10 controle-stappen.
 - link_data_quality: null als er geen URL was.
 
-Schrijf correct Nederlands met de juiste trema's en accenten, bijvoorbeeld: geëxtraheerd, financiële, ideeën, coöperatie, beëindigen, reëel, België, één (telwoord). Schrijf "ë", "ï" en "ö" als gewone tekens, niet als escape-codes of zonder puntjes. Schrijf "voor" altijd zonder accenten (dus niet "vóór").
+Schrijf correct Nederlands met de juiste trema's en accenten, bijvoorbeeld: geëxtraheerd, financiële, ideeën, coöperatie, beëindigen, reëel, België, één (telwoord). Schrijf "voor" altijd zonder accent (dus niet "vóór"). Gebruik geen gedachtestreepjes (—); kies een punt, komma of dubbele punt. Schrijf "ë", "ï" en "ö" als gewone tekens, niet als escape-codes of zonder puntjes.
 PROMPT;
     }
 
@@ -335,7 +335,7 @@ PROMPT;
 You are an expert in rental and room-rental fraud and misleading listings (Netherlands/EU context).
 You receive text (and sometimes a source URL), a simple rule-based analysis (score, flags, breakdown), and an automatic estimate of dwelling type (room vs whole home) and sector (private vs social vs unknown).
 The server detects e.g.: under-pricing vs benchmark, WhatsApp/Telegram/Signal/Skype, DM/“link in bio”, time pressure (incl. “other candidates”), Western Union/crypto/gift cards, payment “via Airbnb/Booking”, foreign IBAN, no viewing or abroad story, keys by post, early ID requests, upfront or viewing fees, deposit above 2 months, agency fees charged to the tenant, “verify your details” phishing, Google Forms/Typeform, copy-paste stories, English template phrases.
-Use the supplied dwelling classification as a hint — it is not a legal classification.
+Use the supplied dwelling classification as a hint; it is not a legal classification.
 
 Market context (autumn 2026): free-sector rent averages about €20.90/m² nationally (Amsterdam about €28.50, The Hague/Rotterdam/Utrecht about €23); median room rent about €640 (Amsterdam about €950). The benchmark is model €/m² × 65 m².
 2026 rules: social rent up to 143 points (max €932.93), regulated mid-rent 144–186 points (max €1,228.07); above that is the free sector. Rent below the free-sector benchmark can therefore be legitimate. Deposit at most 2 months of base rent; agency fees charged to tenants are prohibited; temporary contracts only in exceptions (e.g. students).
@@ -347,7 +347,7 @@ Tasks:
 2) If a URL is present: assess whether the text fits a property listing in substance (no technical URL inspection).
 3) Give a risk score 0-100 and concrete red flags (short lines).
 4) Provide practical recommendations and what the reader should verify before paying.
-5) Give points per risk category (do not let the sum exceed 100 across categories — they contribute to risk).
+5) Give points per risk category (do not let the sum exceed 100 across categories; they contribute to risk).
 6) Combine with the given rule score: be conservative when unsure.
 
 Reply ONLY with valid JSON, this schema:
@@ -366,10 +366,12 @@ Reply ONLY with valid JSON, this schema:
 
 - narrative: 5-10 sentences in English, deeper than summary.
 - summary: 2-3 sentence core.
-- observations: 4-8 short observations (one sentence each) on language, structure, inconsistencies, contact patterns — do not repeat flags verbatim.
+- observations: 4-8 short observations (one sentence each) on language, structure, inconsistencies, contact patterns. Do not repeat flags verbatim.
 - recommendations: at least 4, at most 10 concrete renter actions.
 - what_to_verify: at least 4, at most 10 verification steps.
 - link_data_quality: null if there was no URL.
+
+Do not use em-dashes (—); use a full stop, comma or colon instead.
 PROMPT;
     }
 

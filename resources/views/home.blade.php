@@ -98,7 +98,7 @@
 <body>
     <div class="wrap">
         <h1>De Huur Radar</h1>
-        <p class="sub">Plak een advertentie. Je krijgt een risicoscore op basis van duidelijke regels — geen black box.</p>
+        <p class="sub">Plak een advertentie. Je krijgt een risicoscore op basis van duidelijke regels, geen black box.</p>
 
         <form id="form" action="#" method="post">
             <label for="text">Advertentietekst</label>

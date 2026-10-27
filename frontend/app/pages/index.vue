@@ -77,7 +77,15 @@
             <p class="landing-card__body">{{ t('home.cardSitesBody') }}</p>
             <span class="landing-card__link">{{ t('home.cardSitesLink') }} →</span>
           </NuxtLink>
-          <NuxtLink v-reveal="2" class="landing-card" :to="localePath('/faq')">
+          <NuxtLink v-reveal="2" class="landing-card" :to="localePath('/oplichting-woning-herkennen')">
+            <span class="landing-card__icon landing-card__icon--guide" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z" /><path d="M12 8v5M12 16.5v.5" /></svg>
+            </span>
+            <h3 class="landing-card__title font-display">{{ t('home.cardGuideTitle') }}</h3>
+            <p class="landing-card__body">{{ t('home.cardGuideBody') }}</p>
+            <span class="landing-card__link">{{ t('home.cardGuideLink') }} →</span>
+          </NuxtLink>
+          <NuxtLink v-reveal="3" class="landing-card" :to="localePath('/faq')">
             <span class="landing-card__icon landing-card__icon--faq" aria-hidden="true">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.6v.6M12 17v.5" /></svg>
             </span>
@@ -406,7 +414,7 @@ useHead(() => ({
 
 .landing-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr));
   gap: 1.1rem;
 }
 
@@ -467,6 +475,11 @@ useHead(() => ({
 .landing-card__icon--sites {
   background: var(--brand-soft);
   color: var(--brand);
+}
+
+.landing-card__icon--guide {
+  background: var(--risk-low-bg);
+  color: var(--risk-low);
 }
 
 .landing-card__icon--faq {

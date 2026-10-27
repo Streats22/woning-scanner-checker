@@ -75,7 +75,7 @@ export default defineNuxtConfig({
        * dezelfde fallback als de startpagina (oneindig “laden” / geen echte 404) — zie o.a.
        * https://stackoverflow.com/questions/66804699/nginx-nuxt-website-not-redirecting-to-404
        */
-      navigateFallbackAllowlist: [/^\/$/, /^\/check\/?$/, /^\/faq\/?$/],
+      navigateFallbackAllowlist: [/^\/$/, /^\/check\/?$/, /^\/faq\/?$/, /^\/oplichting-woning-herkennen\/?$/],
       navigateFallbackDenylist: [/^\/api/, /^\/report/, /^\/build/, /^\/storage/, /^\/up$/],
       globPatterns: ['**/*.{js,css,ico,png,svg,woff2}'],
       /** Standaard in vite-plugin-pwa; expliciet voor duidelijkheid bij oude precache-entries. */
@@ -214,6 +214,7 @@ export default defineNuxtConfig({
       '/': { headers: { 'cache-control': 'private, no-cache, must-revalidate' } },
       '/check': { headers: { 'cache-control': 'private, no-cache, must-revalidate' } },
       '/faq': { headers: { 'cache-control': 'private, no-cache, must-revalidate' } },
+      '/oplichting-woning-herkennen': { headers: { 'cache-control': 'private, no-cache, must-revalidate' } },
       /** Voorkomt dat een tussen-cache oude sw.js vasthoudt — mobiel krijgt updates sneller door. */
       '/sw.js': { headers: { 'cache-control': 'no-store, must-revalidate' } },
       '/registerSW.js': { headers: { 'cache-control': 'no-store, must-revalidate' } },
