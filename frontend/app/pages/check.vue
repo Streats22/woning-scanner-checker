@@ -126,6 +126,9 @@
               <li class="how-rules__item">{{ t('howItWorks.ruleTrust') }}</li>
               <li class="how-rules__item">{{ t('howItWorks.ruleIdentity') }}</li>
               <li class="how-rules__item">{{ t('howItWorks.ruleFees') }}</li>
+              <li class="how-rules__item">{{ t('howItWorks.ruleLegal') }}</li>
+              <li class="how-rules__item">{{ t('howItWorks.rulePhishing') }}</li>
+              <li class="how-rules__item">{{ t('howItWorks.ruleEnergyLabel') }}</li>
               <li class="how-rules__item">{{ t('howItWorks.ruleForms') }}</li>
               <li class="how-rules__item">{{ t('howItWorks.ruleNarrative') }}</li>
               <li class="how-rules__item">{{ t('howItWorks.ruleTemplateEn') }}</li>
@@ -226,7 +229,7 @@
                 <dt class="facts-grid__dt">{{ t('result.listingFactsBenchmarkPerM2') }}</dt>
                 <dd class="facts-grid__dd">
                   {{ formatFactsPrice(result.listing_facts.benchmark_per_m2_month_eur) }} {{ t('result.listingFactsPerM2Suffix') }}
-                  <span class="body-text muted"> · {{ t('result.listingFactsPerM2ModelNote', { m2: 55 }) }}</span>
+                  <span class="body-text muted"> · {{ t('result.listingFactsPerM2ModelNote', { m2: result.listing_facts.benchmark_reference_m2 ?? 55 }) }}</span>
                 </dd>
                 <template
                   v-if="
@@ -253,6 +256,10 @@
                   <dt class="facts-grid__dt">{{ t('result.listingFactsSmallSurfaceTitle') }}</dt>
                   <dd class="facts-grid__dd body-text muted">{{ t('result.listingFactsSmallSurfaceNote') }}</dd>
                 </template>
+              </template>
+              <template v-if="result.listing_facts.energy_label !== undefined">
+                <dt class="facts-grid__dt">{{ t('result.listingFactsEnergyLabel') }}</dt>
+                <dd class="facts-grid__dd">{{ listingFactsEnergyLabel }}</dd>
               </template>
               <dt class="facts-grid__dt">{{ t('result.listingFactsSource') }}</dt>
               <dd class="facts-grid__dd">
@@ -439,6 +446,10 @@ type ListingFacts = {
   adjusted_benchmark_per_m2_month_eur?: number | null
   per_m2_vs_adjusted_percent?: number | null
   small_surface?: boolean
+  benchmark_reference_m2?: number
+  benchmark_room_monthly_eur?: number | null
+  energy_label?: string | null
+  energy_label_wws_points?: number | null
 }
 
 type AnalyzeResponse = {
@@ -534,6 +545,22 @@ const dwellingSectorLine = computed(() => {
       ? t('result.dwellingSectorSocial')
       : t('result.dwellingSectorUnknown')
   return `${label} · ${dwellingConfLabel(d.sector_confidence)}`
+})
+
+const listingFactsEnergyLabel = computed(() => {
+  const facts = result.value?.listing_facts
+  if (!facts?.energy_label) {
+    return t('result.listingFactsEnergyLabelMissing')
+  }
+  const points = facts.energy_label_wws_points
+  if (points == null) {
+    return facts.energy_label
+  }
+  const formatted = new Intl.NumberFormat(locale.value === 'nl' ? 'nl-NL' : 'en-GB', {
+    maximumFractionDigits: 1,
+    signDisplay: 'exceptZero',
+  }).format(points)
+  return `${facts.energy_label} (${t('result.listingFactsEnergyLabelPoints', { points: formatted })})`
 })
 
 const listingFactsSurfaceM2Label = computed(() => {
