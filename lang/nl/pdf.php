@@ -49,7 +49,7 @@ return [
     'signals_heading' => 'Signalen',
     'signals_empty' => 'Geen automatisch gedetecteerde signalen.',
     'recommendations_heading' => 'Aanbevelingen',
-    'verify_heading' => 'Controleer vóór je betaalt',
+    'verify_heading' => 'Controleer voor je betaalt',
     'summary_heading' => 'Toelichting',
     'footer_disclaimer' => 'Geen juridisch of financieel advies. Geautomatiseerde inschatting op basis van tekstpatronen en eenvoudige benchmark.',
     'foot_tagline' => 'transparante huurfraude-check',

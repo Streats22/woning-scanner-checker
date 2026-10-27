@@ -256,7 +256,7 @@
 
         @if (count($verify))
             <div class="card">
-                <h2>Controleer dit vóór je betaalt</h2>
+                <h2>Controleer dit voor je betaalt</h2>
                 <ol class="prose">
                     @foreach ($verify as $item)
                         <li>{{ $item }}</li>

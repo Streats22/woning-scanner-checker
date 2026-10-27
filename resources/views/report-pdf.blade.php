@@ -182,7 +182,7 @@
     $logoDataUri = \App\Support\PdfBrandLogo::dataUri($theme);
 @endphp
     <div class="pagebg"></div>
-    {{-- Vaste footer: staat vóór de inhoud zodat Dompdf hem op elke pagina onderaan herhaalt. --}}
+    {{-- Vaste footer: staat voor de inhoud zodat Dompdf hem op elke pagina onderaan herhaalt. --}}
     <div class="foot">
         <table width="100%" cellpadding="0" cellspacing="0">
             <tr>

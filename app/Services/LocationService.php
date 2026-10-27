@@ -27,7 +27,7 @@ class LocationService
      *
      * Volgorde:
      * 1) Gemeente in het pad van de bron-URL (huur/alkmaar/…) — tenzij de tekst een veel
-     *    sterker signaal geeft (bijv. "Straat, Plaats" met komma vóór de plaatsnaam in de
+     *    sterker signaal geeft (bijv. "Straat, Plaats" met komma voor de plaatsnaam in de
      *    advertentie-body, niet in navigatie met “, Utrecht”-achtige patronen).
      *    Ook: als de URL een niet-hubgemeente geeft (bijv. kamer-bussum → Gooise Meren) maar de
      *    tekst een sterke match op een veelvoorkomende hub (Utrecht, Amsterdam, …) — dan wint de URL,
@@ -199,7 +199,7 @@ class LocationService
     }
 
     /**
-     * Typisch: "Veerplein, Bussum" — komma direct vóór de plaatsnaam.
+     * Typisch: "Veerplein, Bussum" — komma direct voor de plaatsnaam.
      */
     private function hasCommaBeforeCity(string $text, int $bytePos): bool
     {

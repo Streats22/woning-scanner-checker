@@ -18,7 +18,7 @@ class LlmScamAnalysisService
 
     /**
      * Combineert regel-gebaseerde score met een LLM-analyse (alleen als $useLlm true en API-key gezet).
-     * Gebruikt {@see app()} locale voor NL/EN prompts en output (zet locale vóór aanroep in de controller).
+     * Gebruikt {@see app()} locale voor NL/EN prompts en output (zet locale voor aanroep in de controller).
      *
      * @param  array{average: int, difference_percent: ?int}  $market
      * @param  array{score: int, flags: array<int, string>, breakdown: array<int, array{category: string, points: int, detail: string}>}  $ruleScam
@@ -247,14 +247,18 @@ class LlmScamAnalysisService
     }
 
     /**
-     * Zet losse combinatietekens (e + ¨) om naar één teken (ë), zodat trema's overal goed renderen (o.a. PDF).
+     * Zet losse combinatietekens (e + ¨) om naar één teken (ë), zodat trema's overal goed renderen (o.a. PDF),
+     * en schrijft "vóór" als "voor".
      */
     private function normalizeUnicode(mixed $value): mixed
     {
         if (is_string($value)) {
-            return class_exists(\Normalizer::class)
+            $value = class_exists(\Normalizer::class)
                 ? (\Normalizer::normalize($value, \Normalizer::FORM_C) ?: $value)
                 : $value;
+
+            // Huisstijl: "voor" zonder klemtoonaccenten.
+            return str_replace(['vóór', 'Vóór', 'VÓÓR'], ['voor', 'Voor', 'VOOR'], $value);
         }
         if (is_array($value)) {
             return array_map(fn (mixed $v) => $this->normalizeUnicode($v), $value);
@@ -282,7 +286,7 @@ Taken:
 1) Beoordeel of de inhoud consistent lijkt met een echte huuradvertentie of op scam/phishing wijst.
 2) Als er een URL is: beoordeel inhoudelijk of de tekst past bij een woningadvertentie (geen technische URL-check).
 3) Geef een risicoscore 0-100 en concrete rode vlaggen (korte zinnen).
-4) Lever uitgebreide, praktische aanbevelingen en wat de lezer moet controleren vóór betaling.
+4) Lever uitgebreide, praktische aanbevelingen en wat de lezer moet controleren voor betaling.
 5) Geef per risicocategorie punten (0-100 totaal niet overschrijven in de som — het zijn deelnemers aan het risico).
 6) Combineer met de meegegeven regel-score: wees conservatief bij twijfel.
 
@@ -307,7 +311,7 @@ Antwoord ALLEEN met geldige JSON, dit schema:
 - what_to_verify: minimaal 4, maximaal 10 controle-stappen.
 - link_data_quality: null als er geen URL was.
 
-Schrijf correct Nederlands met de juiste trema's en accenten, bijvoorbeeld: geëxtraheerd, financiële, ideeën, coöperatie, beëindigen, reëel, België, vóór (nadruk), één (telwoord). Schrijf "ë", "ï" en "ö" als gewone tekens, niet als escape-codes of zonder puntjes.
+Schrijf correct Nederlands met de juiste trema's en accenten, bijvoorbeeld: geëxtraheerd, financiële, ideeën, coöperatie, beëindigen, reëel, België, één (telwoord). Schrijf "ë", "ï" en "ö" als gewone tekens, niet als escape-codes of zonder puntjes. Schrijf "voor" altijd zonder accenten (dus niet "vóór").
 PROMPT;
     }
 

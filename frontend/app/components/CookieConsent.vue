@@ -27,6 +27,7 @@
             {{ detailsOpen ? t('cookies.detailsHide') : t('cookies.detailsToggle') }}
           </button>
 
+          <Transition name="wsc-cookie-details">
           <div v-show="detailsOpen" class="cookie-panel__details">
             <div class="cookie-table-wrap">
               <table class="cookie-table">
@@ -57,6 +58,7 @@
             <p class="cookie-panel__fonts-note">{{ t('cookies.fontsNote') }}</p>
             <p class="cookie-panel__legal">{{ t('cookies.legalNote') }}</p>
           </div>
+          </Transition>
 
           <div class="cookie-panel__actions">
             <button type="button" class="cookie-panel__btn cookie-panel__btn--secondary" @click="onNecessaryOnly">
@@ -345,7 +347,12 @@ watch(showDialog, (open) => {
   border: none;
   transition:
     background var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out);
+    color var(--duration-fast) var(--ease-out),
+    transform var(--duration-fast) var(--ease-out);
+}
+
+.cookie-panel__btn:active {
+  transform: scale(0.97);
 }
 
 .cookie-panel__btn--primary {
@@ -372,6 +379,19 @@ watch(showDialog, (open) => {
   font-size: 0.75rem;
   color: var(--text-tertiary);
   line-height: 1.45;
+}
+
+.wsc-cookie-details-enter-active,
+.wsc-cookie-details-leave-active {
+  transition:
+    opacity var(--duration-normal) var(--ease-out),
+    transform var(--duration-normal) var(--ease-out);
+}
+
+.wsc-cookie-details-enter-from,
+.wsc-cookie-details-leave-to {
+  opacity: 0;
+  transform: translateY(-6px);
 }
 
 .wsc-cookie-backdrop-enter-active,
