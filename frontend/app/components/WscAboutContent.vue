@@ -41,109 +41,126 @@ const { t } = useI18n()
 
 <style scoped>
 .about-content__title {
-  font-size: clamp(1.35rem, 3.5vw, 1.75rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.2;
   margin: 0 0 0.75rem;
+  font-size: clamp(1.6rem, 3.5vw, 2.25rem);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.1;
   color: var(--text-primary);
 }
 
 .about-content__mission {
-  margin: 0 0 1.25rem;
-  color: var(--text-secondary);
-  line-height: 1.65;
+  margin: 0 0 1.5rem;
   max-width: 52rem;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--text-secondary);
 }
 
 .story-grid {
   display: grid;
-  gap: 1.15rem;
-  margin: 0 0 1.25rem;
-}
-
-@media (min-width: 640px) {
-  .story-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr));
+  gap: 1rem;
 }
 
 .story-card {
-  padding: 1rem 1rem 1.05rem;
-  border-radius: var(--radius-md);
-  background: var(--surface-muted);
-  border: 1px solid var(--border-subtle);
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border-radius: var(--radius-lg);
+  background: var(--surface-elevated);
 }
 
-.story-card__title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0 0 0.5rem;
-  color: var(--text-primary);
+.story-card__title,
+.story-how__title {
+  margin: 0 0 0.6rem;
+  font-size: 1.2rem;
+  font-weight: 800;
   letter-spacing: -0.02em;
+  color: var(--text-primary);
 }
 
 .story-card__lead {
-  margin: 0 0 0.65rem;
+  margin: 0 0 0.75rem;
+  line-height: 1.55;
   color: var(--text-secondary);
-  line-height: 1.6;
-  font-size: 0.94rem;
 }
 
 .story-list {
   margin: 0;
-  padding-left: 1.2rem;
-  color: var(--text-secondary);
-  line-height: 1.58;
-  font-size: 0.92rem;
-}
-
-.story-list--what {
-  padding-left: 1.15rem;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 0.55rem;
 }
 
 .story-list__item {
-  margin: 0.45rem 0;
+  position: relative;
+  padding-left: 1.6rem;
+  line-height: 1.5;
+  color: var(--text-primary);
 }
 
-.story-list__item::marker {
-  color: var(--accent);
+.story-list__item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.45rem;
+  width: 0.65rem;
+  height: 0.65rem;
+  border-radius: 50%;
+  background: var(--action);
+}
+
+.story-list--what .story-list__item::before {
+  background: var(--accent);
 }
 
 .story-how {
-  padding: 1rem 1rem 0.85rem;
-  border-radius: var(--radius-md);
-  border: 1px dashed color-mix(in srgb, var(--accent) 28%, var(--border-subtle));
-  background: color-mix(in srgb, var(--accent) 4%, var(--surface-page));
+  margin-top: 1rem;
+  padding: clamp(1.25rem, 3vw, 1.75rem);
+  border-radius: var(--radius-lg);
+  background: var(--brand);
+  color: var(--on-brand);
 }
 
 .story-how__title {
-  font-size: 1rem;
-  font-weight: 600;
-  margin: 0 0 0.65rem;
-  color: var(--text-primary);
-  letter-spacing: -0.02em;
+  color: var(--on-brand);
 }
 
 .story-steps {
-  margin: 0 0 0.65rem;
-  padding-left: 1.2rem;
-  color: var(--text-secondary);
-  line-height: 1.58;
-  font-size: 0.92rem;
+  margin: 0 0 0.75rem;
+  padding: 0;
+  list-style: none;
+  counter-reset: step;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr));
+  gap: 0.75rem;
 }
 
 .story-steps__item {
-  margin: 0.45rem 0;
+  counter-increment: step;
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: 0.65rem;
+  align-items: start;
+  line-height: 1.5;
+  color: var(--on-brand);
 }
 
-.story-steps__item::marker {
-  font-weight: 600;
-  color: var(--accent);
+.story-steps__item::before {
+  content: counter(step);
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-weight: 800;
+  display: grid;
+  place-items: center;
 }
 
 .story-how__hint {
   margin: 0;
-  font-size: 0.88rem;
+  font-size: 0.92rem;
+  color: var(--on-brand-muted);
 }
 </style>

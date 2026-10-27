@@ -48,6 +48,17 @@ return [
     ],
 
     /*
+    | Google Gemini via de OpenAI-compatibele endpoint. Als GEMINI_API_KEY gezet is,
+    | heeft Gemini voorrang op OpenRouter en OpenAI. Zet de key alleen in de .env op
+    | de server, nooit in de code of in git. max_tokens wordt gedeeld met de openai-config.
+    */
+    'gemini' => [
+        'key' => env('GEMINI_API_KEY'),
+        'model' => env('GEMINI_MODEL', 'gemini-flash-latest'),
+        'base_url' => rtrim(env('GEMINI_BASE_URL', 'https://generativelanguage.googleapis.com/v1beta/openai'), '/'),
+    ],
+
+    /*
     | OpenRouter (https://openrouter.ai). Als OPENROUTER_API_KEY gezet is, gaat de
     | LLM-analyse via OpenRouter in plaats van de OpenAI-instellingen hierboven.
     | max_tokens wordt gedeeld met de openai-config.
