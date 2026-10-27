@@ -2,6 +2,7 @@
 <html lang="nl">
 <head>
     <meta charset="utf-8">
+    <meta name="theme-color" content="#0e3b2e">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="robots" content="index, follow">
     <title>Scam-rapport {{ $listing->report_slug ?? '#'.$listing->id }} — De Huur Radar</title>
@@ -13,7 +14,7 @@
     @vite(['resources/css/report-web.css'])
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700&family=Outfit:wght@600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 @php
@@ -22,13 +23,13 @@
     $s = (int) $listing->scam_score;
     if ($s <= 30) {
         $tier = 'c-green';
-        $tierLabel = 'Laag risico';
+        $tierLabel = 'Beperkt risico';
     } elseif ($s <= 60) {
         $tier = 'c-orange';
         $tierLabel = 'Matig risico';
     } else {
         $tier = 'c-red';
-        $tierLabel = 'Hoog risico';
+        $tierLabel = 'Verhoogd risico';
     }
     $flags = $listing->scam_flags ?? [];
     $snap = $listing->report_snapshot ?? [];
@@ -255,6 +256,7 @@
         @endif
 
         <p class="back"><a href="{{ url('/') }}">← Nieuwe analyse</a></p>
+        <p class="meta" style="margin-top:1.5rem;">De Huur Radar · Gemaakt door <a href="https://streatsdesign.nl" style="color:var(--accent);">streatsdesign.nl</a> · <a href="mailto:info@streatsdesign.nl" style="color:var(--accent);">info@streatsdesign.nl</a></p>
 
         <details>
             <summary>Volledige bron (ingevoerde tekst of URL)</summary>

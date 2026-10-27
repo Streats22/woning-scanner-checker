@@ -1,40 +1,65 @@
 <template>
   <Transition name="wsc-locale" mode="out-in">
     <div :key="locale" class="main main--sites">
-      <Transition name="wsc-nav-back" appear>
-        <p class="sites-nav">
-          <NuxtLink class="sites-nav__link wsc-back-link" :to="localePath('/')">
-            <span class="wsc-back-link__arrow" aria-hidden="true">←</span>
-            <span class="sites-nav__text">{{ t('sites.backToHome') }}</span>
-          </NuxtLink>
-        </p>
-      </Transition>
+      <section class="wsc-hero" aria-labelledby="sites-title">
+        <div class="wsc-container wsc-hero__inner">
+          <Transition name="wsc-nav-back" appear>
+            <p class="sites-nav">
+              <NuxtLink class="sites-nav__link wsc-back-link wsc-back-link--on-brand" :to="localePath('/')">
+                <span class="wsc-back-link__arrow" aria-hidden="true">←</span>
+                <span class="sites-nav__text">{{ t('sites.backToHome') }}</span>
+              </NuxtLink>
+            </p>
+          </Transition>
+          <h1 id="sites-title" class="wsc-hero__title">{{ t('sites.title') }}</h1>
+          <p class="wsc-hero__lead">{{ t('sites.intro') }}</p>
+        </div>
+      </section>
 
-      <section class="panel panel--sites panel--rise" aria-labelledby="sites-title">
-        <h1 id="sites-title" class="section-title font-display section-title--first">{{ t('sites.title') }}</h1>
-        <p class="body-text sites-intro">{{ t('sites.intro') }}</p>
-        <p class="body-text sites-disclaimer muted">{{ t('sites.disclaimer') }}</p>
+      <div class="wsc-container sites-body">
+        <div class="sites-toolbar">
+          <div class="sites-filter" role="group" :aria-label="t('sites.filterAria')">
+            <button
+              type="button"
+              class="sites-chip"
+              :class="{ 'sites-chip--on': activeRegion === 'all' }"
+              :aria-pressed="activeRegion === 'all'"
+              @click="activeRegion = 'all'"
+            >{{ t('sites.filterAll') }}</button>
+            <button
+              v-for="region in groupedRegions"
+              :key="region.id"
+              type="button"
+              class="sites-chip"
+              :class="{ 'sites-chip--on': activeRegion === region.id }"
+              :aria-pressed="activeRegion === region.id"
+              @click="activeRegion = region.id"
+            >{{ t('sites.region.' + region.id) }}</button>
+          </div>
+          <ul class="sites-legend" :aria-label="t('sites.legendAria')">
+            <li class="sites-legend__item">
+              <span class="sites-cost sites-cost--free">{{ t('sites.costFree') }}</span>
+              <span class="sites-legend__text">{{ t('sites.legendFree') }}</span>
+            </li>
+            <li class="sites-legend__item">
+              <span class="sites-cost sites-cost--freemium">{{ t('sites.costFreemium') }}</span>
+              <span class="sites-legend__text">{{ t('sites.legendFreemium') }}</span>
+            </li>
+            <li class="sites-legend__item">
+              <span class="sites-cost sites-cost--paid">{{ t('sites.costPaid') }}</span>
+              <span class="sites-legend__text">{{ t('sites.legendPaid') }}</span>
+            </li>
+          </ul>
+        </div>
 
-        <ul class="sites-legend" :aria-label="t('sites.legendAria')">
-          <li class="sites-legend__item">
-            <span class="sites-cost sites-cost--free">{{ t('sites.costFree') }}</span>
-            <span class="sites-legend__text">{{ t('sites.legendFree') }}</span>
-          </li>
-          <li class="sites-legend__item">
-            <span class="sites-cost sites-cost--freemium">{{ t('sites.costFreemium') }}</span>
-            <span class="sites-legend__text">{{ t('sites.legendFreemium') }}</span>
-          </li>
-          <li class="sites-legend__item">
-            <span class="sites-cost sites-cost--paid">{{ t('sites.costPaid') }}</span>
-            <span class="sites-legend__text">{{ t('sites.legendPaid') }}</span>
-          </li>
-        </ul>
+        <p class="sites-count" aria-live="polite">{{ t('sites.resultCount', { n: visibleCount }) }}</p>
 
-        <div v-for="region in groupedRegions" :key="region.id" class="sites-cat">
-          <h2 class="sites-cat__title font-display">{{ t('sites.region.' + region.id) }}</h2>
+        <div v-for="region in visibleRegions" :key="region.id" class="sites-cat">
+          <h2 class="sites-cat__title">{{ t('sites.region.' + region.id) }}</h2>
           <ul class="sites-list">
             <li v-for="site in region.items" :key="site.url" class="sites-item">
               <div class="sites-item__head">
+                <span class="sites-item__mono" aria-hidden="true">{{ site.name.charAt(0) }}</span>
                 <a
                   class="sites-item__link"
                   :href="site.url"
@@ -51,20 +76,20 @@
                 <span class="sites-item__cities-label">{{ t('sites.citiesLabel') }}:</span>
                 {{ site.cities.join(' · ') }}
               </p>
-              <p class="sites-item__note muted">
+              <p class="sites-item__note">
                 {{ locale === 'nl' ? site.noteNl : site.noteEn }}
               </p>
             </li>
           </ul>
         </div>
 
-        <p class="body-text sites-cta">
-          <NuxtLink class="sites-cta__btn" :to="localePath('/check')">{{ t('sites.ctaCheck') }}</NuxtLink>
-        </p>
-        <p class="body-text muted sites-faqlink">
-          <NuxtLink class="sites-faqlink__inner" :to="localePath('/faq')">{{ t('sites.ctaFaq') }}</NuxtLink>
-        </p>
-      </section>
+        <p class="sites-disclaimer">{{ t('sites.disclaimer') }}</p>
+
+        <div class="sites-cta">
+          <NuxtLink class="wsc-btn wsc-btn--action" :to="localePath('/check')">{{ t('sites.ctaCheck') }}</NuxtLink>
+          <NuxtLink class="sites-cta__faq" :to="localePath('/faq')">{{ t('sites.ctaFaq') }}</NuxtLink>
+        </div>
+      </div>
     </div>
   </Transition>
 </template>
@@ -91,6 +116,18 @@ const groupedRegions = computed(() =>
   regionOrder
     .map(id => ({ id, items: rentalSites.filter(s => s.region === id) }))
     .filter(group => group.items.length > 0),
+)
+
+const activeRegion = ref<RentalSiteRegion | 'all'>('all')
+
+const visibleRegions = computed(() =>
+  activeRegion.value === 'all'
+    ? groupedRegions.value
+    : groupedRegions.value.filter(g => g.id === activeRegion.value),
+)
+
+const visibleCount = computed(() =>
+  visibleRegions.value.reduce((sum, g) => sum + g.items.length, 0),
 )
 
 function capitalize(s: string): string {
@@ -140,291 +177,233 @@ useHead(() => ({
 </script>
 
 <style scoped>
-.font-display {
-  font-family: var(--font-display), var(--font-sans);
-}
-
-.main {
-  flex: 1;
-  max-width: 960px;
-  margin: 0 auto;
-  width: 100%;
-  min-width: 0;
-  padding:
-    max(1rem, env(safe-area-inset-top, 0px))
-    max(1.25rem, env(safe-area-inset-right, 0px))
-    max(3rem, env(safe-area-inset-bottom, 0px))
-    max(1.25rem, env(safe-area-inset-left, 0px));
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-
 .main--sites {
-  padding-top: 1rem;
-  gap: 1.35rem;
+  padding-bottom: 4rem;
 }
 
 .sites-nav {
-  margin: 0 0 0.15rem;
+  margin: 0 0 0.5rem;
 }
 
-.panel {
-  background: var(--surface-elevated);
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-md);
-  padding: 1.5rem 1.4rem;
-  transition:
-    box-shadow var(--duration-normal) var(--ease-out),
-    border-color var(--duration-normal) var(--ease-out),
-    transform var(--duration-normal) var(--ease-out);
+.sites-body {
+  margin-top: clamp(1.5rem, 4vw, 2.5rem);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .panel--rise {
-    animation: wsc-panel-rise 0.58s var(--ease-out) backwards;
-  }
+.sites-toolbar {
+  display: grid;
+  gap: 1rem;
 }
 
-.panel--sites {
-  border-color: color-mix(in srgb, var(--accent) 12%, var(--border-subtle));
+.sites-filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-.section-title {
-  font-size: 1.15rem;
-  font-weight: 600;
-  margin: 0 0 0.75rem;
+.sites-chip {
+  min-height: 44px;
+  padding: 0 1rem;
+  border: 1.5px solid var(--border-subtle);
+  border-radius: 999px;
+  background: var(--surface-page);
   color: var(--text-primary);
+  font: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  cursor: pointer;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
 }
 
-.sites-intro {
-  margin: 0 0 0.75rem;
-  color: var(--text-secondary);
-  line-height: 1.65;
+.sites-chip:hover {
+  border-color: var(--border-strong);
 }
 
-.sites-disclaimer {
-  margin: 0 0 1rem;
-  font-size: 0.85rem;
+.sites-chip--on,
+.sites-chip--on:hover {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: var(--on-brand);
+}
+
+html.dark .sites-chip--on,
+html.dark .sites-chip--on:hover {
+  background: var(--brand-soft);
+  border-color: var(--brand-soft);
+  color: var(--brand);
+}
+
+.sites-chip:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
 }
 
 .sites-legend {
-  list-style: none;
-  margin: 0 0 1.25rem;
+  margin: 0;
   padding: 0;
+  list-style: none;
   display: flex;
   flex-wrap: wrap;
-  gap: 0.5rem 0.85rem;
+  gap: 0.5rem 1.25rem;
 }
 
 .sites-legend__item {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 0.45rem;
-  font-size: 0.8rem;
+  gap: 0.5rem;
+  font-size: 0.9rem;
   color: var(--text-secondary);
 }
 
-.sites-cat {
-  margin: 0 0 1.5rem;
+.sites-count {
+  margin: 1.25rem 0 0;
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-tertiary);
 }
 
-.sites-cat:last-of-type {
-  margin-bottom: 0.5rem;
+.sites-cat {
+  margin-top: 1.75rem;
 }
 
 .sites-cat__title {
-  font-size: 1rem;
-  font-weight: 600;
-  letter-spacing: -0.01em;
+  margin: 0 0 0.85rem;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
   color: var(--text-primary);
-  margin: 0 0 0.55rem;
-  padding-bottom: 0.35rem;
-  border-bottom: 1px solid var(--border-subtle);
 }
 
 .sites-list {
-  list-style: none;
   margin: 0;
   padding: 0;
+  list-style: none;
   display: grid;
-  gap: 0.55rem;
-}
-
-@media (min-width: 700px) {
-  .sites-list {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+  gap: 0.85rem;
 }
 
 .sites-item {
-  border: 1px solid var(--border-subtle);
-  border-radius: var(--radius-md);
-  background: var(--surface-muted);
-  padding: 0.7rem 0.85rem 0.8rem;
-  transition:
-    border-color var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
-}
-
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .sites-item:hover {
-    border-color: color-mix(in srgb, var(--accent) 22%, var(--border-subtle));
-    box-shadow: var(--shadow-sm);
-  }
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 1.15rem 1.2rem;
+  border-radius: var(--radius-lg);
+  background: var(--surface-elevated);
 }
 
 .sites-item__head {
   display: flex;
-  flex-wrap: wrap;
   align-items: center;
-  gap: 0.45rem 0.65rem;
-  margin: 0 0 0.25rem;
+  gap: 0.7rem;
+}
+
+.sites-item__mono {
+  flex: 0 0 auto;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 12px;
+  background: var(--brand);
+  color: var(--brand-soft);
+  font-weight: 800;
+  font-size: 1.05rem;
+  display: grid;
+  place-items: center;
+  text-transform: uppercase;
 }
 
 .sites-item__link {
-  font-size: 0.95rem;
-  font-weight: 600;
+  flex: 1;
+  min-width: 0;
+  font-weight: 800;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+  text-decoration: none;
+  overflow-wrap: anywhere;
+}
+
+.sites-item__link::after {
+  content: ' ↗';
   color: var(--accent);
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--accent) 38%, transparent);
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 0.18em;
-  transition:
-    color var(--duration-fast) var(--ease-out),
-    text-decoration-color var(--duration-fast) var(--ease-out),
-    text-decoration-thickness var(--duration-fast) var(--ease-out);
+  font-weight: 700;
 }
 
 .sites-item__link:hover {
-  color: var(--accent-hover);
-  text-decoration-color: color-mix(in srgb, var(--accent-hover) 72%, transparent);
-  text-decoration-thickness: 2px;
+  color: var(--accent);
+  text-decoration: underline;
 }
 
 .sites-item__cities {
-  margin: 0 0 0.3rem;
-  font-size: 0.78rem;
+  margin: 0;
+  font-size: 0.88rem;
   line-height: 1.45;
-  color: var(--text-tertiary);
+  color: var(--text-secondary);
 }
 
 .sites-item__cities-label {
-  font-weight: 600;
-  color: var(--text-secondary);
-  margin-right: 0.25rem;
+  font-weight: 700;
 }
 
 .sites-item__note {
   margin: 0;
-  font-size: 0.85rem;
+  font-size: 0.93rem;
   line-height: 1.5;
+  color: var(--text-secondary);
 }
 
 .sites-cost {
+  flex: 0 0 auto;
   display: inline-flex;
   align-items: center;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  padding: 0.18rem 0.55rem;
+  min-height: 26px;
+  padding: 0 0.6rem;
   border-radius: 999px;
-  border: 1px solid transparent;
+  font-size: 0.78rem;
+  font-weight: 800;
   white-space: nowrap;
 }
 
 .sites-cost--free {
-  color: #0f5132;
-  background: #d1f4dd;
-  border-color: #a7e3bd;
+  background: var(--risk-low-bg);
+  color: var(--risk-low);
 }
 
 .sites-cost--freemium {
-  color: #663b00;
-  background: #fff1cc;
-  border-color: #f6dd97;
+  background: var(--risk-mid-bg);
+  color: var(--risk-mid);
 }
 
 .sites-cost--paid {
-  color: #842029;
-  background: #fcdde0;
-  border-color: #f1b6bb;
+  background: var(--risk-high-bg);
+  color: var(--risk-high);
 }
 
-html.dark .sites-cost--free {
-  color: #b9f0ce;
-  background: color-mix(in srgb, #0f5132 30%, transparent);
-  border-color: color-mix(in srgb, #0f5132 55%, transparent);
-}
-
-html.dark .sites-cost--freemium {
-  color: #ffd681;
-  background: color-mix(in srgb, #663b00 35%, transparent);
-  border-color: color-mix(in srgb, #663b00 60%, transparent);
-}
-
-html.dark .sites-cost--paid {
-  color: #ffb1b8;
-  background: color-mix(in srgb, #842029 30%, transparent);
-  border-color: color-mix(in srgb, #842029 55%, transparent);
+.sites-disclaimer {
+  margin: 2rem 0 0;
+  max-width: 70ch;
+  font-size: 0.9rem;
+  line-height: 1.55;
+  color: var(--text-tertiary);
 }
 
 .sites-cta {
-  margin: 1.25rem 0 0.25rem;
-  text-align: center;
-}
-
-.sites-cta__btn {
-  display: inline-flex;
+  display: flex;
+  flex-wrap: wrap;
   align-items: center;
-  justify-content: center;
-  padding: 0.7rem 1.35rem;
-  min-height: 48px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #fff;
-  background: var(--accent);
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  box-shadow: var(--shadow-sm);
-  touch-action: manipulation;
-  transition:
-    background var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
+  gap: 1rem 1.5rem;
+  margin-top: 2rem;
+  padding: clamp(1.25rem, 3vw, 2rem);
+  border-radius: var(--radius-lg);
+  background: var(--brand);
 }
 
-.sites-cta__btn:hover {
-  background: var(--accent-hover);
-  box-shadow: var(--shadow-md);
+.sites-cta__faq {
+  color: var(--brand-soft);
+  font-weight: 700;
 }
 
-.sites-cta__btn:focus-visible {
-  outline: 2px solid var(--surface-elevated);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px var(--accent-muted);
-}
-
-.sites-faqlink {
-  margin: 0.5rem 0 0;
-  text-align: center;
-  font-size: 0.85rem;
-}
-
-.sites-faqlink__inner {
-  color: var(--accent);
-  text-decoration: underline;
-  text-underline-offset: 0.15em;
-}
-
-.body-text {
-  font-size: 0.9375rem;
-  line-height: 1.65;
-}
-
-.muted {
-  color: var(--text-secondary);
+.sites-cta__faq:hover {
+  color: var(--on-brand);
 }
 </style>

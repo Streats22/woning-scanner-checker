@@ -84,23 +84,22 @@ async function onFile(ev: Event) {
 
 <style scoped>
 .ocr {
-  margin-bottom: 0.75rem;
-  padding: 0.85rem 1rem;
+  padding: 1rem 1.1rem;
   border-radius: var(--radius-md);
-  border: 1px dashed color-mix(in srgb, var(--accent) 35%, var(--border-subtle));
-  background: color-mix(in srgb, var(--accent-muted) 40%, var(--surface-muted));
+  border: 2px dashed var(--border-strong);
+  background: var(--surface-page);
 }
 
 .ocr__label {
   margin: 0 0 0.35rem;
-  font-size: 0.875rem;
-  font-weight: 600;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: var(--text-primary);
 }
 
 .ocr__hint {
   margin: 0 0 0.65rem;
-  font-size: 0.8rem;
+  font-size: 0.88rem;
   color: var(--text-secondary);
   line-height: 1.45;
 }
@@ -122,12 +121,14 @@ async function onFile(ev: Event) {
 }
 
 .ocr__btn {
-  padding: 0.45rem 0.85rem;
-  font-size: 0.85rem;
-  font-weight: 600;
-  color: var(--accent);
-  background: var(--surface-elevated);
-  border: 1px solid var(--border-strong);
+  min-height: 44px;
+  padding: 0 1.1rem;
+  font: inherit;
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: var(--brand);
+  background: var(--brand-soft);
+  border: 0;
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition:
@@ -136,7 +137,7 @@ async function onFile(ev: Event) {
 }
 
 .ocr__btn:hover:not(:disabled) {
-  background: var(--surface-muted);
+  background: color-mix(in srgb, var(--brand-soft) 82%, #ffffff);
 }
 
 .ocr__btn:disabled {
@@ -145,7 +146,7 @@ async function onFile(ev: Event) {
 }
 
 .ocr__btn:focus-visible {
-  outline: 2px solid var(--accent);
+  outline: 3px solid var(--accent);
   outline-offset: 2px;
 }
 
@@ -157,7 +158,7 @@ async function onFile(ev: Event) {
 
 .ocr__privacy {
   margin: 0.45rem 0 0;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   color: var(--text-tertiary);
   line-height: 1.4;
 }

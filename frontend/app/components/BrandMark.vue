@@ -12,6 +12,7 @@
     <title v-if="!decorative">{{ title }}</title>
     <rect width="40" height="40" rx="12" class="brand-mark__bg" />
     <g
+      class="brand-mark__lines"
       stroke="currentColor"
       fill="none"
       stroke-linecap="round"
@@ -21,32 +22,31 @@
         cx="20"
         cy="20"
         r="11"
-        stroke-width="1.25"
-        opacity="0.38"
+        stroke-width="1.4"
+        opacity="0.5"
       />
       <circle
         cx="20"
         cy="20"
         r="6.5"
-        stroke-width="1.25"
-        opacity="0.52"
+        stroke-width="1.4"
+        opacity="0.7"
       />
       <path
         d="M20 20V9.5"
-        stroke-width="2"
+        stroke-width="2.2"
       />
       <path
         d="M20 20L29 14"
-        stroke-width="1.5"
-        opacity="0.42"
+        stroke-width="1.6"
+        opacity="0.55"
       />
     </g>
     <circle
       cx="25"
       cy="14"
-      r="2.25"
-      fill="currentColor"
-      opacity="0.92"
+      r="2.5"
+      class="brand-mark__dot"
     />
   </svg>
 </template>
@@ -69,12 +69,17 @@ withDefaults(
 </script>
 
 <style scoped>
+/* Mint vlak, woudgroene lijnen, koraal stip — ook op de groene header (vlak blijft mint). */
 .brand-mark {
   flex-shrink: 0;
-  color: var(--accent);
+  color: #0e3b2e;
 }
 
 .brand-mark__bg {
-  fill: var(--accent-muted);
+  fill: #c8f2dc;
+}
+
+.brand-mark__dot {
+  fill: #ff7a59;
 }
 </style>

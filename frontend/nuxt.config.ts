@@ -56,12 +56,17 @@ export default defineNuxtConfig({
       name: 'De Huur Radar',
       short_name: 'Huur Radar',
       description: 'Huurfraude-check en risicoscore vóór je betaalt.',
-      theme_color: '#1e40af',
-      background_color: '#f3f6fb',
+      theme_color: '#0e3b2e',
+      background_color: '#ffffff',
       display: 'standalone',
       lang: 'nl',
       start_url: '/',
       scope: '/',
+      icons: [
+        { src: '/icon-192.png', sizes: '192x192', type: 'image/png' },
+        { src: '/icon-512.png', sizes: '512x512', type: 'image/png' },
+        { src: '/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+      ],
     },
     workbox: {
       navigateFallback: '/',
@@ -173,7 +178,7 @@ export default defineNuxtConfig({
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         {
           rel: 'stylesheet',
-          href: 'https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&family=Outfit:wght@500;600;700&display=swap',
+          href: 'https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap',
         },
       ],
     },

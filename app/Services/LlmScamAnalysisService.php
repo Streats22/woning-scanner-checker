@@ -91,6 +91,9 @@ class LlmScamAnalysisService
                 ->timeout(55)
                 ->connectTimeout(15)
                 ->acceptJson()
+                // Eén herhaling bij tijdelijke drukte (429/503) bij de provider.
+                ->retry(2, 1500, fn (\Throwable $e) => $e instanceof \Illuminate\Http\Client\RequestException
+                    && in_array($e->response->status(), [429, 503], true), throw: false)
                 ->post($provider['base_url'].'/chat/completions', $payload);
 
             if (! $response->successful()) {
@@ -108,7 +111,7 @@ class LlmScamAnalysisService
             }
 
             /** @var array<string, mixed> $parsed */
-            $parsed = json_decode($content, true, 512, JSON_THROW_ON_ERROR);
+            $parsed = $this->normalizeUnicode(json_decode($content, true, 512, JSON_THROW_ON_ERROR));
 
             $aiScore = isset($parsed['score']) ? (int) $parsed['score'] : 0;
             $aiScore = max(0, min(100, $aiScore));
@@ -176,12 +179,22 @@ class LlmScamAnalysisService
     }
 
     /**
-     * OpenRouter heeft voorrang als OPENROUTER_API_KEY gezet is; anders OpenAI-compatible config.
+     * Volgorde: Gemini (GEMINI_API_KEY), dan OpenRouter (OPENROUTER_API_KEY), dan OpenAI-compatible config.
      *
      * @return array{key: string, model: string, base_url: string, headers: array<string, string>}|null
      */
     private function resolveProvider(): ?array
     {
+        $geminiKey = config('services.gemini.key');
+        if (is_string($geminiKey) && $geminiKey !== '') {
+            return [
+                'key' => $geminiKey,
+                'model' => (string) config('services.gemini.model'),
+                'base_url' => (string) config('services.gemini.base_url'),
+                'headers' => [],
+            ];
+        }
+
         $routerKey = config('services.openrouter.key');
         if (is_string($routerKey) && $routerKey !== '') {
             $headers = array_filter([
@@ -208,6 +221,23 @@ class LlmScamAnalysisService
             'base_url' => (string) config('services.openai.base_url'),
             'headers' => [],
         ];
+    }
+
+    /**
+     * Zet losse combinatietekens (e + ¨) om naar één teken (ë), zodat trema's overal goed renderen (o.a. PDF).
+     */
+    private function normalizeUnicode(mixed $value): mixed
+    {
+        if (is_string($value)) {
+            return class_exists(\Normalizer::class)
+                ? (\Normalizer::normalize($value, \Normalizer::FORM_C) ?: $value)
+                : $value;
+        }
+        if (is_array($value)) {
+            return array_map(fn (mixed $v) => $this->normalizeUnicode($v), $value);
+        }
+
+        return $value;
     }
 
     private function systemPrompt(): string
@@ -253,6 +283,8 @@ Antwoord ALLEEN met geldige JSON, dit schema:
 - recommendations: minimaal 4, maximaal 10 concrete acties voor de huurder.
 - what_to_verify: minimaal 4, maximaal 10 controle-stappen.
 - link_data_quality: null als er geen URL was.
+
+Schrijf correct Nederlands met de juiste trema's en accenten, bijvoorbeeld: geëxtraheerd, financiële, ideeën, coöperatie, beëindigen, reëel, België, vóór (nadruk), één (telwoord). Schrijf "ë", "ï" en "ö" als gewone tekens, niet als escape-codes of zonder puntjes.
 PROMPT;
     }
 

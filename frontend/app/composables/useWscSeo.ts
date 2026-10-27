@@ -12,9 +12,9 @@ export interface WscSeoOptions {
   imageAlt?: MaybeRefOrGetter<string | undefined>
 }
 
-/** Moet overeenkomen met `public/og.png` (sips -Z 1200 …). */
+/** Moet overeenkomen met `public/og.png` (1200×630, aanbevolen formaat voor Open Graph). */
 const OG_WIDTH = 1200
-const OG_HEIGHT = 669
+const OG_HEIGHT = 630
 
 /** WhatsApp/Facebook crawlers: HTTPS + absolute URL. */
 function normalizeOgImageUrl(url: string): string {
@@ -33,7 +33,7 @@ function normalizeOgImageUrl(url: string): string {
 
 /**
  * Canonieke URL’s, Open Graph, Twitter, hreflang en robots — afgestemd op `NUXT_PUBLIC_SITE_URL`.
- * Standaard social image: `/og.png` (1200×669) voor WhatsApp, Facebook, LinkedIn, X.
+ * Standaard social image: `/og.png` (1200×630) voor WhatsApp, Facebook, LinkedIn, X.
  */
 export function useWscSeo(options: WscSeoOptions) {
   const route = useRoute()

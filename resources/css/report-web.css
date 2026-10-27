@@ -1,17 +1,41 @@
-/* Gedeeld web-rapport (report.blade.php) — variabelen in :root voor één bron van waarheid. */
+/* Gedeeld web-rapport (report.blade.php) — huisstijl G, gelijk aan frontend/app/assets/css/main.css. */
 :root {
-    --bg: #0a101d;
-    --bg2: #111827;
-    --card: #161f2c;
-    --card2: #1c2738;
-    --text: #e8eef4;
-    --muted: #8b9aab;
-    --accent: #60a5fa;
-    --accent-dim: rgba(96, 165, 250, 0.14);
-    --border: #2d3d52;
-    --warn: #fb923c;
-    --danger: #f87171;
-    --ok: #4ade80;
+    --bg: #ffffff;
+    --bg2: #e8efeb;
+    --card: #f3f7f4;
+    --text: #0e2a21;
+    --muted: #3d5249;
+    --accent: #0e3b2e;
+    --accent-dim: #c8f2dc;
+    --border: #dce5e0;
+    --brand: #0e3b2e;
+    --action: #ff7a59;
+    --warn: #7a4f00;
+    --warn-bg: #fdf0d5;
+    --danger: #a12e18;
+    --danger-bg: #fce3dc;
+    --ok: #1e6b44;
+    --ok-bg: #ddf3e6;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --bg: #0a1f18;
+        --bg2: #163428;
+        --card: #10291f;
+        --text: #eaf4ef;
+        --muted: #b4cbc0;
+        --accent: #8fe3b8;
+        --accent-dim: rgba(143, 227, 184, 0.14);
+        --border: #24443a;
+        --action: #ff8a6b;
+        --warn: #f2c14e;
+        --warn-bg: rgba(242, 193, 78, 0.14);
+        --danger: #ff9c85;
+        --danger-bg: rgba(255, 156, 133, 0.14);
+        --ok: #7fd9a6;
+        --ok-bg: rgba(127, 217, 166, 0.14);
+    }
 }
 
 * {
@@ -21,15 +45,15 @@
 body {
     margin: 0;
     min-height: 100vh;
-    font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
-    background: radial-gradient(1200px 600px at 10% -10%, rgba(45, 212, 191, 0.08), transparent 50%), var(--bg);
+    font-family: 'Schibsted Grotesk', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
     color: var(--text);
     line-height: 1.6;
     font-size: 1rem;
 }
 
 .wrap {
-    max-width: 46rem;
+    max-width: 52rem;
     margin: 0 auto;
     padding: 2rem 1.25rem 4rem;
 }
@@ -48,11 +72,11 @@ body {
 }
 
 h1 {
-    font-family: 'Outfit', system-ui, sans-serif;
-    font-size: clamp(1.35rem, 4vw, 1.65rem);
-    font-weight: 700;
+    font-size: clamp(1.9rem, 5vw, 2.75rem);
+    font-weight: 800;
     margin: 0 0 0.35rem;
-    letter-spacing: -0.02em;
+    letter-spacing: -0.04em;
+    line-height: 1.05;
 }
 
 .lead {
@@ -70,9 +94,8 @@ h1 {
 
 .card {
     padding: 1.35rem 1.25rem;
-    border-radius: 14px;
-    border: 1px solid var(--border);
-    background: linear-gradient(165deg, var(--card) 0%, var(--card2) 100%);
+    border-radius: 24px;
+    background: var(--card);
     margin-bottom: 1rem;
 }
 
@@ -97,23 +120,21 @@ h1 {
     border-radius: 999px;
     font-size: 0.75rem;
     font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
 }
 
 /* Gebruikt dynamisch op de score-pill (.pill.c-green etc.) */
 .c-green {
-    background: rgba(74, 222, 128, 0.15);
+    background: var(--ok-bg);
     color: var(--ok);
 }
 
 .c-orange {
-    background: rgba(251, 146, 60, 0.15);
+    background: var(--warn-bg);
     color: var(--warn);
 }
 
 .c-red {
-    background: rgba(248, 113, 113, 0.15);
+    background: var(--danger-bg);
     color: var(--danger);
 }
 
@@ -124,9 +145,8 @@ h1 {
 }
 
 h2 {
-    font-family: 'Outfit', system-ui, sans-serif;
-    font-size: 1.05rem;
-    font-weight: 600;
+    font-size: 1.2rem;
+    font-weight: 800;
     margin: 0 0 0.65rem;
     color: var(--text);
     letter-spacing: -0.01em;
@@ -153,6 +173,10 @@ ol {
 
 li {
     margin: 0.4rem 0;
+}
+
+li::marker {
+    color: var(--action);
 }
 
 .prose {
@@ -183,22 +207,26 @@ li {
 }
 
 .breakdown-cat {
-    font-weight: 600;
-    color: var(--accent);
-    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--text);
+    font-size: 0.95rem;
 }
 
 .breakdown-pts {
+    display: inline-block;
+    padding: 0.1rem 0.55rem;
+    border-radius: 999px;
+    background: var(--danger-bg);
+    color: var(--danger);
     font-size: 0.75rem;
-    color: var(--muted);
+    font-weight: 800;
     margin-left: 0.35rem;
 }
 
 .market-box {
     background: var(--bg2);
-    border-radius: 10px;
+    border-radius: 14px;
     padding: 1rem;
-    border: 1px solid var(--border);
     font-size: 0.9rem;
     color: var(--muted);
 }
@@ -225,7 +253,7 @@ pre.raw {
     margin-top: 0.75rem;
     padding: 1rem;
     border-radius: 10px;
-    background: #080c11;
+    background: var(--bg2);
     border: 1px solid var(--border);
     font-size: 0.78rem;
     white-space: pre-wrap;

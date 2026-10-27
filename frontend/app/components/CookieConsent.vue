@@ -134,18 +134,19 @@ watch(showDialog, (open) => {
   max-height: min(92vh, 40rem);
   overflow-y: auto;
   margin-bottom: env(safe-area-inset-bottom, 0);
-  padding: 1.35rem 1.25rem 1.25rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-subtle);
-  background: var(--surface-elevated);
+  padding: 1.5rem 1.4rem 1.4rem;
+  border-radius: var(--radius-xl);
+  border: 0;
+  border-top: 6px solid var(--brand);
+  background: var(--surface-page);
   box-shadow: var(--shadow-lg);
 }
 
 .cookie-panel__title {
   margin: 0 0 0.35rem;
-  font-size: 1.15rem;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
   color: var(--text-primary);
 }
 
@@ -167,10 +168,11 @@ watch(showDialog, (open) => {
 .cookie-panel__no-tracking {
   padding: 0.55rem 0.65rem;
   border-radius: var(--radius-sm);
-  background: var(--surface-muted);
-  border: 1px solid var(--border-subtle);
-  color: var(--text-primary);
+  background: var(--brand-soft);
+  border: 0;
+  color: var(--brand);
   font-size: 0.85rem;
+  font-weight: 600;
 }
 
 .cookie-panel__toggle {
@@ -333,10 +335,11 @@ watch(showDialog, (open) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.65rem;
-  padding: 0.55rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 600;
+  min-height: 48px;
+  padding: 0.55rem 1.25rem;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
   border-radius: var(--radius-md);
   cursor: pointer;
   border: none;
@@ -346,23 +349,22 @@ watch(showDialog, (open) => {
 }
 
 .cookie-panel__btn--primary {
-  background: var(--accent);
-  color: #fff;
-  box-shadow: var(--shadow-sm);
+  background: var(--action);
+  color: var(--on-action);
 }
 
 .cookie-panel__btn--primary:hover {
-  background: var(--accent-hover);
+  background: var(--action-hover);
 }
 
 .cookie-panel__btn--secondary {
-  background: var(--surface-muted);
-  color: var(--text-primary);
-  border: 1px solid var(--border-strong);
+  background: transparent;
+  color: var(--accent);
+  box-shadow: inset 0 0 0 1.5px currentColor;
 }
 
 .cookie-panel__btn--secondary:hover {
-  background: color-mix(in srgb, var(--surface-muted) 85%, var(--accent-muted));
+  background: var(--accent-muted);
 }
 
 .cookie-panel__hint {

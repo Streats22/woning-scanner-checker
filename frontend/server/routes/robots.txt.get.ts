@@ -19,6 +19,7 @@ export default defineEventHandler((event) => {
   const lines = [
     'User-agent: *',
     'Allow: /',
+    'Disallow: /api/',
     '',
   ]
 

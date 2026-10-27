@@ -6,10 +6,10 @@ export default defineAppConfig({
   brand: {
     /** Stabiele id voor events / deep links */
     id: 'huurradar',
-    /** Primair accent (licht) — gelijk aan --accent in main.css :root */
-    themeColorLight: '#1e40af',
-    /** Achtergrond (donker) — gelijk aan html.dark --surface-page */
-    themeColorDark: '#0a101d',
+    /** Merkgroen (header) — gelijk aan --brand in main.css :root */
+    themeColorLight: '#0e3b2e',
+    /** Donker: header blijft merkgroen — gelijk aan html.dark --brand */
+    themeColorDark: '#0e3b2e',
     ogType: 'website' as const,
   },
 })

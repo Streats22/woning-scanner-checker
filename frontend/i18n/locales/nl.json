@@ -44,7 +44,18 @@
     "cardSitesTitle": "Betrouwbare huurwebsites",
     "cardSitesBody": "Overzicht van bekende NL huurwebsites — voor woning, studio of studentenkamer. Met label gratis, freemium of betaald, zodat je weet waar je snel én veilig kunt huren.",
     "cardSitesLink": "Bekijk de huurwebsites",
-    "faqTeaser": "Vragen over fraude, kamers of bronnen? Bekijk de FAQ."
+    "faqTeaser": "Vragen over fraude, kamers of bronnen? Bekijk de FAQ.",
+    "heroInputLabel": "Advertentie of link",
+    "heroInputPlaceholder": "Plak een link of de tekst van de advertentie",
+    "heroScreenshotHint": "Liever een screenshot?",
+    "heroScreenshotLink": "Upload hem op de analysepagina",
+    "sampleAria": "Voorbeeld van een uitslag",
+    "sampleCaption": "Studio · Utrecht · voorbeeld",
+    "sampleScoreAria": "Voorbeeld-risicoscore 80 van 100",
+    "sampleRow1": "Western Union als betaling",
+    "sampleRow2": "Ruim onder model-huur",
+    "sampleRow3": "Alleen WhatsApp",
+    "cardsTitle": "Verder op deze site"
   },
   "check": {
     "metaTitle": "Huur scam check & analyse | Huurwoning of kamer controleren — De Huur Radar",
@@ -197,7 +208,9 @@
     "dwellingSectorUnknown": "Onbekend",
     "dwellingConfHigh": "duidelijke signalen in de tekst",
     "dwellingConfMedium": "beperkte signalen — extra kritisch lezen",
-    "dwellingConfLow": "weinig houvast in de tekst"
+    "dwellingConfLow": "weinig houvast in de tekst",
+    "scoreGaugeAria": "Risicoscore {n} van 100",
+    "scoreOutOf": "{n} / 100"
   },
   "risk": {
     "low": "Beperkt risico",
@@ -262,7 +275,10 @@
     },
     "ctaCheck": "Doe de huur scam check",
     "ctaFaq": "Of bekijk de FAQ over veilig huren",
-    "backToHome": "Terug naar de startpagina"
+    "backToHome": "Terug naar de startpagina",
+    "filterAria": "Filter op regio",
+    "filterAll": "Alle regio’s",
+    "resultCount": "{n} sites"
   },
   "faq": {
     "metaTitle": "FAQ huur scam, huurfraude & veilig huren in Nederland | De Huur Radar",

@@ -2,11 +2,12 @@
   <NuxtLayout name="default">
     <main id="main-content" class="wsc-error">
       <div class="wsc-error__card">
+        <BrandMark class="wsc-error__mark" :size="96" />
         <p class="wsc-error__code" aria-hidden="true">{{ error.statusCode }}</p>
         <h1 class="wsc-error__title font-display">{{ title }}</h1>
         <p class="wsc-error__message">{{ message }}</p>
         <div class="wsc-error__actions">
-          <button type="button" class="wsc-error__btn" @click="goHome">
+          <button type="button" class="wsc-btn wsc-btn--action" @click="goHome">
             {{ t('faq.backToHome') }}
           </button>
         </div>
@@ -54,67 +55,49 @@ function goHome() {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 2rem 1.25rem 3rem;
+  padding: 2.5rem 1.25rem 4rem;
 }
 
 .wsc-error__card {
   width: 100%;
-  max-width: 28rem;
-  padding: 1.75rem 1.5rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-subtle);
-  background: var(--surface-elevated);
-  box-shadow: var(--shadow-sm);
+  max-width: 32rem;
+  padding: clamp(2rem, 5vw, 3rem) clamp(1.25rem, 4vw, 2.5rem);
+  border-radius: var(--radius-xl);
+  background: var(--brand);
+  color: var(--on-brand);
   text-align: center;
 }
 
+.wsc-error__mark {
+  margin: 0 auto 0.75rem;
+}
+
 .wsc-error__code {
-  margin: 0 0 0.35rem;
-  font-size: 0.85rem;
-  font-weight: 700;
-  letter-spacing: 0.06em;
-  color: var(--text-tertiary);
+  margin: 0;
+  font-size: clamp(4rem, 14vw, 6.5rem);
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.06em;
+  color: var(--brand-soft);
 }
 
 .wsc-error__title {
-  margin: 0 0 0.65rem;
-  font-size: 1.5rem;
-  line-height: 1.25;
-  color: var(--text-primary);
+  margin: 0.5rem 0 0.65rem;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+  color: var(--on-brand);
 }
 
 .wsc-error__message {
-  margin: 0 0 1.25rem;
-  font-size: 0.95rem;
+  margin: 0 0 1.5rem;
   line-height: 1.55;
-  color: var(--text-secondary);
+  color: var(--on-brand-muted);
 }
 
 .wsc-error__actions {
   display: flex;
   justify-content: center;
-}
-
-.wsc-error__btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-height: 2.65rem;
-  padding: 0.55rem 1.15rem;
-  font-size: 0.9rem;
-  font-weight: 600;
-  border-radius: var(--radius-md);
-  cursor: pointer;
-  border: none;
-  background: var(--accent);
-  color: #fff;
-  box-shadow: var(--shadow-sm);
-  transition:
-    background var(--duration-fast) var(--ease-out),
-    color var(--duration-fast) var(--ease-out);
-}
-
-.wsc-error__btn:hover {
-  background: var(--accent-hover);
 }
 </style>

@@ -14,6 +14,7 @@ class LlmScamAnalysisServiceTest extends TestCase
     {
         Config::set('services.openai.key', '');
         Config::set('services.openrouter.key', '');
+        Config::set('services.gemini.key', '');
 
         $service = $this->app->make(LlmScamAnalysisService::class);
         $data = new ParsedListingInput(null, 500, null, 'Test Amsterdam');
@@ -165,5 +166,48 @@ class LlmScamAnalysisServiceTest extends TestCase
             && $request->hasHeader('HTTP-Referer', 'https://dehuurradar.nl')
             && $request->hasHeader('X-Title', 'De Huurradar')
             && $request['model'] === 'openai/gpt-4o-mini');
+    }
+
+    public function test_gemini_key_takes_precedence_and_uses_openai_compatible_endpoint(): void
+    {
+        Config::set('services.gemini.key', 'gemini-test');
+        Config::set('services.gemini.model', 'gemini-flash-latest');
+        Config::set('services.gemini.base_url', 'https://generativelanguage.googleapis.com/v1beta/openai');
+        Config::set('services.openrouter.key', 'or-test');
+        Config::set('services.openai.key', 'sk-test');
+
+        Http::fake([
+            'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions' => Http::response([
+                'choices' => [
+                    [
+                        'message' => [
+                            'content' => json_encode([
+                                'score' => 40,
+                                // Ontleed teken (e + combinerende trema) moet als één 'ë' terugkomen.
+                                'flags' => ["Gee\u{0308}xtraheerde prijs wijkt af"],
+                                'summary' => 'Financiële druk bij de coöperatie.',
+                                'recommendations' => [],
+                                'what_to_verify' => [],
+                                'risk_breakdown' => [],
+                            ], JSON_UNESCAPED_UNICODE),
+                        ],
+                    ],
+                ],
+            ], 200),
+        ]);
+
+        $service = $this->app->make(LlmScamAnalysisService::class);
+        $data = new ParsedListingInput(null, 500, null, str_repeat('x', 200));
+        $market = ['average' => 1800, 'difference_percent' => -72];
+        $rule = ['score' => 30, 'flags' => ['Prijs'], 'breakdown' => []];
+
+        $out = $service->enhance($data, $market, $rule);
+
+        $this->assertTrue($out['llm_used']);
+        $this->assertSame(40, $out['score']);
+        $this->assertContains('Geëxtraheerde prijs wijkt af', $out['flags']);
+        $this->assertStringContainsString('Financiële druk bij de coöperatie.', $out['summary']);
+        Http::assertSent(fn ($request) => $request->hasHeader('Authorization', 'Bearer gemini-test')
+            && $request['model'] === 'gemini-flash-latest');
     }
 }

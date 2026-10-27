@@ -44,7 +44,18 @@
     "cardSitesTitle": "Trusted Dutch rental websites",
     "cardSitesBody": "Curated list of well-known NL rental websites — for homes, studios, and student rooms. Each one labelled free, freemium, or paid so you know where to rent quickly and safely.",
     "cardSitesLink": "Browse the rental websites",
-    "faqTeaser": "Questions about fraud, rooms, or sources? See the FAQ."
+    "faqTeaser": "Questions about fraud, rooms, or sources? See the FAQ.",
+    "heroInputLabel": "Listing or link",
+    "heroInputPlaceholder": "Paste a link or the listing text",
+    "heroScreenshotHint": "Prefer a screenshot?",
+    "heroScreenshotLink": "Upload it on the analysis page",
+    "sampleAria": "Example of a result",
+    "sampleCaption": "Studio · Utrecht · example",
+    "sampleScoreAria": "Example risk score 80 out of 100",
+    "sampleRow1": "Western Union as payment",
+    "sampleRow2": "Far below model rent",
+    "sampleRow3": "WhatsApp only",
+    "cardsTitle": "More on this site"
   },
   "check": {
     "metaTitle": "Rental scam (huur scam) check & analysis | Verify a rental home or room — De Huur Radar",
@@ -197,7 +208,9 @@
     "dwellingSectorUnknown": "Unknown",
     "dwellingConfHigh": "clear signals in the text",
     "dwellingConfMedium": "limited signals — read with extra care",
-    "dwellingConfLow": "little to go on in the text"
+    "dwellingConfLow": "little to go on in the text",
+    "scoreGaugeAria": "Risk score {n} out of 100",
+    "scoreOutOf": "{n} / 100"
   },
   "risk": {
     "low": "Limited risk",
@@ -262,7 +275,10 @@
     },
     "ctaCheck": "Run the rental scam check",
     "ctaFaq": "Or read the safe-renting FAQ",
-    "backToHome": "Back to home"
+    "backToHome": "Back to home",
+    "filterAria": "Filter by region",
+    "filterAll": "All regions",
+    "resultCount": "{n} sites"
   },
   "faq": {
     "metaTitle": "Rental fraud (huur scam) FAQ & safe renting in the Netherlands | De Huur Radar",

@@ -1,52 +1,95 @@
 <template>
   <div>
-    <div class="hero">
+    <section class="wsc-hero home-hero">
       <Transition name="wsc-locale" mode="out-in">
-        <div :key="locale" class="hero__inner">
-          <p class="hero__eyebrow font-display hero-reveal hero-reveal--1">{{ t('brand.tagline') }}</p>
-          <h1 class="hero__title font-display hero-reveal hero-reveal--2">{{ t('hero.title') }}</h1>
-          <p class="hero__sub hero-reveal hero-reveal--3">{{ t('hero.subtitle') }}</p>
-          <ul class="hero__pillars hero-reveal hero-reveal--4" :aria-label="t('trust.pillarsLabel')">
-            <li v-for="(line, i) in trustPillars" :key="i" class="hero__pillar">
-              {{ line }}
-            </li>
-          </ul>
-          <p class="hero__trust hero-reveal hero-reveal--5">{{ t('trust.line') }}</p>
-          <div class="hero__cta hero-reveal hero-reveal--6">
-            <NuxtLink class="hero__cta-btn" :to="localePath('/check')">{{ t('home.ctaCheck') }}</NuxtLink>
-            <a class="hero__cta-secondary" href="#story">{{ t('home.ctaReadStory') }}</a>
+        <div :key="locale" class="wsc-container home-hero__inner">
+          <div class="home-hero__copy">
+            <h1 class="home-hero__title font-display hero-reveal hero-reveal--1">{{ t('hero.title') }}</h1>
+            <p class="home-hero__sub hero-reveal hero-reveal--2">{{ t('hero.subtitle') }}</p>
+
+            <form class="home-hero__form hero-reveal hero-reveal--3" @submit.prevent="onHeroSubmit">
+              <label class="sr-only" for="home-hero-input">{{ t('home.heroInputLabel') }}</label>
+              <input
+                id="home-hero-input"
+                v-model="heroText"
+                class="home-hero__input"
+                type="text"
+                autocomplete="off"
+                :placeholder="t('home.heroInputPlaceholder')"
+              >
+              <button type="submit" class="wsc-btn wsc-btn--action home-hero__submit">
+                {{ t('form.submit') }}
+              </button>
+            </form>
+            <p class="home-hero__alt hero-reveal hero-reveal--3">
+              {{ t('home.heroScreenshotHint') }}
+              <NuxtLink class="home-hero__alt-link" :to="localePath('/check')">{{ t('home.heroScreenshotLink') }}</NuxtLink>
+            </p>
+
+            <ul class="home-hero__pillars hero-reveal hero-reveal--4" :aria-label="t('trust.pillarsLabel')">
+              <li v-for="(line, i) in trustPillars" :key="i" class="home-hero__pillar">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12l5 5 9-10" /></svg>
+                {{ line }}
+              </li>
+            </ul>
           </div>
+
+          <figure class="home-sample hero-reveal hero-reveal--5" :aria-label="t('home.sampleAria')">
+            <div class="home-sample__screen">
+              <figcaption class="home-sample__caption">{{ t('home.sampleCaption') }}</figcaption>
+              <div class="home-sample__card home-sample__card--score">
+                <ScoreGauge :score="80" :aria-label="t('home.sampleScoreAria')" :width="200" />
+                <p class="home-sample__risk">{{ t('risk.high') }}</p>
+              </div>
+              <ul class="home-sample__card home-sample__rows">
+                <li class="home-sample__row"><span>{{ t('home.sampleRow1') }}</span><strong class="home-sample__pts">+40</strong></li>
+                <li class="home-sample__row"><span>{{ t('home.sampleRow2') }}</span><strong class="home-sample__pts">+30</strong></li>
+                <li class="home-sample__row"><span>{{ t('home.sampleRow3') }}</span><strong class="home-sample__pts home-sample__pts--mid">+10</strong></li>
+              </ul>
+            </div>
+          </figure>
         </div>
       </Transition>
-    </div>
+    </section>
 
     <Transition name="wsc-locale" mode="out-in">
-      <div :key="locale" class="main main--landing">
+      <div :key="locale" class="wsc-container home-body">
         <section id="story" class="home-story" aria-labelledby="home-story-title">
           <WscAboutContent />
+          <p class="home-story__trust">{{ t('trust.line') }}</p>
         </section>
 
-        <p class="home-after-story">
-          <NuxtLink class="home-after-story__btn" :to="localePath('/check')">{{ t('home.ctaAfterStory') }}</NuxtLink>
-        </p>
-
         <section class="landing-grid" aria-labelledby="landing-more-title">
-          <h2 id="landing-more-title" class="landing-grid__sr-only">{{ t('home.landingMoreTitle') }}</h2>
-          <article class="landing-card">
+          <h2 id="landing-more-title" class="sr-only">{{ t('home.landingMoreTitle') }}</h2>
+          <NuxtLink class="landing-card" :to="localePath('/check')">
+            <span class="landing-card__icon landing-card__icon--check" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></svg>
+            </span>
             <h3 class="landing-card__title font-display">{{ t('home.cardCheckTitle') }}</h3>
             <p class="landing-card__body">{{ t('home.cardCheckBody') }}</p>
-            <NuxtLink class="landing-card__link" :to="localePath('/check')">{{ t('home.cardCheckLink') }}</NuxtLink>
-          </article>
-          <article class="landing-card">
+            <span class="landing-card__link">{{ t('home.cardCheckLink') }} →</span>
+          </NuxtLink>
+          <NuxtLink class="landing-card" :to="localePath('/huursites')">
+            <span class="landing-card__icon landing-card__icon--sites" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l9-7 9 7" /><path d="M5 10v10h14V10" /></svg>
+            </span>
             <h3 class="landing-card__title font-display">{{ t('home.cardSitesTitle') }}</h3>
             <p class="landing-card__body">{{ t('home.cardSitesBody') }}</p>
-            <NuxtLink class="landing-card__link" :to="localePath('/huursites')">{{ t('home.cardSitesLink') }}</NuxtLink>
-          </article>
-          <article class="landing-card">
+            <span class="landing-card__link">{{ t('home.cardSitesLink') }} →</span>
+          </NuxtLink>
+          <NuxtLink class="landing-card" :to="localePath('/faq')">
+            <span class="landing-card__icon landing-card__icon--faq" aria-hidden="true">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9" /><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.6v.6M12 17v.5" /></svg>
+            </span>
             <h3 class="landing-card__title font-display">{{ t('home.cardFaqTitle') }}</h3>
             <p class="landing-card__body">{{ t('home.cardFaqBody') }}</p>
-            <NuxtLink class="landing-card__link" :to="localePath('/faq')">{{ t('home.cardFaqLink') }}</NuxtLink>
-          </article>
+            <span class="landing-card__link">{{ t('home.cardFaqLink') }} →</span>
+          </NuxtLink>
+        </section>
+
+        <section class="home-cta">
+          <p class="home-cta__text font-display">{{ t('hero.title') }}</p>
+          <NuxtLink class="wsc-btn wsc-btn--action" :to="localePath('/check')">{{ t('home.ctaAfterStory') }}</NuxtLink>
         </section>
       </div>
     </Transition>
@@ -59,6 +102,18 @@ const localePath = useLocalePath()
 
 const trustPillarIds = ['pillar1', 'pillar2', 'pillar3'] as const
 const trustPillars = computed(() => trustPillarIds.map(id => t(`trust.${id}`)))
+
+const heroText = ref('')
+
+/** Startpagina-invoer: door naar /check met de tekst; daar wordt direct geanalyseerd. */
+function onHeroSubmit() {
+  const text = heroText.value.trim()
+  if (!text) {
+    void navigateTo(localePath('/check'))
+    return
+  }
+  void navigateTo({ path: localePath('/check'), query: { text, run: '1' } })
+}
 
 useWscSeo({
   title: () => t('meta.homeTitle'),
@@ -78,391 +133,368 @@ useHead(() => ({
   font-family: var(--font-display), var(--font-sans);
 }
 
-.hero {
-  min-height: clamp(14rem, 36vh, 22rem);
-  background: linear-gradient(
-    165deg,
-    color-mix(in srgb, var(--accent) 8%, var(--surface-page)) 0%,
-    var(--surface-page) 45%,
-    var(--surface-page) 100%
-  );
-  border-bottom: 1px solid var(--border-subtle);
-  transition: background 0.5s var(--ease-out), border-color 0.4s var(--ease-out);
+.home-hero__inner {
+  padding-top: clamp(1.5rem, 4vw, 3rem);
+  padding-bottom: clamp(3rem, 7vw, 5rem);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 3rem 3.5rem;
 }
 
-.hero__inner {
-  max-width: 960px;
-  margin: 0 auto;
-  padding: max(2.5rem, env(safe-area-inset-top, 0px)) max(1.25rem, env(safe-area-inset-right, 0px)) 2.25rem
-    max(1.25rem, env(safe-area-inset-left, 0px));
+.home-hero__copy {
+  flex: 999 1 30rem;
+  min-width: 0;
 }
 
-.hero__eyebrow {
-  font-size: 0.8rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--accent);
-  margin: 0 0 0.5rem;
+.home-hero__title {
+  margin: 0;
+  font-size: clamp(2.35rem, 6.2vw, 4.5rem);
+  font-weight: 800;
+  line-height: 0.98;
+  letter-spacing: -0.045em;
+  color: var(--on-brand);
 }
 
-.hero__title {
-  font-size: clamp(1.5rem, 4vw, 2rem);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  line-height: 1.2;
-  margin: 0 0 0.75rem;
-  color: var(--text-primary);
+.home-hero__sub {
+  margin: 1.25rem 0 0;
+  max-width: 36rem;
+  font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+  line-height: 1.5;
+  color: var(--on-brand-muted);
 }
 
-.hero__sub {
-  font-size: 1.05rem;
-  color: var(--text-secondary);
+.home-hero__form {
+  margin-top: 2rem;
   max-width: 38rem;
-  margin: 0 0 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
 }
 
-.hero__trust {
+.home-hero__input {
+  flex: 999 1 16rem;
+  min-width: 0;
+  min-height: 58px;
+  padding: 0 1.1rem;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  color: #0e2a21;
+  font: inherit;
+  font-size: 1.05rem;
+}
+
+.home-hero__input::placeholder {
+  color: #5e7369;
+}
+
+.home-hero__input:focus-visible {
+  outline: 3px solid var(--action);
+  outline-offset: 2px;
+}
+
+.home-hero__submit {
+  flex: 1 1 auto;
+  min-height: 58px;
+  font-size: 1.05rem;
+}
+
+.home-hero__submit:focus-visible {
+  outline-color: var(--brand-soft);
+}
+
+.home-hero__alt {
+  margin: 0.85rem 0 0;
+  font-size: 0.95rem;
+  color: var(--on-brand-muted);
+}
+
+.home-hero__alt-link {
+  color: var(--brand-soft);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+  text-decoration-color: rgba(200, 242, 220, 0.5);
+}
+
+.home-hero__alt-link:hover {
+  color: var(--on-brand);
+  text-decoration-color: currentColor;
+}
+
+.home-hero__pillars {
+  margin: 2rem 0 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.home-hero__pillar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.9rem;
+  border-radius: 999px;
+  background: var(--on-brand-line);
+  color: #eaf4ef;
+  font-size: 0.92rem;
+  font-weight: 600;
+}
+
+.home-hero__pillar svg {
+  color: #8fe3b8;
+  flex-shrink: 0;
+}
+
+/* Voorbeeld-telefoon */
+.home-sample {
+  flex: 0 0 auto;
+  width: min(20.5rem, 100%);
+  margin: 0 auto;
+  padding: 12px;
+  border-radius: 48px;
+  background: #06140f;
+  box-shadow: 0 30px 60px rgba(0, 0, 0, 0.35);
+}
+
+.home-sample__screen {
+  border-radius: 38px;
+  background: #f3f7f4;
+  color: #0e2a21;
+  padding: 1.6rem 1.1rem 1.1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.home-sample__caption {
+  margin: 0;
+  text-align: center;
   font-size: 0.85rem;
-  color: var(--text-tertiary);
-  margin: 0 0 1.25rem;
-  padding: 0.65rem 0.85rem;
-  border-radius: var(--radius-sm);
-  background: var(--surface-muted);
-  border: 1px solid var(--border-subtle);
-  display: inline-block;
+  color: #4c6159;
 }
 
+.home-sample__card {
+  background: #ffffff;
+  border-radius: 24px;
+}
+
+.home-sample__card--score {
+  padding: 1.1rem 0.85rem 1rem;
+  text-align: center;
+}
+
+.home-sample__card--score :deep(.score-gauge) {
+  margin: 0 auto;
+  color: #0e2a21;
+}
+
+.home-sample__card--score :deep(.score-gauge__track) {
+  stroke: #e2ebe6;
+}
+
+.home-sample__card--score :deep(.score-gauge__fill) {
+  stroke: #e5482a;
+}
+
+.home-sample__risk {
+  margin: 0.35rem 0 0;
+  font-size: 1.3rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: #a12e18;
+}
+
+.home-sample__rows {
+  margin: 0;
+  padding: 0.25rem 1rem;
+  list-style: none;
+}
+
+.home-sample__row {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0;
+  font-size: 0.92rem;
+}
+
+.home-sample__row + .home-sample__row {
+  border-top: 1px solid #e2ebe6;
+}
+
+.home-sample__pts {
+  color: #a12e18;
+}
+
+.home-sample__pts--mid {
+  color: #7a4f00;
+}
+
+/* Inhoud */
+.home-body {
+  padding-top: clamp(3.5rem, 8vw, 5.5rem);
+  padding-bottom: clamp(3.5rem, 8vw, 6rem);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(3rem, 6vw, 4.5rem);
+}
+
+.home-story {
+  scroll-margin-top: 6rem;
+}
+
+.home-story__trust {
+  margin: 1.5rem 0 0;
+  max-width: 52rem;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  color: var(--text-tertiary);
+}
+
+.landing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(17rem, 1fr));
+  gap: 1.1rem;
+}
+
+.landing-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1.75rem;
+  border-radius: var(--radius-lg);
+  background: var(--surface-page);
+  box-shadow: inset 0 0 0 1px var(--border-subtle);
+  color: var(--text-primary);
+  text-decoration: none;
+  transition:
+    box-shadow var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
+}
+
+.landing-card:hover {
+  color: var(--text-primary);
+  text-decoration: none;
+  background: var(--surface-elevated);
+  box-shadow: inset 0 0 0 1.5px var(--border-strong);
+  transform: none;
+}
+
+.landing-card:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: var(--radius-lg);
+}
+
+.landing-card__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.landing-card__icon--check {
+  background: var(--risk-high-bg);
+  color: var(--risk-high);
+}
+
+.landing-card__icon--sites {
+  background: var(--brand-soft);
+  color: var(--brand);
+}
+
+.landing-card__icon--faq {
+  background: var(--risk-mid-bg);
+  color: var(--risk-mid);
+}
+
+.landing-card__title {
+  margin: 0.35rem 0 0;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
+}
+
+.landing-card__body {
+  margin: 0;
+  font-size: 1rem;
+  line-height: 1.55;
+  color: var(--text-secondary);
+}
+
+.landing-card__link {
+  margin-top: auto;
+  padding-top: 0.5rem;
+  font-weight: 700;
+  color: var(--accent);
+}
+
+.home-cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem 2rem;
+  padding: clamp(1.75rem, 4vw, 2.5rem);
+  border-radius: var(--radius-xl);
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+.home-cta__text {
+  flex: 999 1 22rem;
+  margin: 0;
+  font-size: clamp(1.4rem, 3vw, 2rem);
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -0.035em;
+}
+
+.home-cta .wsc-btn {
+  flex: 1 1 auto;
+  max-width: 20rem;
+}
+
+.home-cta .wsc-btn:focus-visible {
+  outline-color: var(--brand-soft);
+}
+
+/* Inkomende animatie hero */
 .hero-reveal {
   opacity: 0;
   animation: wsc-fade-in-up var(--duration-slow) var(--ease-out) forwards;
 }
 
 .hero-reveal--1 {
-  animation-delay: 0.06s;
+  animation-delay: 0.04s;
 }
 
 .hero-reveal--2 {
-  animation-delay: 0.14s;
+  animation-delay: 0.1s;
 }
 
 .hero-reveal--3 {
-  animation-delay: 0.22s;
+  animation-delay: 0.16s;
 }
 
 .hero-reveal--4 {
-  animation-delay: 0.3s;
+  animation-delay: 0.22s;
 }
 
 .hero-reveal--5 {
-  animation-delay: 0.38s;
-}
-
-.hero-reveal--6 {
-  animation-delay: 0.46s;
-}
-
-.hero__pillars {
-  list-style: none;
-  margin: 0 0 0.75rem;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.45rem;
-}
-
-.hero__pillar {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-secondary);
-  padding: 0.4rem 0.7rem;
-  border-radius: 999px;
-  background: var(--surface-elevated);
-  border: 1px solid var(--border-subtle);
-  box-shadow: var(--shadow-sm);
-  transition:
-    transform var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out),
-    border-color var(--duration-fast) var(--ease-out);
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .hero__pillar:nth-child(1) {
-    animation: wsc-pillar-in 0.48s var(--ease-out) 0.32s backwards;
-  }
-
-  .hero__pillar:nth-child(2) {
-    animation: wsc-pillar-in 0.48s var(--ease-out) 0.4s backwards;
-  }
-
-  .hero__pillar:nth-child(3) {
-    animation: wsc-pillar-in 0.48s var(--ease-out) 0.48s backwards;
-  }
-}
-
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .hero__pillar:hover {
-    transform: translateY(-1px);
-    box-shadow: var(--shadow-md);
-    border-color: color-mix(in srgb, var(--accent) 22%, var(--border-subtle));
-  }
+  animation-delay: 0.28s;
 }
 
 @media (prefers-reduced-motion: reduce) {
   .hero-reveal {
     opacity: 1;
-    animation: none;
-    transform: none;
-  }
-}
-
-.hero__cta {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.65rem 1rem;
-}
-
-.hero__cta-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.75rem 1.35rem;
-  min-height: 48px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #fff;
-  background: var(--accent);
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  box-shadow: var(--shadow-sm);
-  touch-action: manipulation;
-  transition:
-    background var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .hero__cta-btn:hover {
-    background: var(--accent-hover);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
-  }
-}
-
-.hero__cta-btn:focus-visible {
-  outline: 2px solid var(--surface-elevated);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px var(--accent-muted);
-}
-
-.hero__cta-secondary {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--accent);
-  text-decoration: underline;
-  text-decoration-color: color-mix(in srgb, var(--accent) 40%, transparent);
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 0.18em;
-  transition:
-    color var(--duration-fast) var(--ease-out),
-    text-decoration-color var(--duration-fast) var(--ease-out),
-    text-decoration-thickness var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out);
-}
-
-.hero__cta-secondary:hover {
-  color: var(--accent-hover);
-  text-decoration-color: color-mix(in srgb, var(--accent-hover) 75%, transparent);
-  text-decoration-thickness: 2px;
-}
-
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .hero__cta-secondary:hover {
-    transform: translateY(-1px);
-  }
-}
-
-.main--landing {
-  flex: 1;
-  max-width: 960px;
-  margin: 0 auto;
-  width: 100%;
-  min-width: 0;
-  padding:
-    1.75rem
-    max(1.25rem, env(safe-area-inset-right, 0px))
-    max(3rem, env(safe-area-inset-bottom, 0px))
-    max(1.25rem, env(safe-area-inset-left, 0px));
-  display: flex;
-  flex-direction: column;
-  gap: 1.35rem;
-}
-
-.home-story {
-  padding: 1.5rem 1.4rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid color-mix(in srgb, var(--accent) 14%, var(--border-subtle));
-  background: var(--surface-elevated);
-  box-shadow: var(--shadow-md);
-  scroll-margin-top: 5rem;
-}
-
-.home-after-story {
-  margin: 0;
-  text-align: center;
-}
-
-.home-after-story__btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0.7rem 1.35rem;
-  min-height: 48px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: #fff;
-  background: var(--accent);
-  border-radius: var(--radius-md);
-  text-decoration: none;
-  box-shadow: var(--shadow-sm);
-  touch-action: manipulation;
-  transition:
-    background var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .home-after-story__btn:hover {
-    background: var(--accent-hover);
-    box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
-  }
-}
-
-.home-after-story__btn:focus-visible {
-  outline: 2px solid var(--surface-elevated);
-  outline-offset: 2px;
-  box-shadow: 0 0 0 4px var(--accent-muted);
-}
-
-.landing-grid {
-  display: grid;
-  gap: 1rem;
-}
-
-@media (min-width: 700px) {
-  .landing-grid {
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-  }
-}
-
-.landing-grid__sr-only {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  padding: 0;
-  margin: -1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
-  white-space: nowrap;
-  border: 0;
-}
-
-.landing-card {
-  padding: 1.15rem 1.25rem 1.25rem;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--border-subtle);
-  background: var(--surface-elevated);
-  box-shadow: var(--shadow-md);
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  min-height: 100%;
-  transition:
-    border-color var(--duration-fast) var(--ease-out),
-    box-shadow var(--duration-fast) var(--ease-out);
-}
-
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .landing-card:hover {
-    border-color: color-mix(in srgb, var(--accent) 22%, var(--border-subtle));
-    box-shadow: var(--shadow-panel-hover);
-  }
-}
-
-.landing-card__title {
-  font-size: 0.98rem;
-  font-weight: 600;
-  margin: 0;
-  letter-spacing: -0.02em;
-  color: var(--text-primary);
-}
-
-.landing-card__body {
-  margin: 0;
-  flex: 1;
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: var(--text-secondary);
-}
-
-.landing-card__link {
-  display: inline-flex;
-  align-items: center;
-  margin-top: 0.15rem;
-  padding: 0.35rem 0;
-  min-height: 44px;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--accent);
-  text-decoration-line: underline;
-  text-decoration-color: transparent;
-  text-decoration-thickness: 1.5px;
-  text-underline-offset: 0.2em;
-  align-self: flex-start;
-  touch-action: manipulation;
-  transition:
-    color var(--duration-fast) var(--ease-out),
-    text-decoration-color var(--duration-fast) var(--ease-out),
-    text-decoration-thickness var(--duration-fast) var(--ease-out),
-    transform var(--duration-fast) var(--ease-spring);
-}
-
-.landing-card__link:hover {
-  color: var(--accent-hover);
-  text-decoration-color: color-mix(in srgb, var(--accent-hover) 65%, transparent);
-  text-decoration-thickness: 2px;
-}
-
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .landing-card__link:hover {
-    transform: translateY(-2px);
-  }
-}
-
-@media (prefers-reduced-motion: no-preference) {
-  .landing-card {
-    animation: wsc-panel-rise 0.55s var(--ease-out) backwards;
-  }
-
-  .landing-card:nth-child(1) {
-    animation-delay: 0.04s;
-  }
-
-  .landing-card:nth-child(2) {
-    animation-delay: 0.1s;
-  }
-
-  .landing-card:nth-child(3) {
-    animation-delay: 0.16s;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .landing-card {
     animation: none;
   }
 }

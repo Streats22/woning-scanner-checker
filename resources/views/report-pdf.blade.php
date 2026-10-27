@@ -1,181 +1,148 @@
 <!DOCTYPE html>
-<html lang="{{ $locale }}" class="pdf-html pdf-html--{{ $theme }}">
+<html lang="{{ $locale }}">
 <head>
     <meta charset="utf-8">
-    @if ($theme === 'dark')
+@php
+    /*
+     * Huisstijl G (bosgroen, mint, koraal), gelijk aan frontend/app/assets/css/main.css.
+     * Lettertype: DejaVu Sans (ingebouwd in Dompdf) — rendert ë, ï, ö, é en € betrouwbaar.
+     */
+    $dark = $theme === 'dark';
+    $c = $dark ? [
+        'page' => '#0a1f18', 'card' => '#10291f', 'text' => '#eaf4ef', 'text2' => '#b4cbc0', 'text3' => '#9db8ac',
+        'line' => '#24443a', 'brand' => '#0e3b2e', 'deep' => '#06140f', 'soft' => '#8fe3b8', 'accent' => '#8fe3b8',
+        'action' => '#ff8a6b', 'track' => '#24443a',
+    ] : [
+        'page' => '#ffffff', 'card' => '#f3f7f4', 'text' => '#0e2a21', 'text2' => '#3d5249', 'text3' => '#4c6159',
+        'line' => '#dce5e0', 'brand' => '#0e3b2e', 'deep' => '#0a1f18', 'soft' => '#c8f2dc', 'accent' => '#0e3b2e',
+        'action' => '#ff7a59', 'track' => '#dce5e0',
+    ];
+    $risk = [
+        'p-low' => ['fg' => '#1e6b44', 'bg' => '#ddf3e6', 'meter' => '#2e9e62', 'onBrand' => '#8fe3b8'],
+        'p-mid' => ['fg' => '#7a4f00', 'bg' => '#fdf0d5', 'meter' => '#e0a100', 'onBrand' => '#f2c14e'],
+        'p-high' => ['fg' => '#a12e18', 'bg' => '#fce3dc', 'meter' => '#e5482a', 'onBrand' => '#ff9c85'],
+    ];
+@endphp
     <style>
-        /**
-         * Dark: zelfde tokens als frontend `html.dark` (main.css — surface-page, text-*, border-subtle, accent).
-         * @page margin: 0 + zelfde achtergrond als html/body — voorkomt witte randen/strepen rondom (Dompdf).
-         */
-        @page {
-            margin: 0;
-            background-color: #0a101d;
-        }
-
-        html.pdf-html--dark {
-            background: #0a101d !important;
+        @page { margin: 26pt 0 0 0; background-color: {{ $c['page'] }}; }
+        @page :first { margin-top: 0; }
+        html { margin: 0; padding: 0; background: {{ $c['page'] }}; }
+        body {
             margin: 0;
             padding: 0;
-        }
-    </style>
-    @else
-    <style>
-        /**
-         * Light: marge via body-padding, niet via @page — één doorlopende witte achtergrond, geen “kader”.
-         */
-        @page {
-            margin: 0;
-            background-color: #ffffff;
-        }
-
-        html.pdf-html--light {
-            background: #ffffff !important;
-            margin: 0;
-            padding: 0;
-        }
-    </style>
-    @endif
-    <style>
-        /* Dompdf: geen standaard tabellijnen (witte/grijze strepen rond cellen). */
-        body.pdf-root--light table,
-        body.pdf-root--dark table { border-collapse: collapse; border: 0; }
-        body.pdf-root--light td,
-        body.pdf-root--light th,
-        body.pdf-root--dark td,
-        body.pdf-root--dark th { border: 0; padding: 0; }
-
-        /* Light (default) */
-        body.pdf-root--light {
             font-family: DejaVu Sans, sans-serif;
-            font-size: 10pt;
-            color: #1a1a1a;
-            line-height: 1.45;
-            background: #ffffff !important;
-            margin: 0;
-            padding: 28pt 32pt 32pt 32pt;
-            box-sizing: border-box;
+            font-size: 9.5pt;
+            line-height: 1.5;
+            color: {{ $c['text'] }};
+            background: {{ $c['page'] }};
         }
-        body.pdf-root--light h1 { font-size: 15pt; margin: 0 0 6pt; color: #0f172a; }
-        body.pdf-root--light h2 { font-size: 11pt; margin: 14pt 0 6pt; color: #0f172a; border-bottom: 1px solid #cbd5e1; padding-bottom: 3pt; }
-        body.pdf-root--light .muted { color: #64748b; font-size: 9pt; }
-        body.pdf-root--light .score { font-size: 28pt; font-weight: bold; color: #0f172a; }
-        body.pdf-root--light .pill { display: inline-block; padding: 2pt 8pt; border-radius: 999pt; font-size: 8pt; font-weight: bold; text-transform: uppercase; }
-        body.pdf-root--light .p-low { background: #dcfce7; color: #166534; }
-        body.pdf-root--light .p-mid { background: #ffedd5; color: #9a3412; }
-        body.pdf-root--light .p-high { background: #fee2e2; color: #991b1b; }
-        body.pdf-root--light .pdf-pill--ai { background: #dbeafe; color: #1e40af; }
-        body.pdf-root--light table.meta { width: 100%; font-size: 9pt; margin-bottom: 10pt; }
-        body.pdf-root--light table.meta td { padding: 2pt 8pt 2pt 0; vertical-align: top; }
-        body.pdf-root--light ul, body.pdf-root--light ol { margin: 4pt 0 8pt 14pt; padding: 0; }
-        body.pdf-root--light li { margin: 3pt 0; color: #1e293b; }
-        body.pdf-root--light .break { margin-bottom: 8pt; padding-bottom: 6pt; border-bottom: 1px solid #e2e8f0; }
-        body.pdf-root--light .break:last-child { border-bottom: none; }
-        body.pdf-root--light .cat { font-weight: bold; color: #1e40af; }
-        body.pdf-root--light .summary { white-space: pre-wrap; word-wrap: break-word; font-size: 9pt; color: #334155; }
-        body.pdf-root--light .footer { margin-top: 16pt; font-size: 8pt; color: #94a3b8; }
-        body.pdf-root--light .pdf-brand { width: 100%; margin-bottom: 14pt; border-bottom: none; padding-bottom: 0; }
-        body.pdf-root--light .pdf-brand td { vertical-align: middle; }
-        body.pdf-root--light .pdf-brand__name { font-size: 16pt; font-weight: bold; color: #1e40af; letter-spacing: -0.02em; }
-        body.pdf-root--light .pdf-brand__tag { font-size: 8.5pt; color: #64748b; margin-top: 2pt; }
-        body.pdf-root--light .pdf-brand__logo { width: 44px; height: 44px; }
-        body.pdf-root--light .pdf-brand-foot { margin-top: 18pt; padding-top: 0; border-top: none; text-align: center; font-size: 8pt; color: #94a3b8; }
-        body.pdf-root--light .pdf-brand-foot img { vertical-align: middle; margin-right: 4pt; }
-        body.pdf-root--light .pdf-brand-foot strong { color: #1e40af; font-weight: bold; }
+        table { border-collapse: collapse; border: 0; }
+        td, th { border: 0; padding: 0; vertical-align: top; }
 
-        /* Dark — tokens: surface-page #0a101d, text-primary #f1f5f9, text-secondary #94a3b8, text-tertiary #64748b, border-subtle #2d3b55, accent #60a5fa */
-        body.pdf-root--dark {
-            font-family: DejaVu Sans, sans-serif;
-            font-size: 10pt;
-            color: #f1f5f9 !important;
-            line-height: 1.45;
-            background: #0a101d !important;
-            margin: 0 !important;
-            padding: 28pt 32pt 32pt 32pt;
-            box-sizing: border-box;
+        .band {
+            background: {{ $c['brand'] }};
+            color: #ffffff;
+            padding: 22pt 34pt 24pt;
+            border-bottom-left-radius: 22pt;
+            border-bottom-right-radius: 22pt;
+        }
+        .brand td { vertical-align: middle; }
+        .brand__name { font-size: 13pt; font-weight: bold; color: #ffffff; }
+        .brand__tag { font-size: 8pt; color: #cfe3da; }
+        .brand__meta { text-align: right; font-size: 8pt; color: #cfe3da; }
+
+        .hero { width: 100%; margin-top: 18pt; }
+        .hero td { vertical-align: middle; }
+        .hero__score { font-size: 40pt; font-weight: bold; line-height: 1; color: #ffffff; }
+        .hero__of { font-size: 12pt; color: #cfe3da; }
+        .hero__label { font-size: 7.5pt; font-weight: bold; letter-spacing: 0.6pt; text-transform: uppercase; color: #cfe3da; }
+        .hero__risk { font-size: 20pt; font-weight: bold; line-height: 1.15; }
+        .meter { width: 100%; margin-top: 10pt; }
+        .meter td { height: 8pt; }
+        .chip {
+            display: inline-block;
+            margin-top: 6pt;
+            padding: 2pt 8pt;
+            border-radius: 9pt;
+            font-size: 7.5pt;
+            font-weight: bold;
+            background: #1d5442;
+            color: #c8f2dc;
         }
 
-        body.pdf-root--dark h1,
-        body.pdf-root--dark h2 {
-            background: transparent !important;
+        .content { padding: 18pt 34pt 0; }
+        h1 { margin: 0; font-size: 22pt; line-height: 1.1; color: #ffffff; }
+        h2 {
+            margin: 16pt 0 7pt;
+            font-size: 12pt;
+            font-weight: bold;
+            color: {{ $c['text'] }};
+        }
+        p { margin: 0 0 6pt; }
+        .muted { color: {{ $c['text2'] }}; }
+        .small { font-size: 8pt; color: {{ $c['text3'] }}; }
+
+        .card {
+            background: {{ $c['card'] }};
+            border-radius: 10pt;
+            padding: 9pt 12pt;
+            margin-bottom: 5pt;
         }
 
-        body.pdf-root--dark h1 { font-size: 15pt; margin: 0 0 6pt; color: #f1f5f9 !important; }
-        body.pdf-root--dark h2 { font-size: 11pt; margin: 14pt 0 6pt; color: #f1f5f9 !important; border-bottom: 1px solid #2d3b55; padding-bottom: 3pt; }
-        body.pdf-root--dark p,
-        body.pdf-root--dark td,
-        body.pdf-root--dark th,
-        body.pdf-root--dark li,
-        body.pdf-root--dark span { color: #f1f5f9 !important; }
-        body.pdf-root--dark .muted { color: #94a3b8 !important; font-size: 9pt; }
-        body.pdf-root--dark .score { font-size: 28pt; font-weight: bold; color: #f1f5f9 !important; }
-        body.pdf-root--dark .pill { display: inline-block; padding: 2pt 8pt; border-radius: 999pt; font-size: 8pt; font-weight: bold; text-transform: uppercase; }
-        body.pdf-root--dark .p-low { background: #14532d !important; color: #bbf7d0 !important; }
-        body.pdf-root--dark .p-mid { background: #7c2d12 !important; color: #ffedd5 !important; }
-        body.pdf-root--dark .p-high { background: #7f1d1d !important; color: #fecaca !important; }
-        body.pdf-root--dark .pdf-pill--ai { background: #172033 !important; color: #60a5fa !important; }
-        body.pdf-root--dark table.meta { width: 100%; font-size: 9pt; margin-bottom: 10pt; background: transparent !important; }
-        body.pdf-root--dark table.meta td { padding: 2pt 8pt 2pt 0; vertical-align: top; background: transparent !important; }
-        body.pdf-root--dark table { background: transparent !important; border-collapse: collapse; }
-        body.pdf-root--dark ul,
-        body.pdf-root--dark ol {
-            margin: 4pt 0 8pt 14pt;
-            padding: 0;
-            background: transparent !important;
-            list-style-color: #64748b;
-        }
-        body.pdf-root--dark li {
-            margin: 3pt 0;
-            color: #f1f5f9 !important;
-        }
-        body.pdf-root--dark .break {
-            margin-bottom: 8pt;
-            padding-bottom: 6pt;
-            border-bottom: 1px solid #2d3b55;
-            background: transparent !important;
-        }
-        body.pdf-root--dark .break:last-child { border-bottom: none; }
-        body.pdf-root--dark .cat { font-weight: bold; color: #60a5fa !important; }
-        body.pdf-root--dark .summary { white-space: pre-wrap; word-wrap: break-word; font-size: 9pt; color: #94a3b8 !important; }
-        body.pdf-root--dark .footer { margin-top: 16pt; font-size: 8pt; color: #64748b !important; }
-        body.pdf-root--dark strong { color: #60a5fa !important; font-weight: bold; }
-        body.pdf-root--dark .pdf-brand { width: 100%; margin-bottom: 14pt; border-bottom: none; padding-bottom: 0; background: transparent !important; }
-        body.pdf-root--dark .pdf-brand td { vertical-align: middle; background: transparent !important; }
-        body.pdf-root--dark .pdf-brand__name { font-size: 16pt; font-weight: bold; color: #f1f5f9 !important; letter-spacing: -0.02em; }
-        body.pdf-root--dark .pdf-brand__tag { font-size: 8.5pt; color: #94a3b8 !important; margin-top: 2pt; }
-        body.pdf-root--dark .pdf-brand__logo { width: 44px; height: 44px; }
-        body.pdf-root--dark .pdf-brand-foot {
-            margin-top: 18pt;
-            padding-top: 0;
-            border-top: none;
-            text-align: center;
+        .facts { width: 100%; background: {{ $c['card'] }}; border-radius: 10pt; }
+        .facts td { padding: 5pt 12pt; border-bottom: 1px solid {{ $c['line'] }}; }
+        .facts td.muted { width: 42%; }
+
+        .row { width: 100%; }
+        .row__cat { font-weight: bold; color: {{ $c['text'] }}; }
+        .pts {
+            display: inline-block;
+            padding: 1pt 7pt;
+            border-radius: 8pt;
             font-size: 8pt;
-            color: #94a3b8 !important;
-            background: transparent !important;
+            font-weight: bold;
+            background: {{ $risk['p-high']['bg'] }};
+            color: {{ $risk['p-high']['fg'] }};
         }
-        body.pdf-root--dark .pdf-brand-foot img { vertical-align: middle; margin-right: 4pt; }
-        body.pdf-root--dark .pdf-brand-foot strong { color: #60a5fa !important; font-weight: bold; }
+
+        .flag {
+            background: {{ $dark ? '#3a1d16' : $risk['p-high']['bg'] }};
+            border-radius: 10pt;
+            padding: 6pt 12pt;
+            margin-bottom: 4pt;
+        }
+        .dot { color: {{ $c['action'] }}; font-weight: bold; }
+
+        .check td { padding: 5pt 0; border-bottom: 1px solid {{ $c['line'] }}; }
+        .box {
+            width: 9pt;
+            height: 9pt;
+            border: 1.2pt solid {{ $c['accent'] }};
+            border-radius: 2pt;
+        }
+
+        ol.rec { margin: 0 0 0 14pt; padding: 0; }
+        ol.rec li { margin: 2pt 0; }
+
+        .summary { white-space: pre-wrap; word-wrap: break-word; color: {{ $c['text2'] }}; }
+
+        .foot {
+            margin-top: 20pt;
+            padding: 14pt 34pt 18pt;
+            background: {{ $c['deep'] }};
+            color: #9db8ac;
+            font-size: 7.5pt;
+        }
+        .foot td { vertical-align: middle; }
+        .foot strong { color: #ffffff; }
+        .foot a { color: #8fe3b8; text-decoration: none; }
     </style>
 </head>
-<body class="pdf-root--{{ $theme }}">
+<body>
 {{-- Dompdf: alleen PNG data-URI; zie App\Support\PdfBrandLogo (public + resources fallback). --}}
 @php
     $logoDataUri = \App\Support\PdfBrandLogo::dataUri($theme);
 @endphp
-    <table class="pdf-brand" cellpadding="0" cellspacing="0">
-        <tr>
-            <td style="width: 52px; padding-right: 10pt;">
-                @if ($logoDataUri !== '')
-                    <img class="pdf-brand__logo" src="{{ $logoDataUri }}" width="44" height="44" alt="" />
-                @endif
-            </td>
-            <td>
-                <div class="pdf-brand__name">{{ __('pdf.brand_name') }}</div>
-                <div class="pdf-brand__tag">{{ __('pdf.brand_tagline') }}</div>
-            </td>
-        </tr>
-    </table>
-
 @php
     $s = (int) $listing->scam_score;
     $tier = $s <= 30 ? 'p-low' : ($s <= 60 ? 'p-mid' : 'p-high');
@@ -188,36 +155,72 @@
     $breakdown = $snap['risk_breakdown'] ?? [];
     $listingFacts = is_array($snap['listing_facts'] ?? null) ? $snap['listing_facts'] : null;
 @endphp
-    <h1>{{ __('pdf.report_title') }}</h1>
-    <p class="muted">{{ $listing->report_slug ?? __('pdf.report_number', ['id' => $listing->id]) }} · {{ $listing->created_at?->format('d-m-Y H:i') ?? '—' }}</p>
-
-    <table class="meta">
-        <tr>
-            <td><span class="score">{{ $listing->scam_score }}</span></td>
-            <td>
-                <span class="pill {{ $tier }}">{{ $tierLabel }}</span>
-                @if (!empty($snap['llm_used']))
-                    <span class="pill pdf-pill--ai">{{ __('pdf.ai_badge') }}</span>
-                @endif
-            </td>
-        </tr>
-        @if ((int) $ruleScore !== $s)
+@php
+    $rc = $risk[$tier];
+    $pct = max(0, min(100, $s));
+@endphp
+    <div class="band">
+        <table class="brand" width="100%" cellpadding="0" cellspacing="0">
             <tr>
-                <td colspan="2" class="muted">{{ __('pdf.rule_engine_line', ['rule' => $ruleScore, 'final' => $s]) }}</td>
+                <td style="width: 46px; padding-right: 9pt;">
+                    @if ($logoDataUri !== '')
+                        <img src="{{ $logoDataUri }}" width="38" height="38" alt="" />
+                    @endif
+                </td>
+                <td>
+                    <div class="brand__name">{{ __('pdf.brand_name') }}</div>
+                    <div class="brand__tag">{{ __('pdf.brand_tagline') }}</div>
+                </td>
+                <td class="brand__meta">
+                    {{ $listing->report_slug ?? __('pdf.report_number', ['id' => $listing->id]) }}<br>
+                    {{ $listing->created_at?->format('d-m-Y H:i') ?? '—' }}
+                </td>
             </tr>
-        @endif
-    </table>
+        </table>
 
-    <h2>{{ __('pdf.market_heading') }}</h2>
-    <p class="muted">{{ __('pdf.market_benchmark', ['avg' => $listing->market_average ?? '—']) }}
-        @if ($listing->market_difference_percent !== null)
-            {{ ' '.__('pdf.market_diff', ['pct' => $listing->market_difference_percent]) }}
+        <table class="hero" cellpadding="0" cellspacing="0">
+            <tr>
+                <td style="width: 34%;">
+                    <div class="hero__label">{{ __('pdf.score_label') }}</div>
+                    <span class="hero__score">{{ $s }}</span><span class="hero__of"> / 100</span>
+                </td>
+                <td>
+                    <h1>{{ __('pdf.report_title') }}</h1>
+                    <div class="hero__risk" style="color: {{ $rc['onBrand'] }};">{{ $tierLabel }}</div>
+                    @if (!empty($snap['llm_used']))
+                        <span class="chip">{{ __('pdf.ai_badge') }}</span>
+                    @endif
+                </td>
+            </tr>
+        </table>
+        <table class="meter" cellpadding="0" cellspacing="0">
+            <tr>
+                @if ($pct > 0)
+                    <td style="width: {{ $pct }}%; background: {{ $rc['meter'] }}; border-radius: 4pt;"></td>
+                @endif
+                @if ($pct < 100)
+                    <td style="background: #1d5442; border-radius: 4pt;"></td>
+                @endif
+            </tr>
+        </table>
+    </div>
+
+    <div class="content">
+        @if ((int) $ruleScore !== $s)
+            <p class="small">{{ __('pdf.rule_engine_line', ['rule' => $ruleScore, 'final' => $s]) }}</p>
         @endif
-    </p>
+
+        <h2>{{ __('pdf.market_heading') }}</h2>
+        <div class="card">
+            {{ __('pdf.market_benchmark', ['avg' => $listing->market_average ?? '—']) }}
+            @if ($listing->market_difference_percent !== null)
+                {{ ' '.__('pdf.market_diff', ['pct' => $listing->market_difference_percent]) }}
+            @endif
+        </div>
 
     @if ($listingFacts)
         <h2>{{ __('pdf.facts_title') }}</h2>
-        <table class="meta">
+        <table class="facts" cellpadding="0" cellspacing="0">
             <tr>
                 <td class="muted">{{ __('pdf.facts_city') }}</td>
                 <td>{{ $listingFacts['city'] ?? __('pdf.facts_empty') }}</td>
@@ -264,7 +267,7 @@
             @endif
             <x-listing-surface-facts :listing-facts="$listingFacts" variant="pdf" />
         </table>
-        <p class="muted" style="margin-top:6pt;">
+        <p class="small" style="margin-top:5pt;">
             @if (($listingFacts['benchmark_scope'] ?? '') === 'national')
                 {{ __('pdf.facts_scope_national') }}
             @elseif (!empty($listingFacts['benchmark_city']))
@@ -273,58 +276,70 @@
         </p>
     @endif
 
-    @if (count($breakdown))
-        <h2>{{ __('pdf.risk_breakdown_heading') }}</h2>
-        @foreach ($breakdown as $row)
-            <div class="break">
-                <span class="cat">{{ $row['category'] ?? __('pdf.breakdown_fallback') }}</span>
-                <span class="muted"> ({{ __('pdf.points', ['n' => $row['points'] ?? 0]) }})</span>
-                @if (!empty($row['detail']))
-                    <p class="muted pdf-detail" style="margin:4pt 0 0;">{{ $row['detail'] }}</p>
-                @endif
-            </div>
-        @endforeach
-    @endif
-
-    <h2>{{ __('pdf.signals_heading') }}</h2>
-    @if (count($flags))
-        <ul>
-            @foreach ($flags as $f)
-                <li>{{ $f }}</li>
+        @if (count($breakdown))
+            <h2>{{ __('pdf.risk_breakdown_heading') }}</h2>
+            @foreach ($breakdown as $row)
+                <div class="card">
+                    <table class="row" cellpadding="0" cellspacing="0">
+                        <tr>
+                            <td class="row__cat">{{ $row['category'] ?? __('pdf.breakdown_fallback') }}</td>
+                            <td style="text-align: right; width: 60pt;"><span class="pts">{{ __('pdf.points', ['n' => $row['points'] ?? 0]) }}</span></td>
+                        </tr>
+                    </table>
+                    @if (!empty($row['detail']))
+                        <p class="muted" style="margin: 3pt 0 0;">{{ $row['detail'] }}</p>
+                    @endif
+                </div>
             @endforeach
-        </ul>
-    @else
-        <p class="muted">{{ __('pdf.signals_empty') }}</p>
-    @endif
-
-    @if (count($rec))
-        <h2>{{ __('pdf.recommendations_heading') }}</h2>
-        <ol>
-            @foreach ($rec as $item)
-                <li>{{ $item }}</li>
-            @endforeach
-        </ol>
-    @endif
-
-    @if (count($verify))
-        <h2>{{ __('pdf.verify_heading') }}</h2>
-        <ol>
-            @foreach ($verify as $item)
-                <li>{{ $item }}</li>
-            @endforeach
-        </ol>
-    @endif
-
-    <h2>{{ __('pdf.summary_heading') }}</h2>
-    <p class="summary">{{ $listing->ai_summary }}</p>
-
-    <p class="footer">{{ __('pdf.footer_disclaimer') }}</p>
-
-    <div class="pdf-brand-foot">
-        @if ($logoDataUri !== '')
-            <img src="{{ $logoDataUri }}" width="20" height="20" alt="" />
         @endif
-        <strong>{{ __('pdf.brand_name') }}</strong> — {{ __('pdf.foot_tagline') }}
+
+        <h2>{{ __('pdf.signals_heading') }}</h2>
+        @if (count($flags))
+            @foreach ($flags as $f)
+                <div class="flag"><span class="dot">&#9679;</span>&nbsp; {{ $f }}</div>
+            @endforeach
+        @else
+            <p class="muted">{{ __('pdf.signals_empty') }}</p>
+        @endif
+
+        @if (count($rec))
+            <h2>{{ __('pdf.recommendations_heading') }}</h2>
+            <ol class="rec">
+                @foreach ($rec as $item)
+                    <li>{{ $item }}</li>
+                @endforeach
+            </ol>
+        @endif
+
+        @if (count($verify))
+            <h2>{{ __('pdf.verify_heading') }}</h2>
+            <table class="check" width="100%" cellpadding="0" cellspacing="0">
+                @foreach ($verify as $item)
+                    <tr>
+                        <td style="width: 18pt; padding-top: 7pt;"><div class="box"></div></td>
+                        <td>{{ $item }}</td>
+                    </tr>
+                @endforeach
+            </table>
+        @endif
+
+        <h2>{{ __('pdf.summary_heading') }}</h2>
+        <p class="summary">{{ $listing->ai_summary }}</p>
+
+        <p class="small" style="margin-top: 12pt;">{{ __('pdf.footer_disclaimer') }}</p>
+    </div>
+
+    <div class="foot">
+        <table width="100%" cellpadding="0" cellspacing="0">
+            <tr>
+                <td>
+                    <strong>{{ __('pdf.brand_name') }}</strong> · {{ __('pdf.foot_tagline') }} · dehuurradar.nl
+                </td>
+                <td style="text-align: right;">
+                    <a href="https://streatsdesign.nl">{{ __('pdf.made_by') }}</a> · <a href="mailto:info@streatsdesign.nl">{{ __('pdf.contact') }}</a>
+                </td>
+            </tr>
+        </table>
     </div>
 </body>
 </html>
