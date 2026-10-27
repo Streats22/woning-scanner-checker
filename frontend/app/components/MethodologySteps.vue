@@ -1,7 +1,7 @@
 <template>
   <div class="method">
     <template v-for="(block, i) in blocks" :key="i">
-      <section v-if="block.kind === 'step'" class="method-step">
+      <section v-if="block.kind === 'step'" v-reveal="i % 3" class="method-step">
         <span class="method-step__num" aria-hidden="true">{{ block.num }}</span>
         <div class="method-step__body">
           <h3 class="method-step__title">
@@ -11,7 +11,7 @@
         </div>
       </section>
 
-      <section v-else-if="block.kind === 'group'" class="method-group">
+      <section v-else-if="block.kind === 'group'" v-reveal="i % 3" class="method-group">
         <h4 class="method-group__title">{{ block.title }}</h4>
         <ul class="method-group__list">
           <li v-for="(item, j) in block.items" :key="j" class="method-group__item">

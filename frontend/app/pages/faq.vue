@@ -21,8 +21,9 @@
           <div class="faq-main">
             <div class="faq-list" role="list">
               <details
-                v-for="n in faqQuestionIds"
+                v-for="(n, i) in faqQuestionIds"
                 :key="n"
+                v-reveal="i % 4"
                 class="faq-item"
                 role="listitem"
               >
@@ -52,7 +53,7 @@
             </details>
           </div>
 
-          <aside class="contact-card" aria-labelledby="contact-title">
+          <aside v-reveal="1" class="contact-card" aria-labelledby="contact-title">
             <h2 id="contact-title" class="contact-card__title">{{ t('faq.contactTitle') }}</h2>
             <p class="contact-card__intro">{{ t('faq.contactIntro') }}</p>
             <a class="wsc-btn wsc-btn--action contact-card__mail" href="mailto:info@streatsdesign.nl">info@streatsdesign.nl</a>
@@ -197,6 +198,25 @@ useHead(() => ({
 .faq-sources-details__summary:focus-visible {
   outline: 3px solid var(--accent);
   outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .faq-item[open] .faq-item__body,
+  .faq-sources-details[open] .faq-sources-details__panel {
+    animation: faq-open 0.35s var(--ease-out);
+  }
+
+  .faq-item__summary:hover::after,
+  .faq-sources-details__summary:hover::after {
+    transform: rotate(90deg);
+  }
+}
+
+@keyframes faq-open {
+  from {
+    opacity: 0;
+    translate: 0 -6px;
+  }
 }
 
 .faq-item__body {

@@ -316,6 +316,7 @@
               <li
                 v-for="(row, i) in result.risk_breakdown"
                 :key="i"
+                v-reveal="i"
                 class="risk-list__item"
               >
                 <span class="risk-list__head">
@@ -365,7 +366,7 @@
           <template v-if="result.what_to_verify?.length">
             <h2 class="section-title font-display">{{ t('result.whatToVerify') }}</h2>
             <ul class="verify-list">
-              <li v-for="(line, i) in result.what_to_verify" :key="i" class="verify-list__item">
+              <li v-for="(line, i) in result.what_to_verify" :key="i" v-reveal="i" class="verify-list__item">
                 <label class="verify-list__label">
                   <input type="checkbox" class="verify-list__box">
                   <span class="verify-list__text">{{ line }}</span>
@@ -1653,6 +1654,18 @@ html.dark .benchmark-focus {
   margin: 0.1rem 0 0;
   accent-color: var(--accent);
   cursor: pointer;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .verify-list__box:checked {
+    animation: verify-tick 0.3s var(--ease-spring);
+  }
+}
+
+@keyframes verify-tick {
+  50% {
+    transform: scale(1.25);
+  }
 }
 
 .verify-list__box:checked + .verify-list__text {
