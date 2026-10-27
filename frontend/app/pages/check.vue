@@ -289,7 +289,7 @@
 
           <template v-if="result.methodology">
             <h2 class="section-title font-display">{{ t('result.methodology') }}</h2>
-            <p class="body-text muted result-block methodology-text">{{ result.methodology }}</p>
+            <MethodologySteps :text="result.methodology" />
           </template>
 
           <template v-if="result.market_context">
@@ -316,6 +316,7 @@
               <li
                 v-for="(row, i) in result.risk_breakdown"
                 :key="i"
+                v-reveal="i"
                 class="risk-list__item"
               >
                 <span class="risk-list__head">
@@ -336,9 +337,31 @@
               :style="{ '--i': String(Math.min(i, 14)) }"
             >
               {{ f }}
+              <span v-if="aiFlagSet.has(f)" class="flag-list__ai">{{ t('result.aiFlagTag') }}</span>
             </li>
           </ul>
           <p v-else class="muted">{{ t('result.flagsEmpty') }}</p>
+
+          <section
+            v-if="result.ai_findings"
+            v-reveal
+            class="ai-findings"
+            aria-labelledby="ai-findings-title"
+          >
+            <h2 id="ai-findings-title" class="ai-findings__title">
+              <span class="ai-findings__badge" aria-hidden="true">AI</span>
+              {{ t('result.aiFindingsTitle') }}
+            </h2>
+            <p v-if="result.ai_findings.raised_score" class="ai-findings__score">
+              {{ t('result.aiFindingsRaised', { ai: result.ai_findings.score, rule: result.ai_findings.rule_score }) }}
+            </p>
+            <template v-if="result.ai_findings.flags.length">
+              <p class="ai-findings__lead">{{ t('result.aiFindingsLead') }}</p>
+              <ul class="ai-findings__list">
+                <li v-for="(f, i) in result.ai_findings.flags" :key="i">{{ f }}</li>
+              </ul>
+            </template>
+          </section>
 
           <template v-if="!result.listing_facts">
             <h2 class="section-title font-display">{{ t('result.market') }}</h2>
@@ -365,7 +388,7 @@
           <template v-if="result.what_to_verify?.length">
             <h2 class="section-title font-display">{{ t('result.whatToVerify') }}</h2>
             <ul class="verify-list">
-              <li v-for="(line, i) in result.what_to_verify" :key="i" class="verify-list__item">
+              <li v-for="(line, i) in result.what_to_verify" :key="i" v-reveal="i" class="verify-list__item">
                 <label class="verify-list__label">
                   <input type="checkbox" class="verify-list__box">
                   <span class="verify-list__text">{{ line }}</span>
@@ -450,6 +473,13 @@ type AnalyzeResponse = {
   summary_short?: string | null
   narrative?: string | null
   llm_used?: boolean
+  /** Alleen gevuld als de AI-check iets toevoegt (hogere score of eigen signalen). */
+  ai_findings?: {
+    score: number
+    rule_score: number
+    raised_score: boolean
+    flags: string[]
+  } | null
   link_assessment?: string | null
   recommendations?: string[]
   what_to_verify?: string[]
@@ -748,6 +778,8 @@ function apiUrl(path: string): string {
     return p
   return `${base.replace(/\/$/, '')}${p}`
 }
+
+const aiFlagSet = computed(() => new Set(result.value?.ai_findings?.flags ?? []))
 
 function scoreLevel(n: number): 'low' | 'mid' | 'high' {
   if (n <= 30) return 'low'
@@ -1625,6 +1657,71 @@ html.dark .benchmark-focus {
   color: var(--accent);
 }
 
+.flag-list__ai {
+  display: inline-block;
+  margin-left: 0.4rem;
+  padding: 0 0.45rem;
+  border-radius: 999px;
+  background: var(--brand);
+  color: var(--brand-soft);
+  font-size: 0.72rem;
+  font-weight: 800;
+  vertical-align: 0.1em;
+}
+
+/* Wat de AI-check extra vond */
+.ai-findings {
+  margin-top: 1.5rem;
+  padding: 1.1rem 1.25rem;
+  border-radius: var(--radius-md);
+  background: var(--brand);
+  color: var(--on-brand);
+}
+
+.ai-findings__title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin: 0 0 0.6rem;
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--on-brand);
+}
+
+.ai-findings__badge {
+  padding: 0.1rem 0.5rem;
+  border-radius: 999px;
+  background: var(--brand-soft);
+  color: var(--brand);
+  font-size: 0.75rem;
+  font-weight: 800;
+}
+
+.ai-findings__score,
+.ai-findings__lead {
+  margin: 0 0 0.6rem;
+  line-height: 1.55;
+  color: var(--on-brand-muted);
+}
+
+.ai-findings__score {
+  color: var(--on-brand);
+  font-weight: 600;
+}
+
+.ai-findings__list {
+  margin: 0;
+  padding-left: 1.2rem;
+  display: grid;
+  gap: 0.4rem;
+  line-height: 1.5;
+}
+
+.ai-findings__list li::marker {
+  color: var(--action);
+}
+
 /* Controlelijst met vinkjes */
 .verify-list {
   margin: 0;
@@ -1655,6 +1752,18 @@ html.dark .benchmark-focus {
   cursor: pointer;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .verify-list__box:checked {
+    animation: verify-tick 0.3s var(--ease-spring);
+  }
+}
+
+@keyframes verify-tick {
+  50% {
+    transform: scale(1.25);
+  }
+}
+
 .verify-list__box:checked + .verify-list__text {
   color: var(--text-secondary);
   text-decoration: line-through;
@@ -1668,6 +1777,10 @@ html.dark .benchmark-focus {
 .narrative,
 .summary {
   max-width: 70ch;
+}
+
+.summary {
+  white-space: pre-line;
 }
 
 /* Delen / PDF */

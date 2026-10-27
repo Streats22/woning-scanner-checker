@@ -32,6 +32,8 @@
         $tierLabel = 'Verhoogd risico';
     }
     $flags = $listing->scam_flags ?? [];
+    $aiFindings = is_array(($listing->report_snapshot ?? [])['ai_findings'] ?? null) ? $listing->report_snapshot['ai_findings'] : null;
+    $aiFlags = $aiFindings['flags'] ?? [];
     $snap = $listing->report_snapshot ?? [];
     $ruleScore = $snap['rule_score'] ?? $s;
     $rec = $snap['recommendations'] ?? [];
@@ -209,13 +211,30 @@
             @if (count($flags))
                 <ul class="prose">
                     @foreach ($flags as $f)
-                        <li>{{ $f }}</li>
+                        <li>{{ $f }}@if (in_array($f, $aiFlags, true)) <span class="ai-tag">AI</span>@endif</li>
                     @endforeach
                 </ul>
             @else
                 <p class="empty">Geen automatisch gedetecteerde signalen in de tekst.</p>
             @endif
         </div>
+
+        @if ($aiFindings)
+            <div class="card card--ai">
+                <h2><span class="ai-tag ai-tag--soft">AI</span> {{ __('pdf.ai_findings_title') }}</h2>
+                @if (! empty($aiFindings['raised_score']))
+                    <p>{{ __('pdf.ai_findings_raised', ['ai' => $aiFindings['score'], 'rule' => $aiFindings['rule_score']]) }}</p>
+                @endif
+                @if (count($aiFlags))
+                    <p class="ai-lead">{{ __('pdf.ai_findings_lead') }}</p>
+                    <ul>
+                        @foreach ($aiFlags as $f)
+                            <li>{{ $f }}</li>
+                        @endforeach
+                    </ul>
+                @endif
+            </div>
+        @endif
 
         @if ($linkAssessment && $listing->source_url)
             <div class="card">

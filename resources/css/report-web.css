@@ -273,3 +273,35 @@ details summary {
     color: var(--muted);
     font-style: italic;
 }
+
+/* Wat de AI-check extra vond */
+.ai-tag {
+    display: inline-block;
+    margin-left: 0.3rem;
+    padding: 0 0.45rem;
+    border-radius: 999px;
+    background: #0e3b2e;
+    color: #c8f2dc;
+    font-size: 0.72rem;
+    font-weight: 800;
+    vertical-align: 0.1em;
+}
+
+.ai-tag--soft {
+    margin-left: 0;
+    background: #c8f2dc;
+    color: #0e3b2e;
+}
+
+.card--ai {
+    background: #0e3b2e;
+    color: #ffffff;
+}
+
+.card--ai h2 {
+    color: #ffffff;
+}
+
+.card--ai .ai-lead {
+    color: #cfe3da;
+}

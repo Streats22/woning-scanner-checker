@@ -28,7 +28,7 @@
       x="130"
       y="124"
       text-anchor="middle"
-    >{{ clamped }}</text>
+    >{{ shown }}</text>
   </svg>
 </template>
 
@@ -49,6 +49,33 @@ const props = withDefaults(
 )
 
 const clamped = computed(() => Math.max(0, Math.min(100, Math.round(props.score))))
+
+/** Getal telt mee op met de meter; bij reduced motion of op de server direct de eindwaarde. */
+const shown = ref(clamped.value)
+let raf = 0
+
+function countUp(to: number) {
+  if (!import.meta.client || window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    shown.value = to
+    return
+  }
+  cancelAnimationFrame(raf)
+  const start = performance.now()
+  const delay = 100
+  const duration = 900
+  const tick = (now: number) => {
+    const t = Math.min(Math.max((now - start - delay) / duration, 0), 1)
+    shown.value = Math.round(to * (1 - Math.pow(1 - t, 3)))
+    if (t < 1)
+      raf = requestAnimationFrame(tick)
+  }
+  shown.value = 0
+  raf = requestAnimationFrame(tick)
+}
+
+onMounted(() => countUp(clamped.value))
+watch(clamped, v => countUp(v))
+onBeforeUnmount(() => cancelAnimationFrame(raf))
 
 const level = computed(() => {
   if (clamped.value <= 30)
@@ -84,7 +111,7 @@ const level = computed(() => {
 
 @media (prefers-reduced-motion: no-preference) {
   .score-gauge__fill {
-    animation: score-gauge-fill 0.6s var(--ease-out) 0.1s backwards;
+    animation: score-gauge-fill 1s var(--ease-out) 0.1s backwards;
   }
 }
 

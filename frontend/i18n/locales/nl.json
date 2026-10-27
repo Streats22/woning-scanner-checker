@@ -210,7 +210,11 @@
     "dwellingConfMedium": "beperkte signalen — extra kritisch lezen",
     "dwellingConfLow": "weinig houvast in de tekst",
     "scoreGaugeAria": "Risicoscore {n} van 100",
-    "scoreOutOf": "{n} / 100"
+    "scoreOutOf": "{n} / 100",
+    "aiFindingsTitle": "Extra gevonden door de AI-check",
+    "aiFindingsLead": "Deze punten vond de AI-check bovenop de vaste regels.",
+    "aiFindingsRaised": "De AI-check schatte het risico op {ai} van 100, hoger dan de vaste regels ({rule}). Daarom is de eindscore {ai}.",
+    "aiFlagTag": "AI"
   },
   "risk": {
     "low": "Beperkt risico",

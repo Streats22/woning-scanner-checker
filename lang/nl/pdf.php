@@ -57,4 +57,7 @@ return [
     'score_label' => 'Risicoscore',
     'made_by' => 'Gemaakt door streatsdesign.nl',
     'contact' => 'info@streatsdesign.nl',
+    'ai_findings_title' => 'Extra gevonden door de AI-check',
+    'ai_findings_lead' => 'Deze punten vond de AI-check bovenop de vaste regels.',
+    'ai_findings_raised' => 'De AI-check schatte het risico op :ai van 100, hoger dan de vaste regels (:rule). Daarom is de eindscore :ai.',
 ];

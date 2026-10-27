@@ -55,9 +55,9 @@
         <p class="sites-count" aria-live="polite">{{ t('sites.resultCount', { n: visibleCount }) }}</p>
 
         <div v-for="region in visibleRegions" :key="region.id" class="sites-cat">
-          <h2 class="sites-cat__title">{{ t('sites.region.' + region.id) }}</h2>
+          <h2 v-reveal class="sites-cat__title">{{ t('sites.region.' + region.id) }}</h2>
           <ul class="sites-list">
-            <li v-for="site in region.items" :key="site.url" class="sites-item">
+            <li v-for="(site, i) in region.items" :key="site.url" v-reveal="i % 3" class="sites-item wsc-lift">
               <div class="sites-item__head">
                 <span class="sites-item__mono" aria-hidden="true">{{ site.name.charAt(0) }}</span>
                 <a
@@ -85,7 +85,7 @@
 
         <p class="sites-disclaimer">{{ t('sites.disclaimer') }}</p>
 
-        <div class="sites-cta">
+        <div v-reveal class="sites-cta">
           <NuxtLink class="wsc-btn wsc-btn--action" :to="localePath('/check')">{{ t('sites.ctaCheck') }}</NuxtLink>
           <NuxtLink class="sites-cta__faq" :to="localePath('/faq')">{{ t('sites.ctaFaq') }}</NuxtLink>
         </div>
@@ -220,6 +220,22 @@ useHead(() => ({
   border-color: var(--border-strong);
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  .sites-chip:active {
+    transform: scale(0.95);
+  }
+
+  .sites-chip--on {
+    animation: sites-chip-on 0.35s var(--ease-spring);
+  }
+}
+
+@keyframes sites-chip-on {
+  from {
+    transform: scale(0.9);
+  }
+}
+
 .sites-chip--on,
 .sites-chip--on:hover {
   background: var(--brand);
@@ -325,8 +341,14 @@ html.dark .sites-chip--on:hover {
 
 .sites-item__link::after {
   content: ' ↗';
+  display: inline-block;
   color: var(--accent);
   font-weight: 700;
+  transition: transform var(--duration-normal) var(--ease-spring);
+}
+
+.sites-item:hover .sites-item__link::after {
+  transform: translate(2px, -2px);
 }
 
 .sites-item__link:hover {
