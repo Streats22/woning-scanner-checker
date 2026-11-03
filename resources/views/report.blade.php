@@ -49,7 +49,7 @@
     <div class="wrap">
         <span class="badge">Gedeeld rapport</span>
         <h1>{{ $listing->report_slug ?? 'Rapport #'.$listing->id }}</h1>
-        <p class="lead">Volledig overzicht van de automatische analyse: risicoscore, onderdelen, benchmark, adviezen en een controlelijst. Geen login nodig.</p>
+        <p class="lead">De volledige automatische analyse van deze advertentie, met de risicoscore per onderdeel, de prijsvergelijking, adviezen en een controlelijst. Je hoeft niet in te loggen.</p>
         <p class="meta">
             Aangemaakt: {{ $listing->created_at?->format('d-m-Y H:i') ?? '—' }}
             @if ($listing->source_url)
@@ -149,13 +149,13 @@
             <div class="card" style="border-left:3px solid var(--accent);">
                 <h2>Lijkt dit op een huuradvertentie?</h2>
                 <p class="prose muted" style="margin:0;">
-                    Automatische inschatting op basis van ingelezen tekst en link: <strong>{{ (int) $listingFit['score'] }}/100</strong>.
+                    Automatische inschatting op basis van de tekst en link: <strong>{{ (int) $listingFit['score'] }}/100</strong>.
                     @if ($listingFit['tier'] === 'strong')
-                        Dit lijkt redelijk typerend voor een huuradvertentie (prijs, termen en/of bekend platform).
+                        De tekst bevat wat je in een huuradvertentie verwacht, zoals een prijs, huurtermen of een bekend platform.
                     @elseif ($listingFit['tier'] === 'mixed')
-                        Twijfelachtig: enkele signalen, maar de inhoud kan ook iets anders zijn. Plak bij voorkeur de volledige advertentie.
+                        Twijfelachtig: er zijn wat signalen, maar het kan ook iets anders zijn. Plak liever de volledige advertentie.
                     @else
-                        Weinig typerend voor een advertentie; de analyse kan minder betrouwbaar zijn.
+                        Dit lijkt weinig op een advertentie, dus de analyse is minder betrouwbaar.
                     @endif
                 </p>
             </div>
@@ -195,7 +195,7 @@
         @if (count($breakdown))
             <div class="card">
                 <h2>Risico per onderdeel</h2>
-                <p class="prose muted" style="margin-bottom:1rem;">Elk blok toont welk thema bijdroeg aan de inschatting. Dit is geen juridisch oordeel.</p>
+                <p class="prose muted" style="margin-bottom:1rem;">Per onderdeel zie je hoeveel punten het aan de score bijdroeg. Dit is geen juridisch oordeel.</p>
                 @foreach ($breakdown as $row)
                     <div class="breakdown-item">
                         <span class="breakdown-cat">{{ $row['category'] ?? 'Onderdeel' }}</span>

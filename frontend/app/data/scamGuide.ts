@@ -158,7 +158,7 @@ const nl: ScamGuideContent = {
     },
     {
       title: 'Foto’s die ook in andere advertenties staan',
-      body: 'Gekopieerde foto’s van Funda, Pararius of een vakantieverhuursite zijn heel gangbaar. Let ook op details die niet kloppen, zoals buitenlandse stopcontacten.',
+      body: 'Gekopieerde foto’s van Funda, Pararius of een vakantieverhuursite komen veel voor. Let ook op details die niet kloppen, zoals buitenlandse stopcontacten.',
     },
     {
       title: 'Geen huisnummer of een adres dat niet bestaat',
@@ -175,7 +175,7 @@ const nl: ScamGuideContent = {
   ],
   stepsTitle: 'Hoe check je of een woningadvertentie betrouwbaar is? Stappenplan',
   stepsIntro:
-    'Neem voor elke advertentie die je serieus overweegt deze stappen door. Het kost tien minuten en kan je honderden of duizenden euro’s besparen.',
+    'Loop deze stappen door voor elke advertentie die je serieus overweegt. Het kost tien minuten en kan je honderden of duizenden euro’s besparen.',
   steps: [
     {
       title: 'Laat de advertentie automatisch checken',
@@ -235,7 +235,7 @@ const nl: ScamGuideContent = {
     },
   ],
   paidTitle: 'Al betaald of je ID gestuurd? Dit doe je nu',
-  paidIntro: 'Snel handelen vergroot de kans dat je geld terugkomt en beperkt verdere schade.',
+  paidIntro: 'Hoe sneller je iets doet, hoe groter de kans dat je je geld terugkrijgt en hoe minder schade je loopt.',
   paidSteps: [
     'Bel direct je bank en vraag of de betaling teruggedraaid of geblokkeerd kan worden.',
     'Maak screenshots van de advertentie, alle berichten, het profiel van de verhuurder en je betaalbewijs.',
@@ -339,7 +339,7 @@ const en: ScamGuideContent = {
     { title: 'Identity fraud', body: 'There is no home at all; the goal is your passport, BSN or payslip, used to take out loans or contracts in your name.' },
   ],
   paidTitle: 'Already paid or sent your ID? Do this now',
-  paidIntro: 'Acting fast improves the chance of getting money back and limits further damage.',
+  paidIntro: 'The faster you act, the better your chance of getting your money back and the less damage you take.',
   paidSteps: [
     'Call your bank right away and ask whether the payment can be reversed or blocked.',
     'Take screenshots of the listing, all messages, the landlord’s profile and your proof of payment.',
