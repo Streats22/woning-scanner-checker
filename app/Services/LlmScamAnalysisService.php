@@ -326,6 +326,7 @@ Antwoord ALLEEN met geldige JSON, dit schema:
 - link_data_quality: null als er geen URL was.
 
 Schrijf correct Nederlands met de juiste trema's en accenten, bijvoorbeeld: geëxtraheerd, financiële, ideeën, coöperatie, beëindigen, reëel, België, één (telwoord). Schrijf "voor" altijd zonder accent (dus niet "vóór"). Gebruik geen gedachtestreepjes (—); kies een punt, komma of dubbele punt. Schrijf "ë", "ï" en "ö" als gewone tekens, niet als escape-codes of zonder puntjes.
+Schrijfstijl: schrijf zoals een ervaren huurjurist die een vriend advies geeft. Noem het concrete signaal uit de advertentie en wat de lezer moet doen. Vermijd constructies als "het is niet X, maar Y", afsluitende zinnetjes die het punt herhalen ("Dat zegt genoeg."), opsommingen van drie om het af te laten klinken, opgeblazen woorden (cruciaal, essentieel, van groot belang), openers als "Laten we kijken" of "Kortom", en vetgedrukte labels. Schrijf geen algemene waarschuwing zonder bijbehorend signaal uit de tekst.
 PROMPT;
     }
 
@@ -372,6 +373,7 @@ Reply ONLY with valid JSON, this schema:
 - link_data_quality: null if there was no URL.
 
 Do not use em-dashes (—); use a full stop, comma or colon instead.
+Writing style: write like an experienced tenancy adviser helping a friend. Name the concrete signal from the listing and what the reader should do. Avoid "it's not X, it's Y" contrasts, closing lines that repeat the point ("That says it all."), lists of three added for rhythm, inflated words (crucial, essential, pivotal, robust), openers like "Let's look at" or "In short", and bold labels. Do not write a generic warning without a matching signal from the text.
 PROMPT;
     }
 
