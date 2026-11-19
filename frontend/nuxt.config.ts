@@ -39,10 +39,12 @@ export default defineNuxtConfig({
    */
   pwa: {
     /**
-     * sw.js die nog binnenkomt (oude installatie) haalt zichzelf uit + caches; helpt klanten
-     * die niet meteen de nieuwe bundle laden. Werkt samen met plugin 00-unregister-sw.
+     * /sw.js is een handgeschreven zelfvernietigende SW in public/ (oude installaties halen
+     * zichzelf uit + caches). @vite-pwa/nuxt 2.x ondersteunt `selfDestroying` niet meer, dus de
+     * gegenereerde Workbox-SW krijgt een andere naam zodat hij public/sw.js niet overschrijft.
+     * Werkt samen met plugin 00-unregister-sw.
      */
-    selfDestroying: true,
+    filename: 'sw-workbox.js',
     injectRegister: process.env.NUXT_PUBLIC_ENABLE_PWA_SW === '1' ? 'auto' : false,
     registerType: 'autoUpdate',
     ...(process.env.NUXT_PUBLIC_ENABLE_PWA_SW === '1'
@@ -68,7 +70,7 @@ export default defineNuxtConfig({
         { src: '/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
       ],
     },
-    workbox: {
+    generateSW: {
       navigateFallback: '/',
       /**
        * Alleen echte app-routes krijgen offline de shell (`/`). Anders vangen onbekende paden
