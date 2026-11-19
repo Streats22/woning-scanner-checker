@@ -3,7 +3,7 @@
 # Full stack deploy: Laravel + Nuxt (PM2) — Ploi/VPS
 #
 # Example (SSH on the server):
-#   export SITE_ROOT=/home/ploi/dehuurradar.nl
+#   export SITE_ROOT=/home/dehuurradar/dehuurradar.nl
 #   export PM2_NAME=dehuurradar-nuxt
 #   export GIT_BRANCH=master
 #   bash deploy/deploy-full.sh
@@ -131,12 +131,25 @@ if [[ ! -f "$FRONTEND/.env" ]] || ! grep -qE '^[[:space:]]*NUXT_PUBLIC_GOOGLE_AN
   echo -e "${YELLOW}    Set NUXT_PUBLIC_GOOGLE_ANALYTICS_ID in frontend/.env on the server.${NC}" >&2
 fi
 
-# Stop Nitro first: a running process can keep file handles under .output and make cleanup fail
-if command -v pm2 >/dev/null 2>&1; then
-  if pm2 describe "$PM2_NAME" >/dev/null 2>&1; then
-    echo -e "${YELLOW}→ pm2 stop $PM2_NAME (release old .output)…${NC}"
-    pm2 stop "$PM2_NAME" || true
-  fi
+# Working dir of the running PM2 app ("" if none). With Ploi zero-downtime deploys every
+# release has its own dir, so the running app usually points at the previous release.
+pm2_app_cwd() {
+  command -v pm2 >/dev/null 2>&1 || return 0
+  pm2 jlist 2>/dev/null | node -e '
+    let d = ""; process.stdin.on("data", c => d += c).on("end", () => {
+      try {
+        const app = JSON.parse(d).find(p => p.name === process.argv[1])
+        if (app) process.stdout.write(app.pm2_env.pm_cwd || "")
+      } catch {}
+    })' "$PM2_NAME" 2>/dev/null || true
+}
+
+# Stop Nitro only when it runs from the dir we are about to rebuild (open file handles under
+# .output can make cleanup fail). A previous release keeps serving during the build.
+RUNNING_CWD="$(pm2_app_cwd)"
+if [[ -n "$RUNNING_CWD" ]] && [[ "$(readlink -f "$RUNNING_CWD" 2>/dev/null || echo "$RUNNING_CWD")" == "$(readlink -f "$FRONTEND")" ]]; then
+  echo -e "${YELLOW}→ pm2 stop $PM2_NAME (release old .output)…${NC}"
+  pm2 stop "$PM2_NAME" || true
 fi
 
 cd "$FRONTEND"
@@ -244,8 +257,19 @@ fi
 mkdir -p "$FRONTEND/logs"
 echo -e "${YELLOW}→ PM2 ($PM2_NAME) via $PM2_ECOSYSTEM…${NC}"
 
-if pm2 describe "$PM2_NAME" >/dev/null 2>&1; then
+if [[ ! -f "$FRONTEND/.output/server/index.mjs" ]]; then
+  echo -e "${RED}Error: Nuxt build missing: $FRONTEND/.output/server/index.mjs${NC}" >&2
+  exit 1
+fi
+
+RUNNING_CWD="$(pm2_app_cwd)"
+if [[ -n "$RUNNING_CWD" ]] && [[ "$(readlink -f "$RUNNING_CWD" 2>/dev/null || echo "$RUNNING_CWD")" == "$(readlink -f "$FRONTEND")" ]]; then
   pm2 reload "$PM2_ECOSYSTEM" --only "$PM2_NAME" --update-env
+elif pm2 describe "$PM2_NAME" >/dev/null 2>&1; then
+  # pm2 reload keeps the old cwd/script, so a new release dir needs delete + start.
+  echo -e "${YELLOW}→ New release dir (was: ${RUNNING_CWD:-?}): pm2 delete + start…${NC}"
+  pm2 delete "$PM2_NAME" || true
+  pm2 start "$PM2_ECOSYSTEM" --only "$PM2_NAME"
 else
   echo -e "${YELLOW}→ First start: pm2 start…${NC}"
   pm2 start "$PM2_ECOSYSTEM" --only "$PM2_NAME"

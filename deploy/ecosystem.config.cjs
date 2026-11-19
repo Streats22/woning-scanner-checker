@@ -9,11 +9,11 @@
  * `NUXT_PUBLIC_GOOGLE_ANALYTICS_ID` moet in `frontend/.env` op de server staan (zelfde bestand
  * als bij `npm run build`). Die waarden worden hieronder ingelezen zodat PM2 ze ook aan Nitro geeft.
  *
- * Test-site (humble-shore-….ploi.website): zet `cwd` naar die site, zelfde poort als
- * in nginx voor die site (vaak 3000 als er maar één Nuxt-app op de server draait).
+ * `cwd`/`script` volgen de map waarin dit bestand staat, dus geen hardcoded /home/<user>/… meer.
+ * Een andere site op dezelfde server: andere `name` en `PORT` (gelijk aan nginx `proxy_pass`).
  *
  * Eenmalig:
- *   cd /home/ploi/<site>/frontend && npm ci && npm run build
+ *   cd <site>/frontend && npm ci && npm run build
  *   pm2 start /path/to/deploy/ecosystem.config.cjs
  *   pm2 save && pm2 startup
  *
@@ -44,15 +44,18 @@ function parseDotenv(filePath) {
   return out
 }
 
-const frontendEnvPath = path.join(__dirname, '..', 'frontend', '.env')
+// Paden relatief aan deze file: werkt in de vaste site-map én in Ploi zero-downtime
+// release-mappen (…-deploy/<site>/<timestamp>/), ongeacht de Linux-gebruiker.
+const frontendDir = path.join(__dirname, '..', 'frontend')
+const frontendEnvPath = path.join(frontendDir, '.env')
 const envFromFrontendFile = parseDotenv(frontendEnvPath)
 
 module.exports = {
     apps: [
         {
             name: 'dehuurradar-nuxt',
-            cwd: '/home/ploi/dehuurradar.nl/frontend',
-            script: '.output/server/index.mjs',
+            cwd: frontendDir,
+            script: path.join(frontendDir, '.output', 'server', 'index.mjs'),
             interpreter: 'node',
             instances: 1,
             exec_mode: 'fork',
