@@ -131,23 +131,32 @@ if [[ ! -f "$FRONTEND/.env" ]] || ! grep -qE '^[[:space:]]*NUXT_PUBLIC_GOOGLE_AN
   echo -e "${YELLOW}    Set NUXT_PUBLIC_GOOGLE_ANALYTICS_ID in frontend/.env on the server.${NC}" >&2
 fi
 
-# Working dir of the running PM2 app ("" if none). With Ploi zero-downtime deploys every
+# Script path of the running PM2 app ("" if none). With Ploi zero-downtime deploys every
 # release has its own dir, so the running app usually points at the previous release.
-pm2_app_cwd() {
+# Note: pm2_env.pm_cwd is NOT reliable here (it follows the cwd of the last pm2 CLI call),
+# so compare the real script path (pm_exec_path, shown as "script path" in pm2 describe).
+pm2_app_script() {
   command -v pm2 >/dev/null 2>&1 || return 0
   pm2 jlist 2>/dev/null | node -e '
     let d = ""; process.stdin.on("data", c => d += c).on("end", () => {
       try {
         const app = JSON.parse(d).find(p => p.name === process.argv[1])
-        if (app) process.stdout.write(app.pm2_env.pm_cwd || "")
+        if (app) process.stdout.write(app.pm2_env.pm_exec_path || "")
       } catch {}
     })' "$PM2_NAME" 2>/dev/null || true
 }
 
+# True when PM2 runs the Nitro entry of *this* release.
+pm2_runs_this_release() {
+  local running
+  running="$(pm2_app_script)"
+  [[ -n "$running" ]] || return 1
+  [[ "$(readlink -f "$running" 2>/dev/null || echo "$running")" == "$(readlink -f "$FRONTEND")/.output/server/index.mjs" ]]
+}
+
 # Stop Nitro only when it runs from the dir we are about to rebuild (open file handles under
 # .output can make cleanup fail). A previous release keeps serving during the build.
-RUNNING_CWD="$(pm2_app_cwd)"
-if [[ -n "$RUNNING_CWD" ]] && [[ "$(readlink -f "$RUNNING_CWD" 2>/dev/null || echo "$RUNNING_CWD")" == "$(readlink -f "$FRONTEND")" ]]; then
+if pm2_runs_this_release; then
   echo -e "${YELLOW}→ pm2 stop $PM2_NAME (release old .output)…${NC}"
   pm2 stop "$PM2_NAME" || true
 fi
@@ -262,12 +271,12 @@ if [[ ! -f "$FRONTEND/.output/server/index.mjs" ]]; then
   exit 1
 fi
 
-RUNNING_CWD="$(pm2_app_cwd)"
-if [[ -n "$RUNNING_CWD" ]] && [[ "$(readlink -f "$RUNNING_CWD" 2>/dev/null || echo "$RUNNING_CWD")" == "$(readlink -f "$FRONTEND")" ]]; then
+RUNNING_SCRIPT="$(pm2_app_script)"
+if pm2_runs_this_release; then
   pm2 reload "$PM2_ECOSYSTEM" --only "$PM2_NAME" --update-env
 elif pm2 describe "$PM2_NAME" >/dev/null 2>&1; then
   # pm2 reload keeps the old cwd/script, so a new release dir needs delete + start.
-  echo -e "${YELLOW}→ New release dir (was: ${RUNNING_CWD:-?}): pm2 delete + start…${NC}"
+  echo -e "${YELLOW}→ New release dir (was: ${RUNNING_SCRIPT:-?}): pm2 delete + start…${NC}"
   pm2 delete "$PM2_NAME" || true
   pm2 start "$PM2_ECOSYSTEM" --only "$PM2_NAME"
 else
